@@ -1,22 +1,22 @@
 {
   "id": "ashdom",
-  "title": "ASHDOM",
+  "title": "ASHDOM: A Post-Apocalyptic Roleplaying System",
   "description": "The ASHDOM Roleplaying Game System",
   "version": "0.2.20",
-  "url": "https://github.com/Skyeris/ashdom",
-  "manifest": "https://raw.githubusercontent.com/Skyeris/ashdom/main/system.json",
-  "download": "https://github.com/Skyeris/ashdom/releases/download/v0.2.20/ashdom.zip",
-  "readme": "https://github.com/Skyeris/ashdom/blob/main/README.md",
-  "license": "https://github.com/Skyeris/ashdom/blob/main/LICENSE",
-  "changelog": "https://github.com/Skyeris/ashdom/releases",
-  "bugs": "https://github.com/Skyeris/ashdom/issues",
+  "url": "https://github.com/Skyeris/ashdom-foundry",
+  "manifest": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/system.json",
+  "download": "https://github.com/Skyeris/ashdom-foundry/releases/download/v0.2.20/ashdom.zip",
+  "readme": "https://github.com/Skyeris/ashdom-foundry/blob/main/README.md",
+  "license": "https://github.com/Skyeris/ashdom-foundry/blob/main/LICENSE",
+  "changelog": "https://github.com/Skyeris/ashdom-foundry/releases",
+  "bugs": "https://github.com/Skyeris/ashdom-foundry/issues",
   "compatibility": {
     "minimum": "13",
     "verified": "14"
   },
   "authors": [
     {
-      "name": "Skyeris",
+      "name": "Osvel Levi Cabrera",
       "url": "https://github.com/Skyeris",
       "discord": "Skyeris"
     }
