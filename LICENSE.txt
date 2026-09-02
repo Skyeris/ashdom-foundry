@@ -1,0 +1,57 @@
+ASHDOM FOUNDRY VIRTUAL TABLETOP SYSTEM LICENSE
+
+Copyright (c) 2026 Osvel Cabrera
+
+1. SOFTWARE CODE
+
+Except where otherwise identified, the software source code comprising the
+ASHDOM implementation for Foundry Virtual Tabletop is licensed under the MIT
+License:
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated software documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is furnished
+to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE, AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES, OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT, OR OTHERWISE, ARISING FROM,
+OUT OF, OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+2. ASHDOM CONTENT
+
+The MIT License above applies only to the software code.
+
+The ASHDOM name, logos, trade dress, setting, characters, lore, rules text,
+descriptive text, artwork, audio, and other original creative content are
+Copyright (c) 2026 Osvel Cabrera. All rights reserved unless a specific file
+or accompanying notice states otherwise.
+
+Permission is granted to download, install, and use the ASHDOM Foundry VTT
+system for personal tabletop play.
+
+No permission is granted to reproduce, redistribute, sell, sublicense, or
+create and distribute derivative works from the reserved ASHDOM content without
+prior written permission from the copyright holder.
+
+3. THIRD-PARTY MATERIAL
+
+Third-party software, fonts, icons, artwork, and other assets remain subject to
+their respective licenses and copyright notices. Such material is not
+relicensed under this document.
+
+4. FOUNDRY VIRTUAL TABLETOP
+
+This package is designed for use with Foundry Virtual Tabletop.
+
+Foundry Virtual Tabletop and its related trademarks are the property of
+Foundry Gaming LLC. This package is not affiliated with or endorsed by Foundry
+Gaming LLC.

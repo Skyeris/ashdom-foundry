@@ -1,0 +1,47 @@
+{
+  "id": "ashdom",
+  "title": "ASHDOM",
+  "description": "The ASHDOM Roleplaying Game System",
+  "version": "0.2.20",
+  "url": "https://github.com/Skyeris/ashdom",
+  "manifest": "https://raw.githubusercontent.com/Skyeris/ashdom/main/system.json",
+  "download": "https://github.com/Skyeris/ashdom/releases/download/v0.2.20/ashdom.zip",
+  "readme": "https://github.com/Skyeris/ashdom/blob/main/README.md",
+  "license": "https://github.com/Skyeris/ashdom/blob/main/LICENSE",
+  "changelog": "https://github.com/Skyeris/ashdom/releases",
+  "bugs": "https://github.com/Skyeris/ashdom/issues",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "14"
+  },
+  "authors": [
+    {
+      "name": "Skyeris",
+      "url": "https://github.com/Skyeris",
+      "discord": "Skyeris"
+    }
+  ],
+  "esmodules": [
+    "ashdom.mjs"
+  ],
+  "styles": [
+    "styles/ashdom.css"
+  ],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+  "documentTypes": {
+    "Actor": {
+      "character": {
+        "htmlFields": []
+      },
+      "npc": {
+        "htmlFields": []
+      }
+    }
+  }
+}

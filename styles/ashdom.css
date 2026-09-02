@@ -1,0 +1,2367 @@
+/* =========================================
+   ASHDOM SHEET
+========================================= */
+
+.ashdom-sheet {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  padding: 10px;
+
+  overflow: hidden;
+}
+
+
+/* =========================================
+   PERSISTENT CHARACTER HEADER
+========================================= */
+
+.ashdom-character-header {
+  display: grid;
+  grid-template-columns: 104px minmax(0, 1fr) 230px;
+  gap: 12px;
+  align-items: center;
+  flex: 0 0 auto;
+  margin-bottom: 8px;
+  padding: 10px;
+  border: 1px solid var(--ashdom-gold);
+  border-radius: 6px;
+  background: var(--ashdom-black);
+  box-sizing: border-box;
+}
+
+.ashdom-sheet .ashdom-portrait-button {
+  display: block;
+  width: 104px;
+  height: 104px;
+  min-width: 0;
+  padding: 0;
+  border: 2px solid var(--ashdom-gold) !important;
+  border-radius: 50%;
+  background: var(--ashdom-black) !important;
+  box-shadow: none !important;
+  box-sizing: border-box;
+  cursor: pointer;
+  object-fit: cover;
+  object-position: center;
+}
+
+.ashdom-sheet .ashdom-portrait-button:hover,
+.ashdom-sheet .ashdom-portrait-button:focus-visible {
+  box-shadow: 0 0 0 2px var(--ashdom-gold-dark) !important;
+  outline: none;
+}
+
+.ashdom-header-details {
+  min-width: 0;
+}
+
+.ashdom-header-details .ashdom-form-row {
+  grid-template-columns: 104px minmax(0, 1fr);
+  column-gap: 12px;
+  margin-bottom: 0;
+}
+
+.ashdom-header-details label,
+.ashdom-header-vitals label {
+  white-space: nowrap;
+}
+
+.ashdom-header-vitals {
+  display: grid;
+  gap: 8px;
+  align-content: center;
+  padding-left: 12px;
+  border-left: 1px solid var(--ashdom-gold-dark);
+}
+
+.ashdom-header-vital-row {
+  display: grid;
+  grid-template-columns: 44px minmax(55px, 1fr) 10px minmax(55px, 1fr);
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-header-vital-row input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-header-vital-row > span,
+.ashdom-header-vital-row > strong {
+  color: var(--ashdom-gold);
+  text-align: center;
+}
+
+/* Distinct health-resource colors in the persistent header. */
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row label,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row > span,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row > strong {
+  color: #b6ff00 !important;
+}
+
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row input,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row input:hover,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row input:focus {
+  background: #b6ff00 !important;
+  border-color: #b6ff00 !important;
+  color: #000 !important;
+}
+
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-rads-row label,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-rads-row > span,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-rads-row > strong {
+  color: #22cf2a !important;
+}
+
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-rads-row input,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-rads-row input:hover,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-rads-row input:focus {
+  background: #22cf2a !important;
+  border-color: #22cf2a !important;
+  color: #000 !important;
+}
+
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-horror-row label,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-horror-row > span,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-horror-row > strong {
+  color: #b455ff !important;
+}
+
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-horror-row input,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-horror-row input:hover,
+.ashdom-sheet .ashdom-header-vitals .ashdom-header-horror-row input:focus {
+  background: #b455ff !important;
+  border-color: #b455ff !important;
+  color: #000 !important;
+}
+
+/* =========================================
+   TABS
+========================================= */
+
+.ashdom-tabs {
+  display: flex;
+
+  gap: 5px;
+
+  margin-bottom: 10px;
+
+  flex: 0 0 auto;
+}
+
+
+.ashdom-tab {
+  flex: 1;
+
+  padding: 10px;
+
+  cursor: pointer;
+
+  font-family: "Arial Black", "Arial Narrow", Arial, Helvetica, sans-serif;
+  font-size: 125%;
+
+  border: 1px solid #555;
+
+  background: #222;
+
+  color: inherit;
+}
+
+
+.ashdom-tab.active {
+  background: #555;
+}
+
+
+/* =========================================
+   TAB CONTENT
+========================================= */
+
+.ashdom-tab-content {
+  display: none;
+
+  flex: 1;
+
+  min-height: 0;
+
+  overflow-y: auto;
+}
+
+
+.ashdom-tab-content.active {
+  display: block;
+}
+
+
+/* =========================================
+   CHARACTER LAYOUT
+========================================= */
+
+.ashdom-character-layout {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    minmax(0, 1fr);
+
+  gap: 10px;
+
+  width: 100%;
+}
+
+
+.ashdom-left-column,
+.ashdom-right-column {
+  min-width: 0;
+}
+
+
+/* =========================================
+   PANELS
+========================================= */
+
+.ashdom-panel {
+  padding: 10px;
+
+  margin-bottom: 10px;
+
+  border: 1px solid #555;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   FORM
+========================================= */
+
+.ashdom-form-row {
+  display: grid;
+
+  grid-template-columns: 1fr 1fr;
+
+  gap: 8px;
+
+  align-items: center;
+
+  margin-bottom: 6px;
+}
+
+
+.ashdom-form-row input {
+  width: 100%;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   HEALTH
+========================================= */
+
+.ashdom-health-layout {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(28px, auto));
+  gap: 4px;
+}
+
+.ashdom-expanded-crippled-row {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 5px;
+  margin-bottom: 7px;
+  padding-bottom: 7px;
+  border-bottom: 1px solid rgba(247, 197, 21, 0.45);
+}
+
+.ashdom-expanded-crippled-row > label {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px;
+  gap: 3px;
+  align-items: center;
+  min-width: 0;
+  font-size: 0.66em !important;
+  white-space: nowrap;
+}
+
+.ashdom-expanded-health-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.ashdom-expanded-health-column {
+  display: grid;
+  gap: 4px;
+}
+
+.ashdom-expanded-health-column .ashdom-health-status-row,
+.ashdom-expanded-health-column .ashdom-health-single-row {
+  grid-template-columns: minmax(72px, 1fr) 48px;
+}
+
+.ashdom-health-column {
+  display: contents;
+}
+
+.ashdom-health-column:nth-child(1) > :nth-child(1) { grid-area: 1 / 1; }
+.ashdom-health-column:nth-child(1) > :nth-child(2) { grid-area: 2 / 1; }
+.ashdom-health-column:nth-child(1) > :nth-child(3) { grid-area: 3 / 1; }
+.ashdom-health-column:nth-child(2) > :nth-child(1) { grid-area: 1 / 2; }
+.ashdom-health-column:nth-child(2) > :nth-child(2) { grid-area: 2 / 2; }
+.ashdom-health-column:nth-child(2) > :nth-child(3) { grid-area: 3 / 2; }
+.ashdom-health-column:nth-child(3) > :nth-child(1) { grid-area: 1 / 3; }
+.ashdom-health-column:nth-child(3) > :nth-child(2) { grid-area: 2 / 3; }
+.ashdom-health-column:nth-child(3) > :nth-child(3) { grid-area: 3 / 3; }
+
+.ashdom-health-column:nth-child(n + 2) > * {
+  min-width: 0;
+  padding-left: 6px;
+  box-sizing: border-box;
+}
+
+.ashdom-health-check-row,
+.ashdom-health-single-row,
+.ashdom-health-status-row,
+.ashdom-health-reaper-row {
+  display: grid;
+  gap: 5px;
+  align-items: center;
+}
+
+.ashdom-health-check-row {
+  grid-template-columns: minmax(72px, 1fr) repeat(3, 18px);
+}
+
+.ashdom-health-single-row {
+  grid-template-columns: minmax(0, 1fr) 48px;
+}
+
+.ashdom-health-status-row {
+  grid-template-columns: minmax(0, 1fr) 48px;
+}
+
+.ashdom-health-status-row .ashdom-tag-checkbox {
+  justify-self: center;
+}
+
+.ashdom-health-reaper-row {
+  grid-template-columns: minmax(0, 1fr) 30px;
+  margin-top: 2px;
+}
+
+.ashdom-health-panel input[type="number"] {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-health-panel select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-health-panel label {
+  color: var(--ashdom-gold);
+  font-size: 0.78em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.ashdom-sheet .ashdom-health-roll-button {
+  width: 100%;
+  min-width: 0;
+  padding: 3px 6px;
+  border: 1px solid transparent !important;
+  border-radius: 3px;
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  box-shadow: none !important;
+  font-weight: bold;
+}
+
+.ashdom-sheet .ashdom-health-roll-button:hover,
+.ashdom-sheet .ashdom-health-roll-button:focus-visible {
+  border-color: var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  outline: none;
+}
+
+
+/* =========================================
+   PRIMARY STATS
+========================================= */
+
+.ashdom-stats-table {
+  display: grid;
+
+  grid-template-columns:
+    minmax(65px, 1.3fr)
+    repeat(5, minmax(45px, 1fr))
+    34px;
+
+  gap: 4px;
+
+  align-items: center;
+}
+
+
+.ashdom-stat-header {
+  text-align: center;
+
+  font-weight: bold;
+
+  font-size: 0.8em;
+}
+
+
+.ashdom-stat-name button {
+  width: 100%;
+
+  cursor: pointer;
+}
+
+
+.ashdom-stats-table input {
+  width: 100%;
+
+  min-width: 0;
+
+  text-align: center;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================
+   SECONDARY STATS
+========================================= */
+
+.ashdom-secondary-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ashdom-secondary-column {
+  display: grid;
+  align-content: start;
+  gap: 5px;
+  min-width: 0;
+}
+
+.ashdom-secondary-header,
+.ashdom-secondary-row {
+  display: grid;
+  grid-template-columns: minmax(72px, 1.35fr) 52px 52px 30px;
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-secondary-row {
+  min-height: 28px;
+}
+
+.ashdom-secondary-header {
+  color: var(--ashdom-gold);
+  font-size: 0.72em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-secondary-row > span:first-child {
+  overflow: hidden;
+  color: var(--ashdom-gold);
+  font-size: 0.82em;
+  font-weight: bold;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ashdom-secondary-row input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-secondary-tracker-row,
+.ashdom-secondary-reaper-row {
+  grid-template-columns: minmax(72px, 1.35fr) 52px 52px 30px;
+}
+
+.ashdom-secondary-tracker-row > span {
+  color: var(--ashdom-gold);
+  font-size: 0.82em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-secondary-checks {
+  display: flex;
+  grid-column: 2 / -1;
+  justify-content: center;
+  gap: 10px;
+}
+
+.ashdom-secondary-reaper-row .ashdom-health-roll-button {
+  grid-column: 1 / 4;
+  white-space: nowrap;
+}
+
+.ashdom-secondary-reaper-row .ashdom-note-button {
+  grid-column: 4;
+}
+
+.ashdom-sheet .ashdom-secondary-roll-button {
+  width: 100%;
+  min-width: 0;
+  padding: 2px 5px;
+  border: 1px solid transparent !important;
+  border-radius: 3px;
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  box-shadow: none !important;
+  font-weight: bold;
+  line-height: 1.2;
+}
+
+.ashdom-sheet .ashdom-secondary-roll-button:hover,
+.ashdom-sheet .ashdom-secondary-roll-button:focus-visible {
+  border-color: var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  outline: none;
+}
+
+
+/* =========================================
+   ARMOR
+========================================= */
+
+.ashdom-armor-panel {
+  margin-top: 8px;
+}
+
+.ashdom-armor-panel > h2 {
+  margin: 0 0 6px;
+  color: var(--ashdom-gold);
+  font-size: 1em;
+  text-align: center;
+}
+
+.ashdom-armor-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ashdom-armor-entry {
+  min-width: 0;
+  padding: 6px;
+  border: 0;
+}
+
+.ashdom-armor-summary-primary {
+  display: grid;
+  grid-template-columns: 24px 24px 58px 30px minmax(0, 1fr) 26px;
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-armor-summary-pieces {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  margin-top: 5px;
+}
+
+.ashdom-armor-summary-primary input[type="text"],
+.ashdom-armor-summary-pieces input[type="text"] {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.ashdom-sheet .ashdom-armor-toggle {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  line-height: 1;
+}
+
+.ashdom-armor-equip-label {
+  color: var(--ashdom-gold);
+  font-size: 0.72em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.ashdom-armor-equip-control {
+  display: grid;
+  grid-template-columns: auto 18px;
+  gap: 3px;
+  align-items: center;
+}
+
+.ashdom-armor-details {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(247, 197, 21, 0.45);
+}
+
+.ashdom-armor-condition-row {
+  display: grid;
+  grid-template-columns: 22px 58px 12px 54px 148px;
+  justify-content: center;
+  gap: 5px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ashdom-armor-condition-row label,
+.ashdom-armor-condition-row > span {
+  color: var(--ashdom-gold);
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-armor-condition-row input,
+.ashdom-armor-condition-row select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-armor-condition-row input:not([readonly]) {
+  padding-right: 6px;
+  padding-left: 6px;
+}
+
+.ashdom-sheet .ashdom-armor-condition-row label,
+.ashdom-sheet .ashdom-armor-condition-row > span {
+  color: #a5a5a5 !important;
+}
+
+.ashdom-sheet .ashdom-armor-condition-row input:not([readonly]),
+.ashdom-sheet .ashdom-armor-condition-row input:not([readonly]):hover,
+.ashdom-sheet .ashdom-armor-condition-row input:not([readonly]):focus {
+  border: 0 !important;
+  outline: 0 !important;
+  background: #a5a5a5 !important;
+  color: #000 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-sheet .ashdom-armor-condition-row input.ashdom-armor-total {
+  border: 0 !important;
+  outline: 0 !important;
+  background: #000 !important;
+  color: #a5a5a5 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-armor-rating-grid {
+  display: grid;
+  grid-template-columns: 29px repeat(6, minmax(0, 1fr));
+  gap: 3px;
+  align-items: center;
+}
+
+.ashdom-armor-rating-header {
+  margin-bottom: 3px;
+  color: var(--ashdom-gold);
+  font-size: 0.62em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-armor-rating-row {
+  margin-bottom: 3px;
+}
+
+.ashdom-armor-rating-row > span {
+  color: var(--ashdom-gold);
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-armor-rating-row input {
+  width: 100%;
+  min-width: 0;
+  padding-right: 2px;
+  padding-left: 2px;
+  box-sizing: border-box;
+  font-size: 1em;
+  text-align: center;
+}
+
+.ashdom-sheet input.ashdom-armor-total {
+  border: 0 !important;
+  border-radius: 0;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ashdom-armor-rating-ac > span { color: #b9dbe9; }
+.ashdom-sheet .ashdom-armor-rating-ac input { background: #b9dbe9 !important; color: #000 !important; }
+
+.ashdom-armor-rating-n > span { color: #b9b9b9; }
+.ashdom-sheet .ashdom-armor-rating-n input { background: #b9b9b9 !important; color: #000 !important; }
+
+.ashdom-armor-rating-l > span { color: #ed2929; }
+.ashdom-sheet .ashdom-armor-rating-l input { background: #ed2929 !important; color: #000 !important; }
+
+.ashdom-armor-rating-f > span { color: #e84b22; }
+.ashdom-sheet .ashdom-armor-rating-f input { background: #e84b22 !important; color: #000 !important; }
+
+.ashdom-armor-rating-p > span { color: #07906e; }
+.ashdom-sheet .ashdom-armor-rating-p input { background: #07906e !important; color: #000 !important; }
+
+.ashdom-armor-rating-e > span { color: #f5e500; }
+.ashdom-sheet .ashdom-armor-rating-e input { background: #f5e500 !important; color: #000 !important; }
+
+.ashdom-armor-rating-dr > span { color: #a5a5a5; }
+.ashdom-sheet .ashdom-armor-rating-dr input { background: #a5a5a5 !important; color: #000 !important; }
+
+.ashdom-armor-rating-rr > span { color: #22cf2a; }
+.ashdom-sheet .ashdom-armor-rating-rr input { background: #22cf2a !important; color: #000 !important; }
+
+
+/* =========================================
+   SKILLS
+========================================= */
+
+.ashdom-skills-grid {
+  display: grid;
+
+  grid-template-columns: 1fr;
+
+  gap: 5px;
+}
+
+.ashdom-character-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 14px;
+}
+
+.ashdom-character-details .ashdom-form-row {
+  grid-template-columns: 110px minmax(0, 1fr);
+  margin-bottom: 0;
+}
+
+.ashdom-character-details label {
+  white-space: nowrap;
+}
+
+.ashdom-character-details .ashdom-form-row-name {
+  margin-bottom: 8px;
+}
+
+.ashdom-skills-header {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    55px
+    38px
+    55px
+    55px
+    34px;
+
+  column-gap: 8px;
+
+  font-weight: bold;
+
+  text-align: center;
+}
+
+.ashdom-skills-header span:first-child {
+  text-align: left;
+}
+
+
+.ashdom-skill {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1fr)
+    55px
+    38px
+    55px
+    55px
+    34px;
+
+  column-gap: 8px;
+
+  align-items: center;
+}
+
+
+.ashdom-skill span {
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+
+  white-space: nowrap;
+}
+
+
+.ashdom-skill input {
+  width: 100%;
+
+  text-align: center;
+
+  box-sizing: border-box;
+}
+
+.ashdom-tag-checkbox {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  justify-self: center;
+  cursor: pointer;
+}
+
+.ashdom-tag-checkbox input {
+  position: absolute;
+  width: 1px !important;
+  height: 1px;
+  opacity: 0;
+}
+
+.ashdom-tag-checkbox span {
+  display: grid;
+  width: 18px;
+  height: 18px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ashdom-gold) !important;
+  border-radius: 3px;
+  background: var(--ashdom-field) !important;
+  color: transparent;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.ashdom-tag-checkbox input:checked + span {
+  border-color: var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+}
+
+.ashdom-tag-checkbox input:focus-visible + span {
+  outline: 2px solid var(--ashdom-gold);
+  outline-offset: 2px;
+}
+
+
+/* =========================================
+   ROLL CHAT CARD
+========================================= */
+
+/* =========================================
+   WEAPONS
+========================================= */
+
+.ashdom-weapons-panel {
+  margin-top: 10px;
+}
+
+.ashdom-weapons-panel > h2 {
+  margin: 0 0 7px;
+  color: var(--ashdom-gold);
+  font-size: 1em;
+  text-align: center;
+}
+
+.ashdom-weapon-list {
+  display: grid;
+  gap: 7px;
+}
+
+.ashdom-weapon-entry {
+  min-width: 0;
+  padding: 5px;
+  border: 0;
+}
+
+.ashdom-weapon-summary {
+  display: grid;
+  grid-template-columns: 24px 24px 58px 30px 25px minmax(0, 1fr) 26px;
+  gap: 5px;
+  align-items: center;
+}
+
+.ashdom-sheet .ashdom-weapon-a-button {
+  width: 25px;
+  min-width: 25px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--ashdom-gold) !important;
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.ashdom-sheet .ashdom-weapon-a-button:hover,
+.ashdom-sheet .ashdom-weapon-a-button:focus-visible {
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+}
+
+.ashdom-sheet .ashdom-weapon-toggle {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  line-height: 1;
+}
+
+.ashdom-weapon-equip {
+  display: grid;
+  grid-template-columns: auto 18px;
+  gap: 4px;
+  align-items: center;
+  color: var(--ashdom-gold);
+  font-size: 0.68em;
+  font-weight: bold;
+}
+
+.ashdom-weapon-attack-row {
+  display: grid;
+  grid-template-columns: repeat(3, 70px) repeat(2, minmax(52px, 1fr)) 78px;
+  gap: 6px;
+  align-items: end;
+  margin-top: 7px;
+}
+
+.ashdom-weapon-attack-pair {
+  display: grid;
+  grid-template-columns: 25px minmax(0, 1fr);
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-sheet .ashdom-weapon-attack-button {
+  width: 25px;
+  min-width: 25px;
+  height: 26px;
+  padding: 0;
+  border: 1px solid var(--ashdom-gold) !important;
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.ashdom-sheet .ashdom-weapon-attack-button:hover,
+.ashdom-sheet .ashdom-weapon-attack-button:focus-visible {
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+}
+
+.ashdom-weapon-attack-row label {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  color: var(--ashdom-gold);
+  font-size: 0.68em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-weapon-attack-row input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 1rem;
+}
+
+.ashdom-weapon-details {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(247, 197, 21, 0.45);
+}
+
+.ashdom-weapon-row-one,
+.ashdom-weapon-row-two,
+.ashdom-weapon-row-three {
+  display: grid;
+  gap: 6px;
+  align-items: end;
+}
+
+.ashdom-weapon-row-one {
+  grid-template-columns: minmax(110px, 1fr) 96px 92px 82px;
+}
+
+.ashdom-weapon-row-two {
+  grid-template-columns: 120px minmax(0, 1fr) 82px;
+  margin-top: 7px;
+}
+
+.ashdom-weapon-row-three {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 150px 82px;
+  margin-top: 7px;
+}
+
+.ashdom-weapon-row-one label,
+.ashdom-weapon-row-two label,
+.ashdom-weapon-row-three label {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  color: var(--ashdom-gold);
+  font-size: 0.68em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-weapon-row-one input,
+.ashdom-weapon-row-one select,
+.ashdom-weapon-row-two input,
+.ashdom-weapon-row-three input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-sheet .ashdom-skill input[type="number"]:not([readonly]),
+.ashdom-weapon-summary > input,
+.ashdom-weapon-attack-row input,
+.ashdom-weapon-row-one input,
+.ashdom-weapon-row-two input,
+.ashdom-weapon-row-three input {
+  font-size: var(--font-size-14, 0.875rem);
+}
+
+.ashdom-weapon-row-one select {
+  font-size: 0.7rem;
+}
+
+.ashdom-weapon-range-field {
+  grid-template-columns: minmax(0, 1fr) 18px;
+  column-gap: 4px;
+}
+
+.ashdom-weapon-range-field > span:first-child {
+  grid-column: 1;
+}
+
+.ashdom-weapon-range-field > .ashdom-weapon-range {
+  grid-column: 1 / -1;
+}
+
+.ashdom-weapon-range {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 18px;
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-weapon-capacity > span:last-child {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 8px minmax(0, 1fr);
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-weapon-range b,
+.ashdom-weapon-capacity b {
+  color: var(--ashdom-gold);
+  font-size: 0.9em;
+}
+
+.ashdom-roll-card {
+  padding: 10px;
+  text-align: center;
+  background: #000;
+  color: #e0b900;
+}
+
+.ashdom-themed-chat-card {
+  background: #000;
+  color: #e0b900;
+}
+
+
+.ashdom-roll-title {
+  font-weight: bold;
+
+  font-size: 1.2em;
+
+  margin-bottom: 6px;
+}
+
+
+.ashdom-roll-result {
+  font-size: 2em;
+
+  font-weight: bold;
+
+  cursor: help;
+}
+
+.ashdom-weapon-attack-results {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e0b900;
+}
+
+.ashdom-weapon-attack-results > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.ashdom-weapon-attack-results strong {
+  font-size: 0.78em;
+  line-height: 1.1;
+}
+
+.ashdom-weapon-attack-results span {
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+.ashdom-roll-result.ashdom-critical-success {
+  color: #39ff14 !important;
+}
+
+.ashdom-roll-result.ashdom-critical-failure {
+  color: #ff3b30 !important;
+}
+
+.ashdom-burst-results {
+  display: grid;
+  gap: 5px;
+}
+
+.ashdom-burst-shared-roll {
+  display: flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e0b900;
+}
+
+.ashdom-burst-shared-roll span {
+  font-size: 1.6em;
+  font-weight: 700;
+}
+
+.ashdom-burst-result-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 65px 42px;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 7px;
+  border: 1px solid #594800;
+  border-radius: 4px;
+  text-align: left;
+}
+
+.ashdom-burst-result-row.selected {
+  border-color: #e0b900;
+}
+
+.ashdom-burst-result-row > span {
+  text-align: center;
+}
+
+.ashdom-burst-result {
+  color: #e0b900;
+  font-size: 1.25em;
+  text-align: center;
+}
+
+.ashdom-burst-result.ashdom-critical-success {
+  color: #39ff14 !important;
+}
+
+.ashdom-burst-result.ashdom-critical-failure {
+  color: #ff3b30 !important;
+}
+
+.ashdom-targeted-attack-effects {
+  display: grid;
+  gap: 5px;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e0b900;
+  text-align: left;
+}
+
+.ashdom-targeted-attack-effects > div {
+  display: grid;
+  grid-template-columns: minmax(105px, 0.8fr) minmax(0, 1.2fr);
+  gap: 8px;
+}
+
+.ashdom-targeted-attack-effects span {
+  font-weight: 700;
+}
+
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 800px) {
+
+  .ashdom-character-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ashdom-character-header {
+    grid-template-columns: 84px minmax(0, 1fr);
+  }
+
+  .ashdom-sheet .ashdom-portrait-button {
+    width: 84px;
+    height: 84px;
+  }
+
+  .ashdom-header-vitals {
+    grid-column: 1 / -1;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 8px 0 0;
+    border-top: 1px solid var(--ashdom-gold-dark);
+    border-left: 0;
+  }
+
+}
+
+.ashdom-panel textarea {
+  width: 100%;
+  min-height: 160px;
+  box-sizing: border-box;
+  resize: vertical;
+}
+
+.ashdom-settings-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  align-items: start;
+}
+
+.ashdom-settings-panel {
+  padding: 8px;
+}
+
+.ashdom-settings-panel h2 {
+  margin: -2px 0 10px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--ashdom-gold);
+  font-size: 1em;
+  text-align: center;
+}
+
+.ashdom-settings-number-row,
+.ashdom-variant-rule-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px;
+  gap: 8px;
+  align-items: center;
+}
+
+.ashdom-settings-number-row input {
+  width: 54px;
+  text-align: center;
+}
+
+.ashdom-variant-rule-row .ashdom-tag-checkbox {
+  justify-self: center;
+}
+
+.ashdom-variant-rule-row.is-disabled,
+.ashdom-variant-rule-row:has(input:disabled) {
+  opacity: 0.48;
+}
+
+.ashdom-settings-help {
+  margin: 4px 0 12px;
+  color: var(--ashdom-gold);
+  font-size: 0.72em;
+  line-height: 1.25;
+}
+
+.ashdom-subvariant-rule-row {
+  margin-left: 16px;
+}
+
+.ashdom-subvariant-help {
+  margin-left: 16px;
+}
+
+
+/* =========================================
+   BLACK AND GOLD THEME
+========================================= */
+
+.ashdom-character-sheet,
+.ashdom-npc-sheet,
+.ashdom-character-sheet .window-content,
+.ashdom-npc-sheet .window-content,
+.ashdom-sheet {
+  --ashdom-gold: #ffd400;
+  --ashdom-field: #f7c51e;
+  --ashdom-field-hover: #ffd84a;
+  --ashdom-black: #000;
+  --ashdom-gold-dark: #6b5700;
+
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+}
+
+.ashdom-sheet {
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Buttons use a slightly deeper gold than the sheet's labels and fields. */
+.ashdom-sheet button,
+.ashdom-note-dialog-window button,
+.ashdom-roll-modifier-window button,
+.ashdom-targeted-attack-window button,
+.ashdom-burst-attack-window button {
+  --ashdom-gold: #e0b900;
+  --ashdom-gold-dark: #594800;
+}
+
+.ashdom-sheet .ashdom-tabs {
+  gap: 2px;
+}
+
+.ashdom-sheet .ashdom-tab {
+  border: 1px solid var(--ashdom-gold) !important;
+  border-radius: 4px 4px 0 0;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  box-shadow: none !important;
+  text-shadow: none;
+}
+
+.ashdom-sheet .ashdom-tab:hover,
+.ashdom-sheet .ashdom-tab:focus-visible {
+  background: #171300 !important;
+  box-shadow: inset 0 0 8px var(--ashdom-gold-dark) !important;
+}
+
+.ashdom-sheet .ashdom-tab.active,
+.ashdom-sheet .ashdom-tab.active:hover,
+.ashdom-sheet .ashdom-tab.active:focus,
+.ashdom-sheet .ashdom-tab.active:focus-visible {
+  background: var(--ashdom-gold) !important;
+  border-color: transparent !important;
+  color: var(--ashdom-black) !important;
+  font-weight: bold;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.ashdom-sheet .ashdom-panel {
+  border: 1px solid var(--ashdom-gold) !important;
+  border-radius: 5px;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+}
+
+.ashdom-sheet .ashdom-panel h2 {
+  color: #fff !important;
+}
+
+.ashdom-sheet label,
+.ashdom-sheet .ashdom-stat-header,
+.ashdom-sheet .ashdom-skills-header {
+  color: var(--ashdom-gold) !important;
+  font-weight: bold;
+}
+
+.ashdom-sheet input:not([readonly]),
+.ashdom-sheet textarea,
+.ashdom-sheet select {
+  border: 1px solid var(--ashdom-gold) !important;
+  border-radius: 4px;
+  background: var(--ashdom-field) !important;
+  color: var(--ashdom-black) !important;
+  box-shadow: none !important;
+  font-weight: bold;
+}
+
+.ashdom-sheet input:not([readonly]):hover,
+.ashdom-sheet input:not([readonly]):focus,
+.ashdom-sheet textarea:hover,
+.ashdom-sheet textarea:focus,
+.ashdom-sheet select:hover,
+.ashdom-sheet select:focus {
+  background: var(--ashdom-field-hover) !important;
+  outline: 1px solid var(--ashdom-gold);
+}
+
+.ashdom-sheet input[readonly] {
+  border: 1px solid var(--ashdom-gold-dark) !important;
+  border-radius: 4px;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  box-shadow: none !important;
+  font-weight: bold;
+}
+
+/* Armor calculated totals intentionally do not use the global readonly field style. */
+.ashdom-sheet .ashdom-armor-entry input.ashdom-armor-total {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-sheet .ashdom-armor-rating-ac input.ashdom-armor-total { background: #000 !important; color: #b9dbe9 !important; }
+.ashdom-sheet .ashdom-armor-rating-n input.ashdom-armor-total { background: #000 !important; color: #b9b9b9 !important; }
+.ashdom-sheet .ashdom-armor-rating-l input.ashdom-armor-total { background: #000 !important; color: #ed2929 !important; }
+.ashdom-sheet .ashdom-armor-rating-f input.ashdom-armor-total { background: #000 !important; color: #e84b22 !important; }
+.ashdom-sheet .ashdom-armor-rating-p input.ashdom-armor-total { background: #000 !important; color: #07906e !important; }
+.ashdom-sheet .ashdom-armor-rating-e input.ashdom-armor-total { background: #000 !important; color: #f5e500 !important; }
+.ashdom-sheet .ashdom-armor-rating-dr input.ashdom-armor-total { background: #000 !important; color: #a5a5a5 !important; }
+.ashdom-sheet .ashdom-armor-rating-rr input.ashdom-armor-total { background: #000 !important; color: #22cf2a !important; }
+
+/* Editable armor components use the solid color assigned to their row. */
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-ac input:not(.ashdom-armor-total) { background: #b9dbe9 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-n input:not(.ashdom-armor-total) { background: #b9b9b9 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-l input:not(.ashdom-armor-total) { background: #ed2929 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-f input:not(.ashdom-armor-total) { background: #e84b22 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-p input:not(.ashdom-armor-total) { background: #07906e !important; color: #000 !important; }
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-e input:not(.ashdom-armor-total) { background: #f5e500 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-dr input:not(.ashdom-armor-total) { background: #a5a5a5 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-rr input:not(.ashdom-armor-total) { background: #22cf2a !important; color: #000 !important; }
+
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-row input:not(.ashdom-armor-total),
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-row input:not(.ashdom-armor-total):hover,
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-row input:not(.ashdom-armor-total):focus {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-sheet .ashdom-armor-entry input.ashdom-armor-rr-base,
+.ashdom-sheet .ashdom-stats-table input[readonly] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-rr input.ashdom-armor-rr-base {
+  background: #000 !important;
+  color: #22cf2a !important;
+}
+
+.ashdom-sheet .ashdom-skill input[readonly],
+.ashdom-sheet .ashdom-secondary-row input[readonly] {
+  border: 0 !important;
+  border-radius: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+  background: #000 !important;
+}
+
+.ashdom-sheet .ashdom-stat-name button,
+.ashdom-sheet .ashdom-skill > span:first-child {
+  border: 1px solid var(--ashdom-gold-dark) !important;
+  border-radius: 12px;
+  background: linear-gradient(
+    180deg,
+    #1a1705 0%,
+    #8b7411 48%,
+    #1a1705 100%
+  ) !important;
+  color: var(--ashdom-black) !important;
+  font-weight: bold;
+  text-align: center;
+  text-shadow: 0 1px 0 var(--ashdom-gold);
+}
+
+.ashdom-sheet .ashdom-stat-name button:hover,
+.ashdom-sheet .ashdom-stat-name button:focus-visible {
+  background: linear-gradient(
+    180deg,
+    #3c3308 0%,
+    #d1ad19 48%,
+    #3c3308 100%
+  ) !important;
+}
+
+.ashdom-sheet .ashdom-tab-content {
+  scrollbar-color: var(--ashdom-gold) #171300;
+  scrollbar-width: thin;
+}
+
+.ashdom-sheet ::placeholder {
+  color: #6f5900 !important;
+  opacity: 1;
+}
+
+
+/* =========================================
+   PRIMARY LABELS AND SKILL ACCORDION
+========================================= */
+
+.ashdom-sheet .ashdom-stat-name {
+  color: var(--ashdom-gold) !important;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-skill-accordion,
+.ashdom-skill-section-content {
+  display: grid;
+  gap: 6px;
+}
+
+.ashdom-skill-section,
+.ashdom-skill-subsection {
+  min-width: 0;
+}
+
+.ashdom-sheet .ashdom-collapse-toggle {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--ashdom-gold) !important;
+  border-radius: 4px;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  box-shadow: none !important;
+  font-weight: bold;
+  text-align: left;
+}
+
+.ashdom-sheet .ashdom-collapse-toggle-main {
+  padding: 6px 10px;
+  font-size: 1.15em;
+}
+
+.ashdom-sheet .ashdom-collapse-toggle-sub {
+  width: 95%;
+  margin-left: 5%;
+  padding: 4px 9px;
+  border-color: var(--ashdom-gold-dark) !important;
+}
+
+.ashdom-sheet .ashdom-collapse-toggle:hover,
+.ashdom-sheet .ashdom-collapse-toggle:focus-visible {
+  border-color: var(--ashdom-gold) !important;
+  background: #211c00 !important;
+  outline: none;
+}
+
+.ashdom-collapse-arrow {
+  flex: 0 0 auto;
+  margin-left: 8px;
+  font-size: 0.8em;
+}
+
+.ashdom-skill-section-content {
+  padding: 0 4px 4px;
+}
+
+.ashdom-skill-section > .ashdom-skill-section-content {
+  margin-top: 6px;
+}
+
+.ashdom-skill-subsection .ashdom-skills-grid {
+  width: 95%;
+  margin-left: 5%;
+  padding: 5px 6px 7px;
+  box-sizing: border-box;
+}
+
+.ashdom-sheet .ashdom-skill-button {
+  width: 75%;
+  min-width: 130px;
+  padding: 2px 5px;
+  justify-self: start;
+  overflow: hidden;
+  border: 1px solid transparent !important;
+  border-radius: 3px;
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  box-shadow: none !important;
+  font-weight: bold;
+  line-height: 1.2;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-shadow: none;
+  white-space: nowrap;
+}
+
+.ashdom-sheet .ashdom-skill-button:hover,
+.ashdom-sheet .ashdom-skill-button:focus-visible {
+  border-color: var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  outline: none;
+}
+
+
+/* =========================================
+   STAT AND SKILL NOTES
+========================================= */
+
+.ashdom-sheet .ashdom-note-button {
+  width: 30px;
+  height: 28px;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid var(--ashdom-gold-dark) !important;
+  border-radius: 4px;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  box-shadow: none !important;
+  font-size: 1.1em;
+  line-height: 1;
+}
+
+.ashdom-sheet .ashdom-note-button:hover,
+.ashdom-sheet .ashdom-note-button:focus-visible,
+.ashdom-sheet .ashdom-note-button.has-note {
+  border-color: var(--ashdom-gold) !important;
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  outline: none;
+}
+
+.ashdom-note-dialog-window,
+.ashdom-note-dialog-window .window-content {
+  background: #000 !important;
+  color: #ffd400 !important;
+}
+
+.ashdom-note-dialog {
+  padding: 8px;
+}
+
+.ashdom-note-dialog textarea {
+  width: 100%;
+  min-height: 220px;
+  padding: 8px;
+  border: 1px solid #ffd400 !important;
+  border-radius: 4px;
+  background: #f7c51e !important;
+  color: #000 !important;
+  box-sizing: border-box;
+  font-weight: bold;
+  resize: vertical;
+}
+
+.ashdom-note-dialog-window button {
+  border: 1px solid #ffd400 !important;
+  background: #000 !important;
+  color: #ffd400 !important;
+}
+
+.ashdom-note-dialog-window button:hover,
+.ashdom-note-dialog-window button:focus-visible {
+  background: #ffd400 !important;
+  color: #000 !important;
+}
+
+.ashdom-roll-modifier-window,
+.ashdom-roll-modifier-window .window-content {
+  background: #000 !important;
+  color: #ffd400 !important;
+}
+
+.ashdom-roll-modifier-dialog {
+  padding: 10px;
+}
+
+.ashdom-roll-modifier-dialog label {
+  display: grid;
+  gap: 8px;
+  color: #ffd400 !important;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-roll-modifier-dialog input {
+  width: 100%;
+  padding: 5px;
+  border: 1px solid #ffd400 !important;
+  border-radius: 4px;
+  background: #f7c51e !important;
+  color: #000 !important;
+  box-sizing: border-box;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-roll-modifier-window button {
+  border: 1px solid #ffd400 !important;
+  background: #000 !important;
+  color: #ffd400 !important;
+}
+
+.ashdom-roll-modifier-window button:hover,
+.ashdom-roll-modifier-window button:focus-visible {
+  background: #ffd400 !important;
+  color: #000 !important;
+}
+
+.ashdom-targeted-attack-window,
+.ashdom-targeted-attack-window .window-content,
+.ashdom-burst-attack-window,
+.ashdom-burst-attack-window .window-content {
+  background: #000 !important;
+  color: #e0b900 !important;
+}
+
+.ashdom-targeted-attack-window .form-footer,
+.ashdom-targeted-attack-window .dialog-buttons,
+.ashdom-burst-attack-window .form-footer,
+.ashdom-burst-attack-window .dialog-buttons {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 6px !important;
+}
+
+.ashdom-targeted-attack-window button,
+.ashdom-burst-attack-window button {
+  min-height: 32px;
+  border: 1px solid var(--ashdom-gold) !important;
+  background: #000 !important;
+  color: var(--ashdom-gold) !important;
+  white-space: normal;
+}
+
+.ashdom-targeted-attack-window button:hover,
+.ashdom-targeted-attack-window button:focus-visible,
+.ashdom-burst-attack-window button:hover,
+.ashdom-burst-attack-window button:focus-visible {
+  background: #171300 !important;
+  outline: none !important;
+}
+
+.ashdom-roll-note {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid #e0b900;
+  color: #e0b900;
+  text-align: left;
+  white-space: normal;
+}
+
+.ashdom-roll-note strong {
+  color: #e0b900;
+  font-weight: 700;
+}
+
+/* Match ASHDOM roll messages to the black-and-gold character sheet. */
+#chat-log .chat-message:is(:has(.ashdom-roll-card), :has(.ashdom-themed-chat-card)),
+#chat-popout .chat-message:is(:has(.ashdom-roll-card), :has(.ashdom-themed-chat-card)),
+.chat-message:is(:has(.ashdom-roll-card), :has(.ashdom-themed-chat-card)) {
+  border: 1px solid #e0b900 !important;
+  background: #000 !important;
+  color: #e0b900 !important;
+}
+
+.chat-message:has(.ashdom-themed-chat-card) .message-header,
+.chat-message:has(.ashdom-themed-chat-card) .message-header .message-sender,
+.chat-message:has(.ashdom-themed-chat-card) .message-header .message-metadata,
+.chat-message:has(.ashdom-themed-chat-card) .message-content,
+.chat-message:has(.ashdom-themed-chat-card) .flavor-text {
+  color: #e0b900 !important;
+  font-weight: 700 !important;
+}
+
+.chat-message:has(.ashdom-themed-chat-card) .message-delete {
+  color: #e0b900 !important;
+}
+
+
+/* =========================================
+   DATA TAB
+========================================= */
+
+.ashdom-data-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ashdom-data-column,
+.ashdom-data-panel {
+  min-width: 0;
+}
+
+.ashdom-data-panel h2 {
+  margin: -3px 0 10px;
+  color: var(--ashdom-gold);
+  font-size: 1.15em;
+  text-align: center;
+}
+
+.ashdom-perk-list {
+  display: grid;
+  gap: 6px;
+}
+
+.ashdom-perk-row {
+  display: grid;
+  grid-template-columns: 24px 30px 30px minmax(120px, 1.5fr) minmax(105px, 1fr) 30px;
+  gap: 6px;
+  align-items: center;
+}
+
+.ashdom-tracker-header,
+.ashdom-tracker-row {
+  display: grid;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.ashdom-tracker-header {
+  font-size: 0.75em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-charge-grid {
+  grid-template-columns: 24px minmax(120px, 1fr) 72px 72px 30px;
+}
+
+.ashdom-effect-grid {
+  grid-template-columns: 24px 52px minmax(105px, 1fr) minmax(105px, 1fr) 30px;
+}
+
+.ashdom-language-grid {
+  grid-template-columns: 24px minmax(0, 1fr) 30px;
+}
+
+.ashdom-sheet .ashdom-drag-handle {
+  width: 24px;
+  height: 28px;
+  min-width: 0;
+  padding: 0;
+  border: 1px solid transparent !important;
+  background: transparent !important;
+  color: var(--ashdom-gold) !important;
+  box-shadow: none !important;
+  cursor: grab;
+  font-size: 1.15em;
+  line-height: 1;
+}
+
+.ashdom-sheet .ashdom-drag-handle:hover,
+.ashdom-sheet .ashdom-drag-handle:focus-visible {
+  border-color: var(--ashdom-gold) !important;
+  outline: none;
+}
+
+.ashdom-sheet .ashdom-drag-handle:active {
+  cursor: grabbing;
+}
+
+[data-reorder-entry].ashdom-dragging {
+  opacity: 0.45;
+}
+
+[data-reorder-entry].ashdom-drop-before {
+  box-shadow: inset 0 2px 0 var(--ashdom-gold);
+}
+
+[data-reorder-entry].ashdom-drop-after {
+  box-shadow: inset 0 -2px 0 var(--ashdom-gold);
+}
+
+.ashdom-tracker-row input[type="number"] {
+  text-align: center;
+}
+
+.ashdom-tracker-row input[type="checkbox"] {
+  justify-self: center;
+}
+
+.ashdom-sheet .ashdom-add-button,
+.ashdom-sheet .ashdom-display-button,
+.ashdom-sheet .ashdom-delete-button {
+  border: 1px solid var(--ashdom-gold) !important;
+  border-radius: 4px;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  box-shadow: none !important;
+  font-weight: bold;
+}
+
+.ashdom-sheet .ashdom-add-button {
+  margin-top: 8px;
+  padding: 4px 9px;
+}
+
+.ashdom-sheet .ashdom-display-button {
+  min-width: 0;
+  padding: 3px 5px;
+  font-size: 0.72em;
+}
+
+.ashdom-sheet .ashdom-delete-button {
+  width: 30px;
+  height: 28px;
+  min-width: 0;
+  padding: 0;
+  color: #ff5b4d !important;
+  font-size: 1.2em;
+}
+
+.ashdom-sheet .ashdom-add-button:hover,
+.ashdom-sheet .ashdom-add-button:focus-visible,
+.ashdom-sheet .ashdom-display-button:hover,
+.ashdom-sheet .ashdom-display-button:focus-visible {
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  outline: none;
+}
+
+.ashdom-sheet .ashdom-delete-button:hover,
+.ashdom-sheet .ashdom-delete-button:focus-visible {
+  border-color: #ff5b4d !important;
+  background: #2a0500 !important;
+  outline: none;
+}
+
+.ashdom-empty-message {
+  margin: 4px 0;
+  color: var(--ashdom-gold-dark);
+  font-style: italic;
+  text-align: center;
+}
+
+.ashdom-perk-chat-type {
+  margin-bottom: 8px;
+  font-size: 0.8em;
+  font-weight: bold;
+  opacity: 0.8;
+}
+
+.ashdom-perk-chat-note,
+.ashdom-weapon-chat-card {
+  text-align: left;
+}
+
+/* =========================================
+   INVENTORY — VEHICLES
+========================================= */
+
+.ashdom-inventory-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.ashdom-inventory-column {
+  min-width: 0;
+}
+
+.ashdom-vehicle-panel > h2 {
+  margin: 0 0 6px;
+  color: var(--ashdom-gold);
+  font-size: 1em;
+  text-align: center;
+}
+
+.ashdom-vehicle-list {
+  display: grid;
+  gap: 8px;
+}
+
+.ashdom-vehicle-entry {
+  min-width: 0;
+  padding: 6px;
+  border: 0;
+}
+
+.ashdom-vehicle-summary-name {
+  display: grid;
+  grid-template-columns: 24px 30px minmax(0, 1fr) 26px;
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-vehicle-summary-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 28px 50px 50px;
+  gap: 4px;
+  align-items: center;
+  margin-top: 5px;
+}
+
+.ashdom-vehicle-summary-name input,
+.ashdom-vehicle-summary-grid input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.ashdom-vehicle-summary-grid label {
+  text-align: center;
+}
+
+.ashdom-sheet .ashdom-vehicle-toggle {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  line-height: 1;
+}
+
+.ashdom-vehicle-details {
+  margin-top: 7px;
+  padding-top: 7px;
+  border-top: 1px solid rgba(247, 197, 21, 0.45);
+}
+
+.ashdom-vehicle-open-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(145px, 0.75fr);
+  gap: 8px;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+.ashdom-vehicle-type-damage,
+.ashdom-vehicle-vitals-grid {
+  min-width: 0;
+}
+
+.ashdom-vehicle-type-damage > input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.ashdom-vehicle-vitals-grid {
+  display: grid;
+  grid-template-columns: 28px repeat(2, minmax(0, 1fr));
+  gap: 5px;
+  align-items: center;
+}
+
+.ashdom-vehicle-vitals-grid label {
+  text-align: center;
+}
+
+.ashdom-vehicle-vitals-grid input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.ashdom-vehicle-rating-grid {
+  display: grid;
+  grid-template-columns: 34px repeat(4, minmax(0, 1fr));
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-vehicle-rating-header {
+  margin-bottom: 3px;
+  color: var(--ashdom-gold);
+  font-size: 0.7em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-vehicle-rating-row {
+  margin-bottom: 3px;
+}
+
+.ashdom-vehicle-rating-row > span {
+  font-size: 1em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-vehicle-rating-row input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-sheet .ashdom-vehicle-rating-row input:not(.ashdom-vehicle-total),
+.ashdom-sheet .ashdom-vehicle-rating-row input:not(.ashdom-vehicle-total):hover,
+.ashdom-sheet .ashdom-vehicle-rating-row input:not(.ashdom-vehicle-total):focus,
+.ashdom-sheet .ashdom-vehicle-rating-row input.ashdom-vehicle-total {
+  border: 0 !important;
+  outline: 0 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-sheet .ashdom-vehicle-rating-row input.ashdom-vehicle-total {
+  background: #000 !important;
+}
+
+.ashdom-vehicle-rating-ac > span { color: #b9dbe9; }
+.ashdom-sheet .ashdom-vehicle-rating-ac input:not(.ashdom-vehicle-total) { background: #b9dbe9 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-vehicle-rating-ac input.ashdom-vehicle-total { color: #b9dbe9 !important; }
+
+.ashdom-vehicle-rating-n > span { color: #b9b9b9; }
+.ashdom-sheet .ashdom-vehicle-rating-n input:not(.ashdom-vehicle-total) { background: #b9b9b9 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-vehicle-rating-n input.ashdom-vehicle-total { color: #b9b9b9 !important; }
+
+.ashdom-vehicle-rating-l > span { color: #ed2929; }
+.ashdom-sheet .ashdom-vehicle-rating-l input:not(.ashdom-vehicle-total) { background: #ed2929 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-vehicle-rating-l input.ashdom-vehicle-total { color: #ed2929 !important; }
+
+.ashdom-vehicle-rating-f > span { color: #e84b22; }
+.ashdom-sheet .ashdom-vehicle-rating-f input:not(.ashdom-vehicle-total) { background: #e84b22 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-vehicle-rating-f input.ashdom-vehicle-total { color: #e84b22 !important; }
+
+.ashdom-vehicle-rating-p > span { color: #07906e; }
+.ashdom-sheet .ashdom-vehicle-rating-p input:not(.ashdom-vehicle-total) { background: #07906e !important; color: #000 !important; }
+.ashdom-sheet .ashdom-vehicle-rating-p input.ashdom-vehicle-total { color: #07906e !important; }
+
+.ashdom-vehicle-rating-e > span { color: #f5e500; }
+.ashdom-sheet .ashdom-vehicle-rating-e input:not(.ashdom-vehicle-total) { background: #f5e500 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-vehicle-rating-e input.ashdom-vehicle-total { color: #f5e500 !important; }
+
+.ashdom-vehicle-rating-ap > span { color: #a5a5a5; }
+.ashdom-sheet .ashdom-vehicle-rating-ap input:not(.ashdom-vehicle-total) { background: #a5a5a5 !important; color: #000 !important; }
+.ashdom-sheet .ashdom-vehicle-rating-ap input.ashdom-vehicle-total { color: #a5a5a5 !important; }
+
+.ashdom-vehicle-damage-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) minmax(0, 1fr);
+  gap: 5px;
+  align-items: center;
+  margin-top: 7px;
+}
+
+.ashdom-sheet .ashdom-vehicle-damage-button {
+  width: 34px;
+  min-width: 34px;
+  height: 28px;
+  padding: 0;
+  border: 1px solid transparent !important;
+  background: var(--ashdom-gold) !important;
+  color: var(--ashdom-black) !important;
+  font-size: 1.15em;
+  font-weight: bold;
+  line-height: 1;
+}
+
+.ashdom-sheet .ashdom-vehicle-damage-button:hover,
+.ashdom-sheet .ashdom-vehicle-damage-button:focus-visible {
+  border-color: var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+}
+
+/* =========================================
+   INVENTORY — CARRY WEIGHT, CURRENCY, ITEMS
+========================================= */
+
+.ashdom-items-panel {
+  margin-top: 8px;
+}
+
+.ashdom-carry-title-row {
+  display: block;
+  margin-bottom: 6px;
+}
+
+.ashdom-carry-title-row h2,
+.ashdom-currency-panel > h2,
+.ashdom-items-panel > h2 {
+  margin: 0;
+  color: var(--ashdom-gold);
+  font-size: 1em;
+  text-align: center;
+}
+
+.ashdom-carry-grid {
+  display: grid;
+  grid-template-columns: minmax(105px, 1fr) 62px 72px 72px 30px;
+  gap: 5px;
+  align-items: center;
+}
+
+.ashdom-carry-header {
+  margin-bottom: 3px;
+  color: var(--ashdom-gold);
+  font-size: 0.72em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-carry-grid input,
+.ashdom-carry-grid select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-sheet .ashdom-carry-grid input[readonly] {
+  border: 0 !important;
+  outline: 0 !important;
+  background: #000 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-currency-grid {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 100px 30px;
+  gap: 5px;
+  align-items: center;
+}
+
+.ashdom-currency-header {
+  margin: 6px 0 3px;
+  color: var(--ashdom-gold);
+  font-size: 0.72em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-currency-row {
+  margin-bottom: 5px;
+}
+
+.ashdom-currency-row input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.ashdom-item-list {
+  display: grid;
+  gap: 6px;
+}
+
+.ashdom-item-summary-grid {
+  display: grid;
+  grid-template-columns: 24px 24px minmax(0, 1fr) 48px 58px 62px 30px 26px;
+  gap: 4px;
+  align-items: center;
+}
+
+.ashdom-item-header {
+  margin: 6px 0 3px;
+  color: var(--ashdom-gold);
+  font-size: 0.66em;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-item-entry {
+  min-width: 0;
+  padding: 5px;
+  border: 0;
+}
+
+.ashdom-item-summary-grid input {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.ashdom-item-summary-grid input[type="text"] {
+  text-align: left;
+}
+
+.ashdom-sheet .ashdom-item-summary-grid input[readonly] {
+  border: 0 !important;
+  outline: 0 !important;
+  background: #000 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-sheet .ashdom-item-toggle {
+  width: 24px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid var(--ashdom-gold) !important;
+  background: var(--ashdom-black) !important;
+  color: var(--ashdom-gold) !important;
+  line-height: 1;
+}
+
+.ashdom-item-details {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 125px;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px solid rgba(247, 197, 21, 0.45);
+}
+
+.ashdom-item-details input,
+.ashdom-item-details select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (max-width: 600px) {
+  .ashdom-character-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .ashdom-data-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ashdom-inventory-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ashdom-settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .ashdom-perk-row {
+    grid-template-columns: 24px 30px 30px minmax(0, 1fr) minmax(95px, 0.8fr) 30px;
+  }
+}
