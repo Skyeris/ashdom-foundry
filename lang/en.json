@@ -1,9 +1,0 @@
-{
-  "ASHDOM": {
-    "SystemName": "ASHDOM - A Post-Apocalyptic Roleplaying System",
-    "CharacterSheet": "ASHDOM Character Sheet",
-    "NPCSheet": "ASHDOM NPC Sheet"
-  },
-  "TYPES.Actor.character": "Character",
-  "TYPES.Actor.npc": "NPC"
-}
