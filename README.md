@@ -48,4 +48,4 @@ Once officially listed, ASHDOM can be installed from Foundry VTT's Game Systems 
 ASHDOM can also be installed using this manifest URL:
 
 ```text
-YOUR-MANIFEST-URL
+https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/system.json
