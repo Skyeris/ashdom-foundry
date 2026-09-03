@@ -18,6 +18,7 @@ function taxonomyFields() {
 function inventoryFields() {
   return {
     ...taxonomyFields(),
+    value: number({ min: 0 }),
     quantity: number({ integer: true, min: 0 }),
     weight: number({ min: 0 }),
     totalWeight: number({ min: 0 }),
@@ -58,6 +59,7 @@ export class AshdomWeaponData extends foundry.abstract.TypeDataModel {
     return {
       ...taxonomyFields(),
       rarity: rarity(),
+      value: number({ min: 0 }),
       quantity: number({ initial: 1, integer: true, min: 0 }),
       weight: number({ min: 0 }),
       totalWeight: number({ min: 0 }),
@@ -95,6 +97,7 @@ export class AshdomArmorData extends foundry.abstract.TypeDataModel {
     return {
       ...taxonomyFields(),
       rarity: rarity(),
+      value: number({ min: 0 }),
       quantity: number({ initial: 1, integer: true, min: 0 }),
       weight: number({ min: 0 }),
       totalWeight: number({ min: 0 }),
@@ -150,6 +153,7 @@ export class AshdomGearData extends AshdomInventoryData {
     return {
       ...taxonomyFields(),
       rarity: rarity(),
+      value: number({ min: 0 }),
       quantity: number({ min: 0 }),
       weight: number({ min: 0 }),
       totalWeight: number({ min: 0 }),
@@ -170,6 +174,7 @@ export class AshdomConsumableData extends AshdomInventoryData {
     return {
       ...taxonomyFields(),
       rarity: rarity(),
+      value: number({ min: 0 }),
       quantity: number({ integer: true, min: 0 }),
       usesCurrent: number({ integer: true, min: 0 }),
       usesMax: number({ integer: true, min: 0 }),

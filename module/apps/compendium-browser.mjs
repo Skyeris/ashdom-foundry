@@ -8,7 +8,8 @@ const INDEX_FIELDS = [
   "system.category",
   "system.subcategory",
   "system.specialization",
-  "system.weight"
+  "system.weight",
+  "system.value"
 ];
 
 function text(value) {
@@ -85,6 +86,7 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
           subcategory,
           specialization,
           weight: foundry.utils.getProperty(entry, "system.weight") ?? "",
+          value: foundry.utils.getProperty(entry, "system.value") ?? "",
           search: [name, pack.title, type, itemTypeLabel(type), rarity, category, subcategory, specialization]
             .join(" ")
             .toLocaleLowerCase()
@@ -195,4 +197,3 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
     ui.notifications.info(`${item.name} imported to the Items directory.`);
   }
 }
-

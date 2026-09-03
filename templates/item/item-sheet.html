@@ -4,7 +4,10 @@
     <label class="ashdom-item-field"><span>NAME</span><input type="text" name="name" value="{{item.name}}"></label>
 
     {{#if hasRarity}}
-      <label class="ashdom-item-field"><span>RARITY</span><select name="system.rarity">{{selectOptions rarityChoices selected=system.rarity}}</select></label>
+      <div class="ashdom-item-grid ashdom-item-rarity-row">
+        <label><span>RARITY</span><select name="system.rarity">{{selectOptions rarityChoices selected=system.rarity}}</select></label>
+        {{#if hasValue}}<label><span>VALUE</span><input type="number" min="0" step="any" name="system.value" value="{{system.value}}"></label>{{/if}}
+      </div>
     {{/if}}
 
     {{#if hasTaxonomy}}

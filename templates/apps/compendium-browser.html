@@ -45,7 +45,10 @@
           </div>
         </div>
         {{#if entry.rarity}}<span class="ashdom-browser-rarity" data-rarity-name="{{entry.rarity}}">{{entry.rarity}}</span>{{/if}}
-        {{#if entry.weight}}<span class="ashdom-browser-weight">{{entry.weight}} lb</span>{{/if}}
+        <span class="ashdom-browser-weight">
+          {{#if entry.weight}}{{entry.weight}} lb{{/if}}
+          {{#if entry.value}}<small>Value {{entry.value}}</small>{{/if}}
+        </span>
         <button type="button" class="ashdom-browser-import" data-action="importEntry" data-uuid="{{entry.uuid}}" title="Import to Items directory">
           <i class="fa-solid fa-download" aria-hidden="true"></i>
         </button>
@@ -57,4 +60,3 @@
     </p>
   </section>
 </div>
-

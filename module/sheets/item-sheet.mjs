@@ -44,6 +44,7 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     context.isVehicle = this.item.type === "vehicle";
     context.isVehicleMod = this.item.type === "vehicleMod";
     context.hasRarity = ASHDOM_RARITY_ITEM_TYPES.includes(this.item.type);
+    context.hasValue = context.hasRarity;
     context.rarityChoices = ASHDOM_ITEM_RARITIES;
     const destinations = ASHDOM_ITEM_DESTINATIONS[this.item.type] ?? [];
     context.isInventoryType = destinations.includes("inventory");
