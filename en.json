@@ -1,0 +1,95 @@
+<div class="ashdom-sheet ashdom-item-editor">
+  <section class="ashdom-panel">
+    <h2>{{itemTypeLabel}}</h2>
+    <label class="ashdom-item-field"><span>NAME</span><input type="text" name="name" value="{{item.name}}"></label>
+
+    {{#if hasRarity}}
+      <label class="ashdom-item-field"><span>RARITY</span><select name="system.rarity">{{selectOptions rarityChoices selected=system.rarity}}</select></label>
+    {{/if}}
+
+    {{#if hasTaxonomy}}
+      <div class="ashdom-item-grid ashdom-taxonomy-fields">
+        <label><span>CATEGORY</span><select name="system.category">{{selectOptions categoryChoices selected=system.category blank=""}}</select></label>
+        {{#if hasSubcategories}}<label><span>SUBCATEGORY</span><select name="system.subcategory">{{selectOptions subcategoryChoices selected=system.subcategory blank=""}}</select></label>{{/if}}
+        {{#if hasSpecializations}}<label><span>SPECIALIZATION</span><select name="system.specialization">{{selectOptions specializationChoices selected=system.specialization blank=""}}</select></label>{{/if}}
+      </div>
+    {{/if}}
+
+    {{#if isWeapon}}
+      <div class="ashdom-item-grid">
+        <label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label>
+        <label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label>
+        <label><span>SKILL</span><select name="system.skill">{{selectOptions skillChoices selected=system.skill}}</select></label>
+        <label><span>DAMAGE TYPE</span><select name="system.damageType">{{selectOptions damageTypes selected=system.damageType}}</select></label>
+        <label><span>DICE DAMAGE</span><input type="text" name="system.diceDamage" value="{{system.diceDamage}}"></label>
+        <label><span>FLAT DAMAGE</span><input type="number" name="system.flatDamage" value="{{system.flatDamage}}"></label>
+        <label><span>AC</span><input type="number" name="system.ac" value="{{system.ac}}"></label>
+        <label><span>DT</span><input type="number" name="system.dt" value="{{system.dt}}"></label>
+        <label><span>RANGE</span><input type="number" min="0" name="system.range" value="{{system.range}}"></label>
+        <label><span>CAPACITY CURRENT</span><input type="number" min="0" name="system.capacityCurrent" value="{{system.capacityCurrent}}"></label>
+        <label><span>CAPACITY MAX</span><input type="number" min="0" name="system.capacityMax" value="{{system.capacityMax}}"></label>
+        <label><span>ITEM TYPE</span><input type="text" name="system.itemType" value="{{system.itemType}}"></label>
+        <label><span>RELOAD AP</span><input type="number" min="0" name="system.reloadAP" value="{{system.reloadAP}}"></label>
+        <label><span>AMMO TYPE</span><input type="text" name="system.ammoType" value="{{system.ammoType}}"></label>
+        <label><span>BURST LIMIT</span><input type="text" name="system.burstLimit" value="{{system.burstLimit}}"></label>
+        <label><span>IGNORE TARGET HIT CHANCE</span><input type="number" min="0" name="system.ignoreTargetHitChance" value="{{system.ignoreTargetHitChance}}"></label>
+        <label><span>SET UP AP</span><input type="number" min="0" name="system.setupAP" value="{{system.setupAP}}"></label>
+      </div>
+    {{/if}}
+
+    {{#if isArmor}}
+      <div class="ashdom-item-grid">
+        <label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label>
+        <label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label>
+        <label><span>HELMET</span><input type="text" name="system.helmetName" value="{{system.helmetName}}"></label>
+        <label><span>UNDER ARMOR</span><input type="text" name="system.underArmorName" value="{{system.underArmorName}}"></label>
+        <label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label>
+        <label><span>DR DAMAGE</span><input type="number" min="0" name="system.drDamage" value="{{system.drDamage}}"></label>
+      </div>
+      <div class="ashdom-item-rating-table">
+        <b>RATING</b><b>BASE</b><b>UA</b><b>AS / PA</b><b>HLM</b><b>MOD</b>
+        {{#each system.ratings as |rating key|}}
+          <b>{{key}}</b><input type="number" name="system.ratings.{{key}}.base" value="{{rating.base}}"><input type="number" name="system.ratings.{{key}}.ua" value="{{rating.ua}}"><input type="number" name="system.ratings.{{key}}.armorSet" value="{{rating.armorSet}}"><input type="number" name="system.ratings.{{key}}.helmet" value="{{rating.helmet}}"><input type="number" name="system.ratings.{{key}}.modifier" value="{{rating.modifier}}">
+        {{/each}}
+      </div>
+    {{/if}}
+
+    {{#if isPerk}}
+      <label class="ashdom-item-field"><span>PERK TYPE</span><select name="system.perkType">{{selectOptions perkTypes selected=system.perkType}}</select></label>
+      <div class="ashdom-item-grid"><label><span>CHARGES</span><input type="number" min="0" name="system.chargesCurrent" value="{{system.chargesCurrent}}"></label><label><span>MAX</span><input type="number" min="0" name="system.chargesMax" value="{{system.chargesMax}}"></label></div>
+    {{/if}}
+
+    {{#if isSkillSpec}}
+      <div class="ashdom-item-grid"><label><span>CHARGES</span><input type="number" min="0" name="system.chargesCurrent" value="{{system.chargesCurrent}}"></label><label><span>MAX</span><input type="number" min="0" name="system.chargesMax" value="{{system.chargesMax}}"></label></div>
+    {{/if}}
+
+    {{#if isGear}}
+      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>ITEM TYPE</span><input type="text" name="system.itemType" value="{{system.itemType}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
+    {{/if}}
+
+    {{#if isConsumable}}
+      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>USES</span><input type="number" min="0" name="system.usesCurrent" value="{{system.usesCurrent}}"></label><label><span>MAX USES</span><input type="number" min="0" name="system.usesMax" value="{{system.usesMax}}"></label><label><span>CONSUMABLE TYPE</span><input type="text" name="system.consumableType" value="{{system.consumableType}}"></label></div>
+    {{/if}}
+
+    {{#if isMod}}
+      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>MOD TYPE</span><input type="text" name="system.modType" value="{{system.modType}}"></label><label><span>MODIFIER</span><input type="number" name="system.modifier" value="{{system.modifier}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
+    {{/if}}
+
+    {{#if isGeneralInventoryType}}
+      {{#unless isGear}}{{#unless isConsumable}}{{#unless isMod}}
+        <div class="ashdom-item-grid">
+          <label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label>
+          <label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label>
+          <label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label>
+          {{#if isVehicleMod}}<label><span>MODIFIER</span><input type="number" name="system.modifier" value="{{system.modifier}}"></label>{{/if}}
+        </div>
+      {{/unless}}{{/unless}}{{/unless}}
+    {{/if}}
+
+    {{#if isVehicle}}
+      <div class="ashdom-item-grid"><label><span>VEHICLE TYPE</span><input type="text" name="system.vehicleType" value="{{system.vehicleType}}"></label><label><span>HP CURRENT</span><input type="number" min="0" name="system.hpCurrent" value="{{system.hpCurrent}}"></label><label><span>HP MAX</span><input type="number" min="0" name="system.hpMax" value="{{system.hpMax}}"></label><label><span>CW CURRENT</span><input type="number" min="0" name="system.cwCurrent" value="{{system.cwCurrent}}"></label><label><span>CW MAX</span><input type="number" min="0" name="system.cwMax" value="{{system.cwMax}}"></label><label><span>DICE DAMAGE</span><input type="text" name="system.diceDamage" value="{{system.diceDamage}}"></label><label><span>FLAT DAMAGE</span><input type="number" name="system.flatDamage" value="{{system.flatDamage}}"></label></div>
+    {{/if}}
+
+    <label class="ashdom-item-notes"><span>NOTES</span><textarea name="system.note">{{system.note}}</textarea></label>
+  </section>
+</div>
