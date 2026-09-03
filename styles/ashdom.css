@@ -27,6 +27,16 @@
 .ashdom-item-rating-table { display: grid; grid-template-columns: 70px repeat(5, minmax(0, 1fr)); gap: 5px; align-items: center; margin: 12px 0; text-align: center; }
 .ashdom-item-rating-table > b { color: #d0a900; text-transform: uppercase; }
 
+.ashdom-sheet [data-armor-drop-slot] {
+  transition: box-shadow 120ms ease, outline-color 120ms ease;
+}
+
+.ashdom-sheet [data-armor-drop-slot].ashdom-armor-drop-ready {
+  outline: 2px solid var(--ashdom-gold) !important;
+  outline-offset: 1px;
+  box-shadow: 0 0 8px rgba(224, 185, 0, 0.75) !important;
+}
+
 
 /* =========================================
    PERSISTENT CHARACTER HEADER

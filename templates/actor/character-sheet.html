@@ -682,6 +682,8 @@
                     value="{{name}}"
                     placeholder="Armor Set"
                     aria-label="Armor set"
+                    data-armor-drop-slot="armorSet"
+                    data-armor-index="{{index}}"
                   >
 
                   <button
@@ -696,8 +698,8 @@
                 </div>
 
                 <div class="ashdom-armor-summary-pieces">
-                  <input type="text" name="system.armors.{{index}}.helmetName" value="{{helmetName}}" placeholder="Helmet" aria-label="Helmet">
-                  <input type="text" name="system.armors.{{index}}.underArmorName" value="{{underArmorName}}" placeholder="Under Armor" aria-label="Under Armor">
+                  <input type="text" name="system.armors.{{index}}.helmetName" value="{{helmetName}}" placeholder="Helmet" aria-label="Helmet" data-armor-drop-slot="helmet" data-armor-index="{{index}}">
+                  <input type="text" name="system.armors.{{index}}.underArmorName" value="{{underArmorName}}" placeholder="Under Armor" aria-label="Under Armor" data-armor-drop-slot="underArmor" data-armor-index="{{index}}">
                 </div>
 
                 {{#if open}}

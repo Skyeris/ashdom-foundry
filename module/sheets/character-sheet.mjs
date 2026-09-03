@@ -115,6 +115,119 @@ export class AshdomCharacterSheet extends
     }
 
     this._activateDataReordering();
+    this._activateArmorItemDrops();
+
+  }
+
+
+  /* =========================================
+     DROP COMPENDIUM ARMOR COMPONENTS
+  ========================================= */
+
+  _activateArmorItemDrops() {
+
+    const slotData = {
+      armorSet: {
+        nameField: "name",
+        ratingField: "armorSet",
+        noteLabel: "Armor Set"
+      },
+      underArmor: {
+        nameField: "underArmorName",
+        ratingField: "ua",
+        noteLabel: "Under Armor"
+      },
+      helmet: {
+        nameField: "helmetName",
+        ratingField: "helmet",
+        noteLabel: "Helmet"
+      }
+    };
+
+    const mergeComponentNote = (currentNote, component, itemName, itemNote) => {
+      const componentLabels = ["Armor Set", "Under Armor", "Helmet"];
+      const componentPattern = new RegExp(
+        `^(${componentLabels.join("|")})\\s+[—-]\\s+`,
+        "i"
+      );
+      const blocks = String(currentNote ?? "")
+        .split(/\r?\n\s*\r?\n/)
+        .map(block => block.trim())
+        .filter(Boolean)
+        .filter(block => {
+          const match = block.match(componentPattern);
+          return !match || match[1].toLocaleLowerCase() !== component.noteLabel.toLocaleLowerCase();
+        });
+      const cleanNote = String(itemNote ?? "").trim();
+
+      if (cleanNote) {
+        blocks.push(`${component.noteLabel} — ${itemName}\n${cleanNote}`);
+      }
+
+      return blocks.join("\n\n");
+    };
+
+    this.element.querySelectorAll("[data-armor-drop-slot]")
+      .forEach(target => {
+        target.addEventListener("dragover", event => {
+          event.preventDefault();
+          event.dataTransfer.dropEffect = "copy";
+          target.classList.add("ashdom-armor-drop-ready");
+        });
+
+        target.addEventListener("dragleave", () => {
+          target.classList.remove("ashdom-armor-drop-ready");
+        });
+
+        target.addEventListener("drop", async event => {
+          event.preventDefault();
+          target.classList.remove("ashdom-armor-drop-ready");
+
+          let dragData;
+          try {
+            dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+          } catch (error) {
+            return;
+          }
+
+          if (dragData?.type !== "Item" || !dragData.uuid) return;
+
+          const item = await fromUuid(dragData.uuid);
+          if (!item || item.type !== "armor") {
+            return ui.notifications.warn("Only ASHDOM Armor Items can be dropped into an Armor slot.");
+          }
+
+          const index = Number(target.dataset.armorIndex);
+          const component = slotData[target.dataset.armorDropSlot];
+          const armors = foundry.utils.deepClone(
+            this.actor.toObject().system.armors ?? []
+          );
+
+          if (!component || !Number.isInteger(index) || !armors[index]) return;
+
+          const armor = armors[index];
+          armor[component.nameField] = String(item.name ?? "");
+
+          for (const key of ["ac", "n", "l", "f", "p", "e", "dr", "rr"]) {
+            const sourceRating = item.system.ratings?.[key];
+            const targetRating = armor.ratings?.[key];
+            if (!sourceRating || !targetRating) continue;
+            targetRating[component.ratingField] = Number(
+              sourceRating[component.ratingField]
+            ) || 0;
+          }
+
+          armor.note = mergeComponentNote(
+            armor.note,
+            component,
+            String(item.name || component.noteLabel),
+            item.system.note
+          );
+
+          await this.actor.update({ "system.armors": armors });
+          ui.notifications.info(`${item.name} added as ${component.noteLabel}.`);
+        });
+      });
 
   }
 
