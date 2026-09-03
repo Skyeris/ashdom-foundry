@@ -1,11 +1,11 @@
 {
   "id": "ashdom",
-  "title": "ASHDOM: A Post-Apocalyptic Roleplaying System",
+  "title": "ASHDOM",
   "description": "The ASHDOM Roleplaying Game System",
-  "version": "0.2.20",
+  "version": "0.2.21",
   "url": "https://github.com/Skyeris/ashdom-foundry",
   "manifest": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/system.json",
-  "download": "https://github.com/Skyeris/ashdom-foundry/releases/download/v0.2.20/ashdom.zip",
+  "download": "https://github.com/Skyeris/ashdom-foundry/releases/download/v0.2.21/ashdom.zip",
   "readme": "https://github.com/Skyeris/ashdom-foundry/blob/main/README.md",
   "license": "https://github.com/Skyeris/ashdom-foundry/blob/main/LICENSE",
   "changelog": "https://github.com/Skyeris/ashdom-foundry/releases",
@@ -16,7 +16,7 @@
   },
   "authors": [
     {
-      "name": "Osvel Levi Cabrera",
+      "name": "Skyeris",
       "url": "https://github.com/Skyeris",
       "discord": "Skyeris"
     }
@@ -42,6 +42,24 @@
       "npc": {
         "htmlFields": []
       }
+    },
+    "Item": {
+      "weapon": {},
+      "armor": {},
+      "perk": {},
+      "skillSpec": {},
+      "gear": {},
+      "consumable": {},
+      "mod": {},
+      "ammunition": {},
+      "robotPart": {},
+      "literature": {},
+      "misc": {},
+      "legendary": {},
+      "vehicle": {},
+      "vehicleMod": {},
+      "implant": {},
+      "cybernetic": {}
     }
   }
 }

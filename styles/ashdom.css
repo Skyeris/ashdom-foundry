@@ -15,6 +15,17 @@
   overflow: hidden;
 }
 
+/* Native Item editors used by ASHDOM compendiums. */
+.ashdom-item-editor { display: block; overflow-y: auto; padding: 8px; }
+.ashdom-item-editor h2 { color: #fff; text-align: center; text-transform: uppercase; }
+.ashdom-item-field, .ashdom-item-notes, .ashdom-item-grid label {
+  display: flex; flex-direction: column; gap: 4px; color: #d0a900; font-weight: 700;
+}
+.ashdom-item-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin: 10px 0; }
+.ashdom-item-notes textarea { min-height: 150px; margin-top: 4px; }
+.ashdom-item-rating-table { display: grid; grid-template-columns: 70px repeat(5, minmax(0, 1fr)); gap: 5px; align-items: center; margin: 12px 0; text-align: center; }
+.ashdom-item-rating-table > b { color: #d0a900; text-transform: uppercase; }
+
 
 /* =========================================
    PERSISTENT CHARACTER HEADER
