@@ -687,7 +687,8 @@ export class AshdomCharacterSheet extends
           armorSet: armor.ratings[key].armorSet,
           helmet: armor.ratings[key].helmet,
           modifier: armor.ratings[key].modifier,
-          baseLocked: key === "rr"
+          baseLocked: key === "ac" || key === "rr",
+          baseSourceLabel: key === "ac" ? "AC (B)" : "RR (B)"
         }))
       })
     );

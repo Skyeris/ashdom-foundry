@@ -448,9 +448,11 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 
     for (const armor of this.armors ?? []) {
       for (const [ratingKey, rating] of Object.entries(armor.ratings)) {
-        const base = ratingKey === "rr"
-          ? this.secondary.baseRR.total
-          : (Number(rating.base) || 0);
+        const base = ratingKey === "ac"
+          ? this.secondary.baseAC.total
+          : ratingKey === "rr"
+            ? this.secondary.baseRR.total
+            : (Number(rating.base) || 0);
 
         rating.base = base;
         const manualTotal =

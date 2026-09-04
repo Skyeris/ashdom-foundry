@@ -1507,7 +1507,7 @@
   box-shadow: none !important;
 }
 
-.ashdom-sheet .ashdom-armor-entry input.ashdom-armor-rr-base,
+.ashdom-sheet .ashdom-armor-entry input.ashdom-armor-derived-base,
 .ashdom-sheet .ashdom-stats-table input[readonly] {
   border: 0 !important;
   border-radius: 0 !important;
@@ -1515,7 +1515,12 @@
   box-shadow: none !important;
 }
 
-.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-rr input.ashdom-armor-rr-base {
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-ac input.ashdom-armor-derived-base {
+  background: #000 !important;
+  color: #b9dbe9 !important;
+}
+
+.ashdom-sheet .ashdom-armor-entry .ashdom-armor-rating-rr input.ashdom-armor-derived-base {
   background: #000 !important;
   color: #22cf2a !important;
 }

@@ -724,7 +724,7 @@
                         <span>{{label}}</span>
                         <input type="number" class="ashdom-armor-total" value="{{total}}" readonly aria-label="{{label}} total">
                         {{#if baseLocked}}
-                          <input type="number" class="ashdom-armor-rr-base" value="{{base}}" readonly title="From RR (B)" aria-label="{{label}} base from RR (B)">
+                          <input type="number" class="ashdom-armor-derived-base" value="{{base}}" readonly title="From {{baseSourceLabel}}" aria-label="{{label}} base from {{baseSourceLabel}}">
                         {{else}}
                           <input type="number" name="system.armors.{{../index}}.ratings.{{key}}.base" value="{{base}}" aria-label="{{label}} base">
                         {{/if}}
