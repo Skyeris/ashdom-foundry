@@ -132,7 +132,8 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
         event.dataTransfer.effectAllowed = "copy";
         event.dataTransfer.setData("text/plain", JSON.stringify({
           type: "Item",
-          uuid: row.dataset.entryUuid
+          uuid: row.dataset.entryUuid,
+          category: row.dataset.category
         }));
       });
     });

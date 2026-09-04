@@ -144,6 +144,21 @@ export class AshdomCharacterSheet extends
       }
     };
 
+    const slotFromCategory = category => {
+      switch (String(category ?? "").trim().toLocaleLowerCase()) {
+        case "armor set":
+        case "power armor":
+          return "armorSet";
+        case "under armor":
+          return "underArmor";
+        case "helmet":
+        case "helmets":
+          return "helmet";
+        default:
+          return null;
+      }
+    };
+
     const mergeComponentNote = (currentNote, component, itemName, itemNote) => {
       const componentLabels = ["Armor Set", "Under Armor", "Helmet"];
       const componentPattern = new RegExp(
@@ -198,7 +213,10 @@ export class AshdomCharacterSheet extends
           }
 
           const index = Number(target.dataset.armorIndex);
-          const component = slotData[target.dataset.armorDropSlot];
+          const targetSlot = target.dataset.armorDropSlot;
+          const categorySlot = slotFromCategory(item.system.category);
+          const resolvedSlot = categorySlot ?? targetSlot;
+          const component = slotData[resolvedSlot];
           const armors = foundry.utils.deepClone(
             this.actor.toObject().system.armors ?? []
           );
