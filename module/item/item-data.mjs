@@ -106,6 +106,15 @@ export class AshdomArmorData extends foundry.abstract.TypeDataModel {
       underArmorName: text(),
       equipped: new fields.BooleanField({ initial: false }),
       condition: text({ initial: "Pristine", choices: ["Pristine", "Broken"] }),
+      conductive: new fields.BooleanField({ initial: false }),
+      insulated: new fields.BooleanField({ initial: false }),
+      hardplate: new fields.SchemaField({
+        head: new fields.BooleanField({ initial: false }),
+        torso: new fields.BooleanField({ initial: false }),
+        arms: new fields.BooleanField({ initial: false }),
+        legs: new fields.BooleanField({ initial: false }),
+        groin: new fields.BooleanField({ initial: false })
+      }),
       drDamage: number({ min: 0 }),
       note: text(),
       ratings: new fields.SchemaField({

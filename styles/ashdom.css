@@ -650,11 +650,63 @@
 
 .ashdom-armor-condition-row {
   display: grid;
-  grid-template-columns: 22px 58px 12px 54px 148px;
+  grid-template-columns: 22px 58px 12px 54px 12px 18px 12px 18px minmax(105px, 120px);
   justify-content: center;
-  gap: 5px;
+  gap: 8px;
   align-items: center;
   margin-bottom: 6px;
+}
+
+.ashdom-armor-property-label {
+  color: var(--ashdom-gold) !important;
+  font-weight: bold;
+  text-align: center;
+}
+
+.ashdom-hardplate-row {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin: 7px 0;
+  color: var(--ashdom-gold);
+  font-size: 1em;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.ashdom-hardplate-row label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.66em !important;
+}
+
+.ashdom-hardplate-row .ashdom-tag-checkbox {
+  flex: 0 0 18px;
+}
+
+.ashdom-item-armor-condition-line {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  align-items: end;
+  gap: 24px;
+}
+
+.ashdom-item-armor-condition-line > .ashdom-item-armor-toggle {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+  padding-bottom: 5px;
+  color: var(--ashdom-gold);
+  font-weight: bold;
+}
+
+.ashdom-item-armor-condition-line > .ashdom-item-armor-condition {
+  min-width: 0;
 }
 
 .ashdom-armor-condition-row label,

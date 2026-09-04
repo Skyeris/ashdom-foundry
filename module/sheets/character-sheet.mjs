@@ -306,6 +306,17 @@ export class AshdomCharacterSheet extends
             ) || 0;
           }
 
+          if (resolvedSlot === "armorSet") {
+            armor.conductive = Boolean(item.system.conductive);
+            armor.insulated = Boolean(item.system.insulated);
+            armor.hardplate = Object.fromEntries(
+              ["head", "torso", "arms", "legs", "groin"].map(location => [
+                location,
+                Boolean(item.system.hardplate?.[location])
+              ])
+            );
+          }
+
           armor.note = mergeComponentNote(
             armor.note,
             component,
@@ -673,6 +684,15 @@ export class AshdomCharacterSheet extends
         underArmorName: armor.underArmorName,
         equipped: armor.equipped,
         condition: armor.condition,
+        conductive: Boolean(armor.conductive),
+        insulated: Boolean(armor.insulated),
+        hardplate: {
+          head: Boolean(armor.hardplate?.head),
+          torso: Boolean(armor.hardplate?.torso),
+          arms: Boolean(armor.hardplate?.arms),
+          legs: Boolean(armor.hardplate?.legs),
+          groin: Boolean(armor.hardplate?.groin)
+        },
         drDamage: armor.drDamage,
         drTotal: armor.ratings.dr.total,
         note: armor.note,
@@ -1065,6 +1085,15 @@ export class AshdomCharacterSheet extends
         underArmorName: "",
         equipped: false,
         condition: "Pristine",
+        conductive: false,
+        insulated: false,
+        hardplate: {
+          head: false,
+          torso: false,
+          arms: false,
+          legs: false,
+          groin: false
+        },
         drDamage: 0,
         note: "",
         ratings: Object.fromEntries(

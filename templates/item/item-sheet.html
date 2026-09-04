@@ -45,7 +45,19 @@
       <div class="ashdom-item-grid">
         <label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label>
         <label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label>
-        <label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label>
+        <div class="ashdom-item-armor-condition-line">
+          <label class="ashdom-item-armor-toggle">C <span class="ashdom-tag-checkbox" title="Conductive"><input type="checkbox" name="system.conductive" {{checked system.conductive}} aria-label="Conductive"><span aria-hidden="true">✓</span></span></label>
+          <label class="ashdom-item-armor-toggle">I <span class="ashdom-tag-checkbox" title="Insulated"><input type="checkbox" name="system.insulated" {{checked system.insulated}} aria-label="Insulated"><span aria-hidden="true">✓</span></span></label>
+          <label class="ashdom-item-armor-condition"><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label>
+        </div>
+      </div>
+      <div class="ashdom-hardplate-row">
+        <b>HARDPLATE</b>
+        <label>HEAD <span class="ashdom-tag-checkbox" title="Head Hardplate"><input type="checkbox" name="system.hardplate.head" {{checked system.hardplate.head}} aria-label="Head Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>TORSO <span class="ashdom-tag-checkbox" title="Torso Hardplate"><input type="checkbox" name="system.hardplate.torso" {{checked system.hardplate.torso}} aria-label="Torso Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>ARMS <span class="ashdom-tag-checkbox" title="Arms Hardplate"><input type="checkbox" name="system.hardplate.arms" {{checked system.hardplate.arms}} aria-label="Arms Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>LEGS <span class="ashdom-tag-checkbox" title="Legs Hardplate"><input type="checkbox" name="system.hardplate.legs" {{checked system.hardplate.legs}} aria-label="Legs Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>GROIN <span class="ashdom-tag-checkbox" title="Groin Hardplate"><input type="checkbox" name="system.hardplate.groin" {{checked system.hardplate.groin}} aria-label="Groin Hardplate"><span aria-hidden="true">✓</span></span></label>
       </div>
       <div class="ashdom-item-rating-table">
         <b>RATING</b><b>BASE</b><b>UA</b><b>AS / PA</b><b>HLM</b><b>MOD</b>

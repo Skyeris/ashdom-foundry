@@ -172,6 +172,15 @@ function createArmor() {
       initial: "Pristine",
       choices: ["Pristine", "Broken"]
     }),
+    conductive: new fields.BooleanField({ initial: false }),
+    insulated: new fields.BooleanField({ initial: false }),
+    hardplate: new fields.SchemaField({
+      head: new fields.BooleanField({ initial: false }),
+      torso: new fields.BooleanField({ initial: false }),
+      arms: new fields.BooleanField({ initial: false }),
+      legs: new fields.BooleanField({ initial: false }),
+      groin: new fields.BooleanField({ initial: false })
+    }),
     drDamage: new fields.NumberField({ initial: 0, min: 0 }),
     note: new fields.StringField({ initial: "" }),
     ratings: new fields.SchemaField({
