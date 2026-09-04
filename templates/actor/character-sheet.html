@@ -882,6 +882,7 @@
             {{#each weapons}}
               <article class="ashdom-weapon-entry" data-reorder-entry data-collection="weapons" data-index="{{index}}">
                 <input type="hidden" name="system.weapons.{{index}}.note" value="{{note}}">
+                <input type="hidden" name="system.weapons.{{index}}.concealedNote" value="{{concealedNote}}">
                 <div class="ashdom-weapon-summary">
                   <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag {{#if name}}{{name}}{{else}}weapon{{/if}} to reorder">⠿</button>
                   <button type="button" class="ashdom-weapon-toggle" data-action="toggleWeapon" data-index="{{index}}" aria-expanded="{{open}}" title="{{#if open}}Collapse{{else}}Expand{{/if}} weapon">{{#if open}}▲{{else}}▼{{/if}}</button>
@@ -917,6 +918,7 @@
                       <label class="ashdom-weapon-capacity"><span>CAPACITY</span><span><input type="number" min="0" name="system.weapons.{{index}}.capacityCurrent" value="{{capacityCurrent}}" aria-label="Current weapon capacity"><b>/</b><input type="number" min="0" name="system.weapons.{{index}}.capacityMax" value="{{capacityMax}}" aria-label="Maximum weapon capacity"></span></label>
                       <label><span>ITEM TYPE</span><input type="text" name="system.weapons.{{index}}.itemType" value="{{itemType}}" aria-label="Weapon item type"></label>
                       <label><span>RELOAD AP</span><input type="number" min="0" name="system.weapons.{{index}}.reloadAP" value="{{reloadAP}}" aria-label="Weapon reload AP"></label>
+                      <button type="button" class="ashdom-note-button{{#if hasConcealedNote}} has-note{{/if}} ashdom-weapon-concealed-note" data-action="openNote" data-note-path="system.weapons.{{index}}.concealedNote" data-note-label="Concealed Notes" title="Edit concealed notes" aria-label="Edit concealed notes"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
                     </div>
 
                     <div class="ashdom-weapon-row-three">

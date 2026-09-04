@@ -201,6 +201,7 @@ function createWeapon() {
     name: new fields.StringField({ initial: "" }),
     equipped: new fields.BooleanField({ initial: false }),
     note: new fields.StringField({ initial: "" }),
+    concealedNote: new fields.StringField({ initial: "" }),
     s: new fields.NumberField({ initial: 0 }),
     t: new fields.NumberField({ initial: 0 }),
     b: new fields.NumberField({ initial: 0 }),

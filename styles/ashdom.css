@@ -1046,8 +1046,16 @@
 }
 
 .ashdom-weapon-row-two {
-  grid-template-columns: 120px minmax(0, 1fr) 82px;
+  grid-template-columns: 120px minmax(0, 1fr) 82px 30px;
   margin-top: 7px;
+}
+
+.ashdom-sheet .ashdom-weapon-concealed-note {
+  align-self: end;
+  width: 30px;
+  min-width: 30px;
+  height: 28px;
+  padding: 0;
 }
 
 .ashdom-weapon-row-three {

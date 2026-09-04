@@ -65,6 +65,7 @@ export class AshdomWeaponData extends foundry.abstract.TypeDataModel {
       totalWeight: number({ min: 0 }),
       equipped: new fields.BooleanField({ initial: false }),
       note: text(),
+      concealedNote: text(),
       s: number(),
       t: number(),
       b: number(),

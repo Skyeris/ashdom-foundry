@@ -512,6 +512,8 @@ export class AshdomCharacterSheet extends
         equipped: weapon.equipped,
         note: weapon.note,
         hasNote: Boolean(weapon.note?.trim()),
+        concealedNote: weapon.concealedNote,
+        hasConcealedNote: Boolean(weapon.concealedNote?.trim()),
         s: weapon.s,
         t: weapon.t,
         b: weapon.b,
@@ -773,6 +775,9 @@ export class AshdomCharacterSheet extends
 
           if (collection === "weapons") {
             mergedEntry.note = String(entry?.note ?? currentEntry.note ?? "");
+            mergedEntry.concealedNote = String(
+              entry?.concealedNote ?? currentEntry.concealedNote ?? ""
+            );
           } else if (noteCollections.has(collection)) {
             mergedEntry.note = String(currentEntry.note ?? "");
           }
@@ -981,6 +986,7 @@ export class AshdomCharacterSheet extends
         name: "",
         equipped: false,
         note: "",
+        concealedNote: "",
         s: 0,
         t: 0,
         b: 0,
@@ -1914,18 +1920,18 @@ export class AshdomCharacterSheet extends
       : savedNote;
 
     const repeatableNote = path.match(
-      /^system\.(perks|weapons|armors|vehicles|inventoryItems)\.(\d+)\.note$/
+      /^system\.(perks|weapons|armors|vehicles|inventoryItems)\.(\d+)\.(note|concealedNote)$/
     );
 
     if (repeatableNote) {
-      const [, collection, indexText] = repeatableNote;
+      const [, collection, indexText, noteFieldName] = repeatableNote;
       const index = Number(indexText);
       const entries = foundry.utils.deepClone(
         this.actor.toObject().system[collection] ?? []
       );
 
       if (index >= 0 && index < entries.length) {
-        entries[index].note = String(noteToSave);
+        entries[index][noteFieldName] = String(noteToSave);
         await this.actor.update({
           [`system.${collection}`]: entries
         });
