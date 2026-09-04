@@ -83,14 +83,7 @@ export class AshdomCharacterSheet extends
 
   async _preRender(context, options) {
 
-    if (this.rendered) {
-      const scrollPositions = this._tabScrollPositions ??= new Map();
-
-      this.element.querySelectorAll("[data-tab-content]")
-        .forEach(tab => {
-          scrollPositions.set(tab.dataset.tabContent, tab.scrollTop);
-        });
-    }
+    if (this.rendered) this._captureSheetUIState();
 
     await super._preRender(context, options);
 
@@ -101,21 +94,99 @@ export class AshdomCharacterSheet extends
 
     await super._onRender(context, options);
 
-    const scrollPositions = this._tabScrollPositions;
+    this._restoreSheetUIState();
 
-    if (scrollPositions) {
-      this.element.querySelectorAll("[data-tab-content]")
-        .forEach(tab => {
-          const scrollTop = scrollPositions.get(tab.dataset.tabContent);
-
-          if (Number.isFinite(scrollTop)) {
-            tab.scrollTop = scrollTop;
-          }
-        });
+    for (const eventName of ["input", "change"]) {
+      this.element.addEventListener(
+        eventName,
+        () => this._captureSheetUIState(),
+        { capture: true }
+      );
     }
+
+    this.element.querySelectorAll('input[type="number"]:not([readonly])')
+      .forEach(input => {
+        input.addEventListener("focus", () => {
+          if (this._restoringSheetFocus) return;
+          requestAnimationFrame(() => {
+            if (document.activeElement === input) input.select();
+          });
+        });
+      });
 
     this._activateDataReordering();
     this._activateArmorItemDrops();
+
+  }
+
+
+  _captureSheetUIState() {
+
+    const scrollPositions = this._tabScrollPositions ??= new Map();
+
+    this.element.querySelectorAll("[data-tab-content]")
+      .forEach(tab => {
+        scrollPositions.set(tab.dataset.tabContent, tab.scrollTop);
+      });
+
+    const windowContent = this.element.closest(".window-content");
+    if (windowContent) this._windowContentScrollTop = windowContent.scrollTop;
+
+    const active = document.activeElement;
+    if (!(active instanceof HTMLInputElement) || !this.element.contains(active)) return;
+    if (!active.name) return;
+
+    this._focusedFieldState = {
+      name: active.name,
+      selectionStart: active.type === "number" ? null : active.selectionStart,
+      selectionEnd: active.type === "number" ? null : active.selectionEnd
+    };
+    this._restoreFocusPending = true;
+
+  }
+
+
+  _restoreSheetUIState() {
+
+    const restore = () => {
+      const scrollPositions = this._tabScrollPositions;
+
+      if (scrollPositions) {
+        this.element.querySelectorAll("[data-tab-content]")
+          .forEach(tab => {
+            const scrollTop = scrollPositions.get(tab.dataset.tabContent);
+            if (Number.isFinite(scrollTop)) tab.scrollTop = scrollTop;
+          });
+      }
+
+      const windowContent = this.element.closest(".window-content");
+      if (windowContent && Number.isFinite(this._windowContentScrollTop)) {
+        windowContent.scrollTop = this._windowContentScrollTop;
+      }
+
+      if (!this._restoreFocusPending || !this._focusedFieldState) return;
+
+      const state = this._focusedFieldState;
+      const input = Array.from(this.element.querySelectorAll("input[name]"))
+        .find(element => element.name === state.name);
+
+      this._restoreFocusPending = false;
+      if (!input || input.disabled || input.readOnly) return;
+
+      this._restoringSheetFocus = true;
+      input.focus({ preventScroll: true });
+
+      if (state.selectionStart != null && state.selectionEnd != null) {
+        input.setSelectionRange(state.selectionStart, state.selectionEnd);
+      } else if (input.type === "number") {
+        input.select();
+      }
+
+      this._restoringSheetFocus = false;
+    };
+
+    restore();
+    requestAnimationFrame(restore);
 
   }
 

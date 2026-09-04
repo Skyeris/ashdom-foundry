@@ -29,6 +29,76 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     form: { template: "systems/ashdom/templates/item/item-sheet.html" }
   };
 
+  async _preRender(context, options) {
+    if (this.rendered) this._captureEditorState();
+    await super._preRender(context, options);
+  }
+
+  async _onRender(context, options) {
+    await super._onRender(context, options);
+    this._restoreEditorState();
+
+    for (const eventName of ["input", "change"]) {
+      this.element.addEventListener(
+        eventName,
+        () => this._captureEditorState(),
+        { capture: true }
+      );
+    }
+
+    this.element.querySelectorAll('input[type="number"]:not([readonly])')
+      .forEach(input => {
+        input.addEventListener("focus", () => {
+          if (this._restoringEditorFocus) return;
+          requestAnimationFrame(() => {
+            if (document.activeElement === input) input.select();
+          });
+        });
+      });
+  }
+
+  _captureEditorState() {
+    const editor = this.element.querySelector(".ashdom-item-editor");
+    const windowContent = this.element.closest(".window-content");
+    if (editor) this._editorScrollTop = editor.scrollTop;
+    if (windowContent) this._windowContentScrollTop = windowContent.scrollTop;
+
+    const active = document.activeElement;
+    if (!(active instanceof HTMLInputElement) || !this.element.contains(active)) return;
+    if (!active.name) return;
+
+    this._focusedEditorField = active.name;
+    this._restoreEditorFocusPending = true;
+  }
+
+  _restoreEditorState() {
+    const restore = () => {
+      const editor = this.element.querySelector(".ashdom-item-editor");
+      const windowContent = this.element.closest(".window-content");
+      if (editor && Number.isFinite(this._editorScrollTop)) {
+        editor.scrollTop = this._editorScrollTop;
+      }
+      if (windowContent && Number.isFinite(this._windowContentScrollTop)) {
+        windowContent.scrollTop = this._windowContentScrollTop;
+      }
+
+      if (!this._restoreEditorFocusPending || !this._focusedEditorField) return;
+      const input = Array.from(this.element.querySelectorAll("input[name]"))
+        .find(element => element.name === this._focusedEditorField);
+
+      this._restoreEditorFocusPending = false;
+      if (!input || input.disabled || input.readOnly) return;
+
+      this._restoringEditorFocus = true;
+      input.focus({ preventScroll: true });
+      if (input.type === "number") input.select();
+      this._restoringEditorFocus = false;
+    };
+
+    restore();
+    requestAnimationFrame(restore);
+  }
+
   async _prepareContext(options) {
     const context = await super._prepareContext(options);
     context.item = this.item;
