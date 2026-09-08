@@ -190,7 +190,6 @@ export class AshdomConsumableData extends AshdomInventoryData {
       usesMax: number({ integer: true, min: 0 }),
       weight: number({ min: 0 }),
       totalWeight: number({ min: 0 }),
-      consumableType: text(),
       note: text()
     };
   }
