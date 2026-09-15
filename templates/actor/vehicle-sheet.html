@@ -1,0 +1,103 @@
+<div class="ashdom-sheet ashdom-vehicle-workspace">
+  <header class="ashdom-vehicle-title">
+    <h1>VEHICLE</h1>
+    <input type="text" name="name" value="{{actor.name}}" aria-label="Sheet name" placeholder="Vehicle Name">
+  </header>
+  <div class="ashdom-vehicle-columns">
+    <section class="ashdom-panel ashdom-fleet-panel" data-vehicle-drop>
+      <h2>VEHICLE</h2>
+      {{#each vehicles}}
+        <article class="ashdom-fleet-entry{{#if selected}} is-selected{{/if}}">
+          {{#if selected}}
+            <div class="ashdom-vehicle-type-seating">
+            <label class="ashdom-fleet-field"><span class="ashdom-vehicle-type-control"><img src="{{typeIcon}}" alt="{{type}} icon"><select name="system.vehicles.{{index}}.type" aria-label="Vehicle type">{{selectOptions ../vehicleTypeChoices selected=type blank=""}}</select></span></label>
+              <label class="ashdom-vehicle-seating">SEATING<input type="number" min="0" step="1" name="system.vehicles.{{index}}.seating" value="{{seating}}" aria-label="Vehicle seating"></label>
+            <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="{{index}}" title="Vehicle notes" aria-label="Vehicle notes">✎</button>
+            </div>
+            <div class="ashdom-fleet-vitals">
+              <b>HP</b><input type="number" min="0" name="system.vehicles.{{index}}.hpCurrent" value="{{hpCurrent}}" aria-label="Current vehicle HP"><span>/</span><input type="number" min="0" name="system.vehicles.{{index}}.hpMax" value="{{hpMax}}" aria-label="Maximum vehicle HP">
+            </div>
+            <div class="ashdom-vehicle-cw-fuel">
+              <b>CW</b><input type="number" min="0" name="system.vehicles.{{index}}.cwMax" value="{{cwMax}}" aria-label="Vehicle cargo capacity">
+              <b>FUEL</b><span class="ashdom-vehicle-fuel-value"><input type="number" min="0" step="any" name="system.vehicles.{{index}}.fuelCurrent" value="{{fuelCurrent}}" aria-label="Current vehicle fuel in pounds"><span>lbs</span></span><span>/</span><span class="ashdom-vehicle-fuel-value"><input type="number" min="0" step="any" name="system.vehicles.{{index}}.fuelMax" value="{{fuelMax}}" aria-label="Maximum vehicle fuel in pounds"><span>lbs</span></span>
+            </div>
+            <div class="ashdom-fleet-damage">
+              <label>DICE DAMAGE<input type="text" name="system.vehicles.{{index}}.diceDamage" value="{{diceDamage}}" placeholder="Dice Damage"></label>
+              <label>FLAT DAMAGE<input type="number" name="system.vehicles.{{index}}.flatDamage" value="{{flatDamage}}"></label>
+              <button type="button" class="ashdom-vehicle-damage-button" data-action="rollVehicleDamage" data-vehicle-index="{{index}}" title="Roll vehicle damage" aria-label="Roll vehicle damage">
+                <svg class="ashdom-tire-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="5"/>
+                  <path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>
+                  <circle cx="12" cy="12" r="1" fill="currentColor"/>
+                </svg>
+              </button>
+            </div>
+            <div class="ashdom-fleet-ratings">
+              <div class="ashdom-fleet-rating-grid ashdom-armor-rating-header"><span></span><b>TOTAL</b><b>BASE</b><b>MOD</b><b>+/-</b></div>
+              {{#each ratings}}
+                <div class="ashdom-fleet-rating-grid ashdom-armor-rating-row ashdom-armor-rating-{{key}}">
+                <span>{{key}}</span><input type="number" class="ashdom-armor-total" value="{{total}}" readonly aria-label="{{key}} total">
+                <input type="number" name="system.vehicles.{{../index}}.ratings.{{key}}.base" value="{{base}}" aria-label="{{key}} base">
+                <input type="number" name="system.vehicles.{{../index}}.ratings.{{key}}.modifier" value="{{modifier}}" aria-label="{{key}} modifier">
+                <input type="number" name="system.vehicles.{{../index}}.ratings.{{key}}.temp" value="{{temp}}" aria-label="{{key}} temporary modifier">
+                </div>
+              {{/each}}
+            </div>
+            <div class="ashdom-equipment-mods" data-vehicle-mod-drop>
+              <b>VEHICLE MODS</b>
+              {{#each mods}}
+                <div class="ashdom-equipment-mod-row">
+                  <span>{{name}}</span>
+                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="0" data-mod-index="{{modIndex}}" title="Edit {{name}} notes" aria-label="Edit {{name}} notes">✎</button>
+                  <button type="button" class="ashdom-delete-button" data-action="removeVehicleMod" data-mod-index="{{modIndex}}" title="Remove {{name}}" aria-label="Remove {{name}}">×</button>
+                </div>
+              {{/each}}
+              <p class="ashdom-mod-drop-hint">Drop vehicle mods here</p>
+            </div>
+          {{else}}
+            <p class="ashdom-vehicle-hint">{{type}} · CW {{cwCurrent}} / {{cwMax}}</p>
+          {{/if}}
+        </article>
+      {{else}}
+        <p class="ashdom-empty-message">Add or drop a vehicle to begin.</p>
+      {{/each}}
+    </section>
+    <section class="ashdom-panel ashdom-vehicle-cargo-panel" {{#if activeVehicle}}data-cargo-drop data-vehicle-index="{{activeVehicle.index}}"{{/if}}>
+      <h2>VEHICLE INVENTORY</h2>
+      {{#if activeVehicle}}
+        <h3>{{activeVehicle.name}}</h3>
+        <div class="ashdom-vehicle-cw{{#if activeVehicle.overloaded}} is-overloaded{{/if}}">
+          <b>CW</b><strong>{{activeVehicle.cwCurrent}} / {{activeVehicle.cwMax}}</strong>
+          {{#if activeVehicle.overloaded}}<span>OVER CAPACITY</span>{{/if}}
+        </div>
+        <div class="ashdom-cargo-row ashdom-cargo-header"><span></span><b>ITEM</b><b>QTY</b><b>WT</b><b>TOTAL</b><span></span><span></span></div>
+        {{#each activeVehicle.cargo}}
+          <article class="ashdom-cargo-entry">
+            <div class="ashdom-cargo-row">
+              <button type="button" class="ashdom-weapon-toggle" data-action="toggleCargo" data-vehicle-index="{{vehicleIndex}}" data-cargo-index="{{index}}" aria-expanded="{{open}}" title="{{#if open}}Collapse{{else}}Expand{{/if}} item" aria-label="{{#if open}}Collapse{{else}}Expand{{/if}} item">{{#if open}}▲{{else}}▼{{/if}}</button>
+              <input type="text" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.name" value="{{name}}" placeholder="Item Name" aria-label="Cargo item name">
+              <input type="number" min="0" step="any" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.quantity" value="{{quantity}}" aria-label="Cargo quantity">
+              <input type="number" min="0" step="any" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.weight" value="{{weight}}" aria-label="Cargo unit weight">
+              <input type="number" value="{{totalWeight}}" readonly aria-label="Cargo total weight">
+              <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="{{vehicleIndex}}" data-cargo-index="{{index}}" title="Item notes" aria-label="Item notes">✎</button>
+              <button type="button" class="ashdom-delete-button" data-action="deleteCargo" data-vehicle-index="{{vehicleIndex}}" data-cargo-index="{{index}}" title="Remove cargo item" aria-label="Remove cargo item">×</button>
+            </div>
+            {{#if open}}
+              <div class="ashdom-cargo-details">
+                <label>CATEGORY<input type="text" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.category" value="{{category}}"></label>
+                <label>SUBCATEGORY<input type="text" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.subcategory" value="{{subcategory}}"></label>
+                <label>SPECIALIZATION<input type="text" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.specialization" value="{{specialization}}"></label>
+                <label>CONDITION<select name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.condition">{{selectOptions ../conditions selected=condition}}</select></label>
+              </div>
+            {{/if}}
+          </article>
+        {{else}}
+          <p class="ashdom-empty-message">This vehicle has no cargo.</p>
+        {{/each}}
+        <button type="button" class="ashdom-add-button" data-action="addCargo" data-vehicle-index="{{activeVehicle.index}}">+ ADD ITEM</button>
+      {{else}}
+        <p class="ashdom-empty-message">Select a vehicle on the left to view its inventory.</p>
+      {{/if}}
+    </section>
+  </div>
+</div>

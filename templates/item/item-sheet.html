@@ -26,17 +26,20 @@
         <label><span>DAMAGE TYPE</span><select name="system.damageType">{{selectOptions damageTypes selected=system.damageType}}</select></label>
         <label><span>DICE DAMAGE</span><input type="text" name="system.diceDamage" value="{{system.diceDamage}}"></label>
         <label><span>FLAT DAMAGE</span><input type="number" name="system.flatDamage" value="{{system.flatDamage}}"></label>
+        <label><span>S</span><input type="number" name="system.s" value="{{system.s}}"></label>
+        <label><span>T</span><input type="number" name="system.t" value="{{system.t}}"></label>
+        <label><span>B</span><input type="number" name="system.b" value="{{system.b}}"></label>
         <label><span>AC</span><input type="number" name="system.ac" value="{{system.ac}}"></label>
         <label><span>DT</span><input type="number" name="system.dt" value="{{system.dt}}"></label>
         <label><span>RANGE</span><input type="number" min="0" name="system.range" value="{{system.range}}"></label>
-        <label><span>CAPACITY CURRENT</span><input type="number" min="0" name="system.capacityCurrent" value="{{system.capacityCurrent}}"></label>
         <label><span>CAPACITY MAX</span><input type="number" min="0" name="system.capacityMax" value="{{system.capacityMax}}"></label>
-        <label><span>ITEM TYPE</span><input type="text" name="system.itemType" value="{{system.itemType}}"></label>
+        <label><span>CC (S)</span><input type="number" name="system.ccSuccessModifier" value="{{system.ccSuccessModifier}}"></label>
+        <label><span>CC (F)</span><input type="number" name="system.ccFailureModifier" value="{{system.ccFailureModifier}}"></label>
         <label><span>RELOAD AP</span><input type="number" min="0" name="system.reloadAP" value="{{system.reloadAP}}"></label>
         <label><span>AMMO TYPE</span><input type="text" name="system.ammoType" value="{{system.ammoType}}"></label>
         <label><span>BURST LIMIT</span><input type="text" name="system.burstLimit" value="{{system.burstLimit}}"></label>
         <label><span>IGNORE TARGET HIT CHANCE</span><input type="number" min="0" name="system.ignoreTargetHitChance" value="{{system.ignoreTargetHitChance}}"></label>
-        <label><span>SET UP AP</span><input type="number" min="0" name="system.setupAP" value="{{system.setupAP}}"></label>
+        <label><span>SET-UP AP</span><input type="number" min="0" name="system.setupAP" value="{{system.setupAP}}"></label>
       </div>
       <label class="ashdom-item-notes"><span>CONCEALED NOTES</span><textarea name="system.concealedNote">{{system.concealedNote}}</textarea></label>
     {{/if}}
@@ -77,15 +80,15 @@
     {{/if}}
 
     {{#if isGear}}
-      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>ITEM TYPE</span><input type="text" name="system.itemType" value="{{system.itemType}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
+      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
     {{/if}}
 
     {{#if isConsumable}}
-      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>USES</span><input type="number" min="0" name="system.usesCurrent" value="{{system.usesCurrent}}"></label><label><span>MAX USES</span><input type="number" min="0" name="system.usesMax" value="{{system.usesMax}}"></label></div>
+      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label></div>
     {{/if}}
 
     {{#if isMod}}
-      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>MOD TYPE</span><input type="text" name="system.modType" value="{{system.modType}}"></label><label><span>MODIFIER</span><input type="number" name="system.modifier" value="{{system.modifier}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
+      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>MODIFIER</span><input type="number" name="system.modifier" value="{{system.modifier}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
     {{/if}}
 
     {{#if isGeneralInventoryType}}
@@ -99,8 +102,38 @@
       {{/unless}}{{/unless}}{{/unless}}
     {{/if}}
 
+    {{#if isRobotBody}}
+      <div class="ashdom-armor-property-row">
+        <b>ARMOR PROPERTIES</b>
+        <label>C <span class="ashdom-tag-checkbox" title="Conductive"><input type="checkbox" name="system.conductive" {{checked system.conductive}} aria-label="Conductive"><span aria-hidden="true">✓</span></span></label>
+        <label>I <span class="ashdom-tag-checkbox" title="Insulated"><input type="checkbox" name="system.insulated" {{checked system.insulated}} aria-label="Insulated"><span aria-hidden="true">✓</span></span></label>
+      </div>
+      <div class="ashdom-hardplate-row">
+        <b>TARGETABLE</b>
+        <label>HEAD <span class="ashdom-tag-checkbox" title="Head Targetable"><input type="checkbox" name="system.targetable.head" {{checked system.targetable.head}} aria-label="Head Targetable"><span aria-hidden="true">✓</span></span></label>
+        <label>TORSO <span class="ashdom-tag-checkbox" title="Torso Targetable"><input type="checkbox" name="system.targetable.torso" {{checked system.targetable.torso}} aria-label="Torso Targetable"><span aria-hidden="true">✓</span></span></label>
+        <label>ARMS <span class="ashdom-tag-checkbox" title="Arms Targetable"><input type="checkbox" name="system.targetable.arms" {{checked system.targetable.arms}} aria-label="Arms Targetable"><span aria-hidden="true">✓</span></span></label>
+        <label>LEGS <span class="ashdom-tag-checkbox" title="Legs Targetable"><input type="checkbox" name="system.targetable.legs" {{checked system.targetable.legs}} aria-label="Legs Targetable"><span aria-hidden="true">✓</span></span></label>
+        <label>GROIN <span class="ashdom-tag-checkbox" title="Groin Targetable"><input type="checkbox" name="system.targetable.groin" {{checked system.targetable.groin}} aria-label="Groin Targetable"><span aria-hidden="true">✓</span></span></label>
+      </div>
+      <div class="ashdom-hardplate-row">
+        <b>HARDPLATE</b>
+        <label>HEAD <span class="ashdom-tag-checkbox" title="Head Hardplate"><input type="checkbox" name="system.hardplate.head" {{checked system.hardplate.head}} aria-label="Head Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>TORSO <span class="ashdom-tag-checkbox" title="Torso Hardplate"><input type="checkbox" name="system.hardplate.torso" {{checked system.hardplate.torso}} aria-label="Torso Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>ARMS <span class="ashdom-tag-checkbox" title="Arms Hardplate"><input type="checkbox" name="system.hardplate.arms" {{checked system.hardplate.arms}} aria-label="Arms Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>LEGS <span class="ashdom-tag-checkbox" title="Legs Hardplate"><input type="checkbox" name="system.hardplate.legs" {{checked system.hardplate.legs}} aria-label="Legs Hardplate"><span aria-hidden="true">✓</span></span></label>
+        <label>GROIN <span class="ashdom-tag-checkbox" title="Groin Hardplate"><input type="checkbox" name="system.hardplate.groin" {{checked system.hardplate.groin}} aria-label="Groin Hardplate"><span aria-hidden="true">✓</span></span></label>
+      </div>
+      <div class="ashdom-robot-body-rating-table">
+        <b>RATING</b><b>ARMOR SET</b>
+        {{#each system.ratings as |rating key|}}
+          <b>{{key}}</b><input type="number" name="system.ratings.{{key}}.armorSet" value="{{rating.armorSet}}">
+        {{/each}}
+      </div>
+    {{/if}}
+
     {{#if isVehicle}}
-      <div class="ashdom-item-grid"><label><span>VEHICLE TYPE</span><input type="text" name="system.vehicleType" value="{{system.vehicleType}}"></label><label><span>HP CURRENT</span><input type="number" min="0" name="system.hpCurrent" value="{{system.hpCurrent}}"></label><label><span>HP MAX</span><input type="number" min="0" name="system.hpMax" value="{{system.hpMax}}"></label><label><span>CW CURRENT</span><input type="number" min="0" name="system.cwCurrent" value="{{system.cwCurrent}}"></label><label><span>CW MAX</span><input type="number" min="0" name="system.cwMax" value="{{system.cwMax}}"></label><label><span>DICE DAMAGE</span><input type="text" name="system.diceDamage" value="{{system.diceDamage}}"></label><label><span>FLAT DAMAGE</span><input type="number" name="system.flatDamage" value="{{system.flatDamage}}"></label></div>
+      <div class="ashdom-item-grid"><label><span>HP CURRENT</span><input type="number" min="0" name="system.hpCurrent" value="{{system.hpCurrent}}"></label><label><span>HP MAX</span><input type="number" min="0" name="system.hpMax" value="{{system.hpMax}}"></label><label><span>CW CURRENT</span><input type="number" min="0" name="system.cwCurrent" value="{{system.cwCurrent}}"></label><label><span>CW MAX</span><input type="number" min="0" name="system.cwMax" value="{{system.cwMax}}"></label><label><span>DICE DAMAGE</span><input type="text" name="system.diceDamage" value="{{system.diceDamage}}"></label><label><span>FLAT DAMAGE</span><input type="number" name="system.flatDamage" value="{{system.flatDamage}}"></label></div>
     {{/if}}
 
     <label class="ashdom-item-notes"><span>NOTES</span><textarea name="system.note">{{system.note}}</textarea></label>

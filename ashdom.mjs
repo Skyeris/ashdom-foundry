@@ -1,3 +1,6 @@
+import { applyCompendiumSorting } from "./module/compendium-sorting.mjs";
+import { AshdomVehicleActorData } from "./module/actor/vehicle-data.mjs";
+import { AshdomVehicleSheet } from "./module/sheets/vehicle-sheet.mjs";
 import {
   AshdomCharacterData,
   AshdomNPCData
@@ -42,6 +45,11 @@ import {
   AshdomCompendiumBrowser
 } from "./module/apps/compendium-browser.mjs";
 
+import {
+  getAshdomItemIcon,
+  isReplaceableItemIcon
+} from "./module/item/item-icons.mjs";
+
 
 Hooks.once("init", () => {
 
@@ -56,6 +64,7 @@ Hooks.once("init", () => {
 
     character: AshdomCharacterData,
 
+    vehicle: AshdomVehicleActorData,
     npc: AshdomNPCData
 
   };
@@ -104,6 +113,10 @@ Hooks.once("init", () => {
     }
   );
 
+  foundry.documents.collections.Actors.registerSheet("ashdom", AshdomVehicleSheet, {
+    types: ["vehicle"], makeDefault: true, label: "ASHDOM.VehicleSheet"
+  });
+
   foundry.documents.collections.Items.registerSheet(
     "ashdom",
     AshdomItemSheet,
@@ -129,8 +142,33 @@ Hooks.once("init", () => {
 
 });
 
-Hooks.once("ready", () => {
+Hooks.once("ready", async () => {
+  await applyCompendiumSorting();
   game.ashdom.compendiumBrowser ??= new AshdomCompendiumBrowser();
+});
+
+Hooks.on("preCreateItem", (item, data) => {
+  const currentImage = data.img ?? item.img;
+  if (!isReplaceableItemIcon(currentImage)) return;
+  item.updateSource({
+    img: getAshdomItemIcon(
+      data.type ?? item.type,
+      data.system?.category ?? item.system?.category,
+      data.system?.subcategory ?? item.system?.subcategory,
+      data.system?.rarity ?? item.system?.rarity
+    )
+  });
+});
+
+Hooks.on("preUpdateItem", (item, changes) => {
+  if (!isReplaceableItemIcon(item.img)) return;
+  const category = foundry.utils.getProperty(changes, "system.category") ??
+    item.system?.category;
+  const rarity = foundry.utils.getProperty(changes, "system.rarity") ??
+    item.system?.rarity;
+  const subcategory = foundry.utils.getProperty(changes, "system.subcategory") ??
+    item.system?.subcategory;
+  changes.img = getAshdomItemIcon(item.type, category, subcategory, rarity);
 });
 
 Hooks.on("renderCompendiumDirectory", (application, html) => {

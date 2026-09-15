@@ -704,6 +704,7 @@
 
                 {{#if open}}
                   <div class="ashdom-armor-details">
+
                     <div class="ashdom-armor-condition-row">
                       <label>DR</label>
                       <input type="number" min="0" name="system.armors.{{index}}.drDamage" value="{{drDamage}}" aria-label="Current armor damage">
@@ -719,6 +720,14 @@
                       </select>
                     </div>
 
+                    <div class="ashdom-hardplate-row">
+                      <b>TARGETABLE</b>
+                      <label>HEAD <span class="ashdom-tag-checkbox" title="Head Targetable"><input type="checkbox" name="system.armors.{{index}}.targetable.head" {{checked targetable.head}} aria-label="Head Targetable"><span aria-hidden="true">✓</span></span></label>
+                      <label>TORSO <span class="ashdom-tag-checkbox" title="Torso Targetable"><input type="checkbox" name="system.armors.{{index}}.targetable.torso" {{checked targetable.torso}} aria-label="Torso Targetable"><span aria-hidden="true">✓</span></span></label>
+                      <label>ARMS <span class="ashdom-tag-checkbox" title="Arms Targetable"><input type="checkbox" name="system.armors.{{index}}.targetable.arms" {{checked targetable.arms}} aria-label="Arms Targetable"><span aria-hidden="true">✓</span></span></label>
+                      <label>LEGS <span class="ashdom-tag-checkbox" title="Legs Targetable"><input type="checkbox" name="system.armors.{{index}}.targetable.legs" {{checked targetable.legs}} aria-label="Legs Targetable"><span aria-hidden="true">✓</span></span></label>
+                      <label>GROIN <span class="ashdom-tag-checkbox" title="Groin Targetable"><input type="checkbox" name="system.armors.{{index}}.targetable.groin" {{checked targetable.groin}} aria-label="Groin Targetable"><span aria-hidden="true">✓</span></span></label>
+                    </div>
                     <div class="ashdom-hardplate-row">
                       <b>HARDPLATE</b>
                       <label>HEAD <span class="ashdom-tag-checkbox" title="Head Hardplate"><input type="checkbox" name="system.armors.{{index}}.hardplate.head" {{checked hardplate.head}} aria-label="Head Hardplate"><span aria-hidden="true">✓</span></span></label>
@@ -747,6 +756,17 @@
                         <input type="number" name="system.armors.{{../index}}.ratings.{{key}}.modifier" value="{{modifier}}" aria-label="{{label}} modifier">
                       </div>
                     {{/each}}
+                    <div class="ashdom-equipment-mods" data-equipment-mod-drop data-collection="armors" data-equipment-index="{{index}}">
+                      <b>MODS</b>
+                      {{#each mods}}
+                        <div class="ashdom-equipment-mod-row">
+                          <span>{{name}}</span>
+                          <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="{{notePath}}" data-note-label="{{name}}" title="Edit {{name}} notes" aria-label="Edit {{name}} notes">✎</button>
+                          <button type="button" class="ashdom-delete-button" data-action="removeEquipmentMod" data-collection="{{collection}}" data-equipment-index="{{equipmentIndex}}" data-mod-index="{{modIndex}}" title="Remove {{name}}" aria-label="Remove {{name}}">×</button>
+                        </div>
+                      {{/each}}
+                      <p class="ashdom-mod-drop-hint">Drop mods here</p>
+                    </div>
                   </div>
                 {{/if}}
               </article>
@@ -920,6 +940,7 @@
 
                 {{#if open}}
                   <div class="ashdom-weapon-details">
+
                     <div class="ashdom-weapon-row-one">
                       <label><span>SKILL</span><select name="system.weapons.{{index}}.skill" aria-label="Weapon skill">{{selectOptions ../weaponSkillChoices selected=skill}}</select></label>
                       <label><span>DAMAGE TYPE</span><select name="system.weapons.{{index}}.damageType" aria-label="Weapon damage type">{{selectOptions ../weaponDamageTypeChoices selected=damageType}}</select></label>
@@ -930,15 +951,28 @@
                     <div class="ashdom-weapon-row-two">
                       <label class="ashdom-weapon-capacity"><span>CAPACITY</span><span><input type="number" min="0" name="system.weapons.{{index}}.capacityCurrent" value="{{capacityCurrent}}" aria-label="Current weapon capacity"><b>/</b><input type="number" min="0" name="system.weapons.{{index}}.capacityMax" value="{{capacityMax}}" aria-label="Maximum weapon capacity"></span></label>
                       <label><span>ITEM TYPE</span><input type="text" name="system.weapons.{{index}}.itemType" value="{{itemType}}" aria-label="Weapon item type"></label>
+                      <label><span>CC (S)</span><input type="number" name="system.weapons.{{index}}.ccSuccessModifier" value="{{ccSuccessModifier}}" aria-label="Weapon critical success modifier"></label>
+                      <label><span>CC (F)</span><input type="number" name="system.weapons.{{index}}.ccFailureModifier" value="{{ccFailureModifier}}" aria-label="Weapon critical failure modifier"></label>
                       <label><span>RELOAD AP</span><input type="number" min="0" name="system.weapons.{{index}}.reloadAP" value="{{reloadAP}}" aria-label="Weapon reload AP"></label>
-                      <button type="button" class="ashdom-note-button{{#if hasConcealedNote}} has-note{{/if}} ashdom-weapon-concealed-note" data-action="openNote" data-note-path="system.weapons.{{index}}.concealedNote" data-note-label="Concealed Notes" title="Edit concealed notes" aria-label="Edit concealed notes"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
                     </div>
 
                     <div class="ashdom-weapon-row-three">
                       <label><span>AMMO TYPE</span><input type="text" name="system.weapons.{{index}}.ammoType" value="{{ammoType}}" aria-label="Weapon ammo type"></label>
                       <label><span>BURST LIMIT</span><input type="text" name="system.weapons.{{index}}.burstLimit" value="{{burstLimit}}" aria-label="Weapon burst limit"></label>
                       <label><span>IGNORE TARGET HIT CHANCE</span><input type="number" min="0" name="system.weapons.{{index}}.ignoreTargetHitChance" value="{{ignoreTargetHitChance}}" aria-label="Ignore Target Hit Chance"></label>
-                      <label><span>SET UP AP</span><input type="number" min="0" name="system.weapons.{{index}}.setupAP" value="{{setupAP}}" aria-label="Weapon set up AP"></label>
+                      <label><span>SET-UP AP</span><input type="number" min="0" name="system.weapons.{{index}}.setupAP" value="{{setupAP}}" aria-label="Weapon set-up AP"></label>
+                      <button type="button" class="ashdom-note-button{{#if hasConcealedNote}} has-note{{/if}} ashdom-weapon-concealed-note" data-action="openNote" data-note-path="system.weapons.{{index}}.concealedNote" data-note-label="Concealed Notes" title="Edit concealed notes" aria-label="Edit concealed notes"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+                    </div>
+                    <div class="ashdom-equipment-mods" data-equipment-mod-drop data-collection="weapons" data-equipment-index="{{index}}">
+                      <b>MODS</b>
+                      {{#each mods}}
+                        <div class="ashdom-equipment-mod-row">
+                          <span>{{name}}</span>
+                          <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="{{notePath}}" data-note-label="{{name}}" title="Edit {{name}} notes" aria-label="Edit {{name}} notes">✎</button>
+                          <button type="button" class="ashdom-delete-button" data-action="removeEquipmentMod" data-collection="{{collection}}" data-equipment-index="{{equipmentIndex}}" data-mod-index="{{modIndex}}" title="Remove {{name}}" aria-label="Remove {{name}}">×</button>
+                        </div>
+                      {{/each}}
+                      <p class="ashdom-mod-drop-hint">Drop mods here</p>
                     </div>
                   </div>
                 {{/if}}
@@ -973,7 +1007,7 @@
 
       <div class="ashdom-data-column">
         <section class="ashdom-panel ashdom-data-panel">
-          <h2>PERKS &amp; TRAITS</h2>
+          <h2>PERKS, TRAITS &amp; SKILL SPECS</h2>
 
           <div class="ashdom-perk-list">
             {{#each perks}}
@@ -1176,6 +1210,8 @@
           </button>
         </section>
 
+
+
         <section class="ashdom-panel ashdom-data-panel">
           <h2>BIOGRAPHY</h2>
           <textarea
@@ -1232,66 +1268,74 @@
           <button type="button" class="ashdom-add-button" data-action="addDataEntry" data-collection="currencies">+ ADD CURRENCY</button>
         </section>
 
-        <section class="ashdom-panel ashdom-vehicle-panel">
-          <h2>VEHICLES</h2>
+        <section class="ashdom-panel ashdom-data-panel" data-augmentation-drop-zone>
+          <h2>CYBERNETICS, IMPLANTS, &amp; ROBOT PARTS</h2>
 
-          <div class="ashdom-vehicle-list">
-            {{#each vehicles}}
-              <article class="ashdom-vehicle-entry">
-                <div class="ashdom-vehicle-summary-name">
-                  <button type="button" class="ashdom-vehicle-toggle" data-action="toggleVehicle" data-index="{{index}}" aria-expanded="{{open}}" title="{{#if open}}Collapse{{else}}Expand{{/if}} vehicle">{{#if open}}▲{{else}}▼{{/if}}</button>
-                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.vehicles.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Vehicle{{/if}}" title="Edit vehicle notes" aria-label="Edit vehicle notes">✎</button>
-                  <input type="text" name="system.vehicles.{{index}}.name" value="{{name}}" placeholder="Vehicle Name" aria-label="Vehicle name">
-                  <button type="button" class="ashdom-delete-button" data-action="deleteDataEntry" data-collection="vehicles" data-index="{{index}}" title="Delete vehicle" aria-label="Delete vehicle">×</button>
-                </div>
+          <div class="ashdom-perk-list">
+            {{#each augmentations}}
+              <div class="ashdom-perk-row" data-reorder-entry data-collection="augmentations" data-index="{{index}}">
+                <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag {{name}} to reorder">⠿</button>
 
-                {{#if open}}
-                  <div class="ashdom-vehicle-details">
-                    <div class="ashdom-vehicle-open-summary">
-                      <div class="ashdom-vehicle-type-damage">
-                        <input type="text" name="system.vehicles.{{index}}.type" value="{{type}}" placeholder="Vehicle Type" aria-label="Vehicle type">
+                <button
+                  type="button"
+                  class="ashdom-weapon-a-button"
+                  data-action="displayPerk"
+                  data-collection="augmentations"
+                  data-index="{{index}}"
+                  title="Display {{name}} in chat"
+                  aria-label="Display {{name}} in chat"
+                >A</button>
 
-                        <div class="ashdom-vehicle-damage-row">
-                          <button type="button" class="ashdom-vehicle-damage-button" data-action="rollVehicleDamage" data-index="{{index}}" title="Roll Dice Damage plus Flat Damage" aria-label="Roll vehicle damage"><span aria-hidden="true">☸</span></button>
-                          <input type="text" name="system.vehicles.{{index}}.diceDamage" value="{{diceDamage}}" placeholder="Dice Damage" aria-label="Vehicle dice damage">
-                          <input type="number" name="system.vehicles.{{index}}.flatDamage" value="{{flatDamage}}" placeholder="Flat Damage" aria-label="Vehicle flat damage">
-                        </div>
-                      </div>
+                <button
+                  type="button"
+                  class="ashdom-note-button{{#if hasNote}} has-note{{/if}}"
+                  data-action="openNote"
+                  data-note-path="system.augmentations.{{index}}.note"
+                  data-note-label="{{#if name}}{{name}}{{else}}Part{{/if}}"
+                  title="Edit description"
+                  aria-label="Edit part description"
+                >✎</button>
 
-                      <div class="ashdom-vehicle-vitals-grid">
-                        <label>HP</label>
-                        <input type="number" min="0" name="system.vehicles.{{index}}.hpCurrent" value="{{hpCurrent}}" aria-label="Current vehicle HP">
-                        <input type="number" min="0" name="system.vehicles.{{index}}.hpMax" value="{{hpMax}}" aria-label="Maximum vehicle HP">
+                <input
+                  type="text"
+                  name="system.augmentations.{{index}}.name"
+                  value="{{name}}"
+                  placeholder="Part Name"
+                  aria-label="Part name"
+                >
 
-                        <label>CW</label>
-                        <input type="number" min="0" name="system.vehicles.{{index}}.cwCurrent" value="{{cwCurrent}}" aria-label="Current vehicle carry weight">
-                        <input type="number" min="0" name="system.vehicles.{{index}}.cwMax" value="{{cwMax}}" aria-label="Maximum vehicle carry weight">
-                      </div>
-                    </div>
+                <select
+                  name="system.augmentations.{{index}}.type"
+                  aria-label="Part type"
+                >
+                  {{selectOptions ../augmentationTypeChoices selected=type}}
+                </select>
 
-                    <div class="ashdom-vehicle-rating-grid ashdom-vehicle-rating-header">
-                      <span></span><span>TOTAL</span><span>BASE</span><span>MOD</span><span>+/-</span>
-                    </div>
-
-                    {{#each ratings}}
-                      <div class="ashdom-vehicle-rating-grid ashdom-vehicle-rating-row ashdom-vehicle-rating-{{key}}">
-                        <span>{{label}}</span>
-                        <input type="number" class="ashdom-vehicle-total" value="{{total}}" readonly aria-label="{{label}} total">
-                        <input type="number" name="system.vehicles.{{../index}}.ratings.{{key}}.base" value="{{base}}" aria-label="{{label}} base">
-                        <input type="number" name="system.vehicles.{{../index}}.ratings.{{key}}.modifier" value="{{modifier}}" aria-label="{{label}} modifier">
-                        <input type="number" name="system.vehicles.{{../index}}.ratings.{{key}}.temp" value="{{temp}}" aria-label="{{label}} temporary modifier">
-                      </div>
-                    {{/each}}
-
-                  </div>
-                {{/if}}
-              </article>
+                <button
+                  type="button"
+                  class="ashdom-delete-button"
+                  data-action="deleteDataEntry"
+                  data-collection="augmentations"
+                  data-index="{{index}}"
+                  title="Delete {{name}}"
+                  aria-label="Delete part"
+                >
+                  ×
+                </button>
+              </div>
             {{else}}
-              <p class="ashdom-empty-message">No vehicles added.</p>
+              <p class="ashdom-empty-message">No cybernetics, implants, or robot parts added.</p>
             {{/each}}
           </div>
 
-          <button type="button" class="ashdom-add-button" data-action="addDataEntry" data-collection="vehicles">+ ADD VEHICLE</button>
+          <button
+            type="button"
+            class="ashdom-add-button"
+            data-action="addDataEntry"
+            data-collection="augmentations"
+          >
+            + ADD PART
+          </button>
         </section>
       </div>
 
@@ -1315,7 +1359,7 @@
           </div>
         </section>
 
-        <section class="ashdom-panel ashdom-items-panel">
+        <section class="ashdom-panel ashdom-items-panel" data-inventory-drop-zone>
           <h2>ITEMS</h2>
 
           <div class="ashdom-item-summary-grid ashdom-item-header">
@@ -1338,10 +1382,10 @@
 
                 {{#if open}}
                   <div class="ashdom-item-details">
-                    <input type="text" name="system.inventoryItems.{{index}}.type" value="{{type}}" placeholder="Item Type" aria-label="Item type">
-                    <select name="system.inventoryItems.{{index}}.condition" aria-label="Item condition">
-                      {{selectOptions ../armorConditionChoices selected=condition}}
-                    </select>
+                    <label><span>CATEGORY</span><input type="text" name="system.inventoryItems.{{index}}.category" value="{{category}}" placeholder="Category" aria-label="Item category" readonly></label>
+                    <label><span>SUBCATEGORY</span><input type="text" name="system.inventoryItems.{{index}}.subcategory" value="{{subcategory}}" placeholder="Subcategory" aria-label="Item subcategory" readonly></label>
+                    <label><span>SPECIALIZATION</span><input type="text" name="system.inventoryItems.{{index}}.specialization" value="{{specialization}}" placeholder="Specialization" aria-label="Item specialization" readonly></label>
+                    <label><span>CONDITION</span><select name="system.inventoryItems.{{index}}.condition" aria-label="Item condition">{{selectOptions ../armorConditionChoices selected=condition}}</select></label>
                   </div>
                 {{/if}}
               </article>
