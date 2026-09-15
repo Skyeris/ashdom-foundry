@@ -103,6 +103,9 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const context = await super._prepareContext(options);
     context.item = this.item;
     context.system = this.item.system;
+    if (this.item.type === "vehicle" && this.item.system.category === "Sea Vehicle") {
+      context.system = { ...this.item.system.toObject(), category: "Sea Vehicles" };
+    }
     context.itemTypeLabel = game.i18n.localize(`TYPES.Item.${this.item.type}`);
     context.isWeapon = this.item.type === "weapon";
     context.isArmor = this.item.type === "armor";
@@ -113,6 +116,8 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     context.isMod = this.item.type === "mod";
     context.isVehicle = this.item.type === "vehicle";
     context.isVehicleMod = this.item.type === "vehicleMod";
+    context.isRobotBody = this.item.type === "robotPart" &&
+      String(this.item.system.category ?? "").trim().toLocaleLowerCase() === "body";
     context.hasRarity = ASHDOM_RARITY_ITEM_TYPES.includes(this.item.type);
     context.hasValue = context.hasRarity;
     context.rarityChoices = ASHDOM_ITEM_RARITIES;

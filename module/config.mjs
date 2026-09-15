@@ -1,3 +1,4 @@
+import { VEHICLE_TYPES } from "./vehicle-types.mjs";
 export const ASHDOM_SKILLS = Object.freeze({
   meleeWeapons: "Melee Weapons", unarmed: "Unarmed", archery: "Archery",
   energyWeapons: "Energy Weapons", heavyGuns: "Heavy Guns", lightGuns: "Light Guns",
@@ -75,16 +76,8 @@ export const ASHDOM_ITEM_TAXONOMY = Object.freeze({
     "Legendary Power Armor": null,
     "Legendary Gear": null
   },
-  vehicle: {
-    "Lightweight Vehicle": null,
-    "Civilian Vehicle": null,
-    "Sea Vehicle": null,
-    "Heavy Vehicle": null,
-    Tank: null,
-    "Military Vehicle": null,
-    "Air Vehicle": null
-  },
-  vehicleMod: { Chassis: null, Engine: null, Trailer: null, Upgrades: null }
+  vehicle: Object.fromEntries(VEHICLE_TYPES.map(type => [type, null])),
+  vehicleMod: { Chassis: null, Engine: null, Upgrades: null }
 });
 
 export const ASHDOM_ITEM_DESTINATIONS = Object.freeze({

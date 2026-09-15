@@ -22,11 +22,18 @@ function convertEntry(collection, entry, index) {
       flags: { ashdom: { legacySource: { collection, index } } }
     };
   } else if (collection === "inventoryItems") {
-    system.itemType = system.type || "";
+    system.category = system.category || system.type || "";
+    system.subcategory = system.subcategory || "";
+    system.specialization = system.specialization || "";
     delete system.type;
   } else if (collection === "vehicles") {
-    system.vehicleType = system.type || "";
+    system.category = system.category || system.type || "";
+    system.subcategory = system.subcategory || "";
+    system.specialization = system.specialization || "";
     delete system.type;
+  } else if (collection === "weapons") {
+    delete system.itemType;
+    delete system.capacityCurrent;
   }
 
   return {

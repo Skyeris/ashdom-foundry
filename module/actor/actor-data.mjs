@@ -1,3 +1,5 @@
+import { AUGMENTATION_TYPES } from "./augmentations.mjs";
+
 const { fields } = foundry.data;
 
 
@@ -162,8 +164,17 @@ function createArmorRating() {
   });
 }
 
+function createEquipmentMods() {
+  return new fields.ArrayField(new fields.SchemaField({
+    name: new fields.StringField({ initial: "" }),
+    note: new fields.StringField({ initial: "" }),
+    sourceUuid: new fields.StringField({ initial: "" })
+  }), { initial: [] });
+}
+
 function createArmor() {
   return new fields.SchemaField({
+    mods: createEquipmentMods(),
     name: new fields.StringField({ initial: "" }),
     helmetName: new fields.StringField({ initial: "" }),
     underArmorName: new fields.StringField({ initial: "" }),
@@ -174,6 +185,14 @@ function createArmor() {
     }),
     conductive: new fields.BooleanField({ initial: false }),
     insulated: new fields.BooleanField({ initial: false }),
+    isRobotBody: new fields.BooleanField({ initial: false }),
+    targetable: new fields.SchemaField({
+      head: new fields.BooleanField({ initial: true }),
+      torso: new fields.BooleanField({ initial: true }),
+      arms: new fields.BooleanField({ initial: true }),
+      legs: new fields.BooleanField({ initial: true }),
+      groin: new fields.BooleanField({ initial: true })
+    }),
     hardplate: new fields.SchemaField({
       head: new fields.BooleanField({ initial: false }),
       torso: new fields.BooleanField({ initial: false }),
@@ -207,6 +226,7 @@ function createVehicleRating() {
 
 function createWeapon() {
   return new fields.SchemaField({
+    mods: createEquipmentMods(),
     name: new fields.StringField({ initial: "" }),
     equipped: new fields.BooleanField({ initial: false }),
     note: new fields.StringField({ initial: "" }),
@@ -227,6 +247,8 @@ function createWeapon() {
     capacityCurrent: new fields.NumberField({ initial: 0, min: 0 }),
     capacityMax: new fields.NumberField({ initial: 0, min: 0 }),
     itemType: new fields.StringField({ initial: "" }),
+    ccSuccessModifier: new fields.NumberField({ initial: 0 }),
+    ccFailureModifier: new fields.NumberField({ initial: 0 }),
     reloadAP: new fields.NumberField({ initial: 0, min: 0 }),
     ammoType: new fields.StringField({ initial: "" }),
     burstLimit: new fields.StringField({ initial: "" }),
@@ -272,6 +294,9 @@ function createInventoryItem() {
     weight: new fields.NumberField({ initial: 0, min: 0 }),
     totalWeight: new fields.NumberField({ initial: 0, min: 0 }),
     type: new fields.StringField({ initial: "" }),
+    category: new fields.StringField({ initial: "" }),
+    subcategory: new fields.StringField({ initial: "" }),
+    specialization: new fields.StringField({ initial: "" }),
     condition: new fields.StringField({
       initial: "Pristine",
       choices: ["Pristine", "Broken"]
@@ -816,6 +841,12 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 
       effects: new fields.ArrayField(createEffectTracker(), { initial: [] }),
 
+      augmentations: new fields.ArrayField(new fields.SchemaField({
+        name: new fields.StringField({ initial: "" }),
+        type: new fields.StringField({ initial: "Implant", choices: AUGMENTATION_TYPES }),
+        note: new fields.StringField({ initial: "" }),
+        sourceUuid: new fields.StringField({ initial: "" })
+      }), { initial: [] }),
       languages: new fields.ArrayField(createLanguage(), { initial: [] }),
 
       armors: new fields.ArrayField(createArmor(), { initial: [] }),

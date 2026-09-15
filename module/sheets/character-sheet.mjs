@@ -1,8 +1,13 @@
+import { appendEquipmentMod, equipmentModRows } from "../actor/equipment-mods.mjs";
+import { AUGMENTATION_TYPES, augmentationType, appendAugmentation } from "../actor/augmentations.mjs";
+
 const { HandlebarsApplicationMixin } =
   foundry.applications.api;
 
 const { ActorSheetV2 } =
   foundry.applications.sheets;
+
+import { ASHDOM_ITEM_DESTINATIONS } from "../config.mjs";
 
 
 function escapeHTML(value) {
@@ -11,6 +16,28 @@ function escapeHTML(value) {
   element.textContent = String(value);
 
   return element.innerHTML;
+
+}
+
+
+async function enrichChatNote(value, actor) {
+
+  const escaped = escapeHTML(value).replace(/\r?\n/g, "<br>");
+  const editor =
+    foundry.applications?.ux?.TextEditor?.implementation ??
+    globalThis.TextEditor?.implementation ??
+    globalThis.TextEditor;
+
+  if (typeof editor?.enrichHTML !== "function") return escaped;
+
+  return editor.enrichHTML(escaped, {
+    async: true,
+    documents: true,
+    links: true,
+    rolls: true,
+    relativeTo: actor,
+    rollData: actor?.getRollData?.() ?? {}
+  });
 
 }
 
@@ -49,6 +76,7 @@ export class AshdomCharacterSheet extends
       addDataEntry: AshdomCharacterSheet.#addDataEntry,
       deleteDataEntry: AshdomCharacterSheet.#deleteDataEntry,
       displayPerk: AshdomCharacterSheet.#displayPerk,
+      removeEquipmentMod: AshdomCharacterSheet.#removeEquipmentMod,
       displayWeapon: AshdomCharacterSheet.#displayWeapon,
       rollWeaponSingle: AshdomCharacterSheet.#rollWeaponSingle,
       rollWeaponTargeted: AshdomCharacterSheet.#rollWeaponTargeted,
@@ -116,6 +144,9 @@ export class AshdomCharacterSheet extends
 
     this._activateDataReordering();
     this._activateArmorItemDrops();
+    this._activateInventoryItemDrops();
+    this._activateAugmentationDrops();
+    this._activateEquipmentModDrops();
 
   }
 
@@ -279,13 +310,15 @@ export class AshdomCharacterSheet extends
           if (dragData?.type !== "Item" || !dragData.uuid) return;
 
           const item = await fromUuid(dragData.uuid);
-          if (!item || item.type !== "armor") {
-            return ui.notifications.warn("Only ASHDOM Armor Items can be dropped into an Armor slot.");
+          const isRobotBody = item?.type === "robotPart" &&
+            String(item.system.category ?? "").trim().toLocaleLowerCase() === "body";
+          if (!item || (item.type !== "armor" && !isRobotBody)) {
+            return ui.notifications.warn("Only ASHDOM Armor Items or Robot Body parts can be dropped into an Armor slot.");
           }
 
           const index = Number(target.dataset.armorIndex);
           const targetSlot = target.dataset.armorDropSlot;
-          const categorySlot = slotFromCategory(item.system.category);
+          const categorySlot = isRobotBody ? "armorSet" : slotFromCategory(item.system.category);
           const resolvedSlot = categorySlot ?? targetSlot;
           const component = slotData[resolvedSlot];
           const armors = foundry.utils.deepClone(
@@ -307,6 +340,13 @@ export class AshdomCharacterSheet extends
           }
 
           if (resolvedSlot === "armorSet") {
+            armor.isRobotBody = isRobotBody;
+            armor.targetable = Object.fromEntries(
+              ["head", "torso", "arms", "legs", "groin"].map(location => [
+                location,
+                isRobotBody ? (item.system.targetable?.[location] ?? true) : true
+              ])
+            );
             armor.conductive = Boolean(item.system.conductive);
             armor.insulated = Boolean(item.system.insulated);
             armor.hardplate = Object.fromEntries(
@@ -324,10 +364,152 @@ export class AshdomCharacterSheet extends
             item.system.note
           );
 
-          await this.actor.update({ "system.armors": armors });
+          const update = { "system.armors": armors };
+          if (isRobotBody) {
+            update["system.augmentations"] = appendAugmentation(this.actor.toObject().system.augmentations, item);
+          }
+          await this.actor.update(update);
           ui.notifications.info(`${item.name} added as ${component.noteLabel}.`);
         });
       });
+
+  }
+
+
+  /* =========================================
+     DROP COMPENDIUM ITEMS INTO INVENTORY
+  ========================================= */
+
+  _activateEquipmentModDrops() {
+    this.element.querySelectorAll("[data-equipment-mod-drop]").forEach(target => {
+      target.addEventListener("dragover", event => {
+        if (this._draggedDataEntry) return;
+        event.preventDefault();
+        event.stopPropagation();
+        event.dataTransfer.dropEffect = "copy";
+        target.classList.add("ashdom-mod-drop-ready");
+      });
+      target.addEventListener("dragleave", event => {
+        if (!target.contains(event.relatedTarget)) target.classList.remove("ashdom-mod-drop-ready");
+      });
+      target.addEventListener("drop", async event => {
+        if (this._draggedDataEntry) return;
+        event.preventDefault();
+        event.stopPropagation();
+        target.classList.remove("ashdom-mod-drop-ready");
+        let data;
+        try { data = JSON.parse(event.dataTransfer.getData("text/plain")); }
+        catch { return; }
+        if (data?.type !== "Item" || !data.uuid) return;
+        const item = await fromUuid(data.uuid);
+        if (item?.type !== "mod") return ui.notifications.warn("Drop a Modification Item here.");
+        const collection = target.dataset.collection;
+        const index = Number(target.dataset.equipmentIndex);
+        if (!["armors", "weapons"].includes(collection) || !Number.isInteger(index)) return;
+        const entries = foundry.utils.deepClone(this.actor.toObject().system[collection] ?? []);
+        if (!entries[index]) return;
+        entries[index].mods = appendEquipmentMod(entries[index].mods, item);
+        await this.actor.update({ [`system.${collection}`]: entries });
+      });
+    });
+  }
+
+  static async #removeEquipmentMod(event, target) {
+    event.preventDefault();
+    const { collection } = target.dataset;
+    const index = Number(target.dataset.equipmentIndex);
+    const modIndex = Number(target.dataset.modIndex);
+    if (!["armors", "weapons"].includes(collection) || !Number.isInteger(index) || !Number.isInteger(modIndex)) return;
+    const entries = foundry.utils.deepClone(this.actor.toObject().system[collection] ?? []);
+    const mods = entries[index]?.mods;
+    if (!mods || modIndex < 0 || modIndex >= mods.length) return;
+    mods.splice(modIndex, 1);
+    await this.actor.update({ [`system.${collection}`]: entries });
+  }
+
+  _activateAugmentationDrops() {
+    const target = this.element.querySelector("[data-augmentation-drop-zone]");
+    if (!target) return;
+    target.addEventListener("dragover", event => {
+      if (this._draggedDataEntry) return;
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+    });
+    target.addEventListener("drop", async event => {
+      event.preventDefault();
+      let data;
+      try { data = JSON.parse(event.dataTransfer.getData("text/plain")); }
+      catch { return; }
+      if (data?.type !== "Item" || !data.uuid) return;
+      const item = await fromUuid(data.uuid);
+      if (!augmentationType(item)) return ui.notifications.warn("Only implants, cybernetics, and robot parts can be added here.");
+      await this.actor.update({
+        "system.augmentations": appendAugmentation(this.actor.toObject().system.augmentations, item)
+      });
+    });
+  }
+
+  _activateInventoryItemDrops() {
+
+    const target = this.element.querySelector("[data-inventory-drop-zone]");
+    if (!target) return;
+
+    target.addEventListener("dragover", event => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "copy";
+      target.classList.add("ashdom-inventory-drop-ready");
+    });
+
+    target.addEventListener("dragleave", event => {
+      if (!target.contains(event.relatedTarget)) {
+        target.classList.remove("ashdom-inventory-drop-ready");
+      }
+    });
+
+    target.addEventListener("drop", async event => {
+      event.preventDefault();
+      target.classList.remove("ashdom-inventory-drop-ready");
+
+      let dragData;
+      try {
+        dragData = JSON.parse(event.dataTransfer.getData("text/plain"));
+      } catch (error) {
+        return;
+      }
+
+      if (dragData?.type !== "Item" || !dragData.uuid) return;
+      const item = await fromUuid(dragData.uuid);
+      if (!item || !(ASHDOM_ITEM_DESTINATIONS[item.type] ?? []).includes("inventory")) {
+        return ui.notifications.warn("That ASHDOM Item cannot be added to Inventory.");
+      }
+
+      const inventoryItems = foundry.utils.deepClone(
+        this.actor.toObject().system.inventoryItems ?? []
+      );
+      const category = String(item.system.category ?? "");
+      const quantity = Math.max(Number(item.system.quantity) || 1, 0);
+      const weight = Math.max(Number(item.system.weight) || 0, 0);
+
+      inventoryItems.push({
+        name: String(item.name ?? ""),
+        quantity,
+        weight,
+        totalWeight: quantity * weight,
+        type: category,
+        category,
+        subcategory: String(item.system.subcategory ?? ""),
+        specialization: String(item.system.specialization ?? ""),
+        condition: String(item.system.condition ?? "Pristine"),
+        note: String(item.system.note ?? "")
+      });
+
+      const update = { "system.inventoryItems": inventoryItems };
+      if (augmentationType(item)) {
+        update["system.augmentations"] = appendAugmentation(this.actor.toObject().system.augmentations, item);
+      }
+      await this.actor.update(update);
+      ui.notifications.info(`${item.name} added to Inventory.`);
+    });
 
   }
 
@@ -413,6 +595,7 @@ export class AshdomCharacterSheet extends
 
     const allowed = new Set([
       "perks",
+      "augmentations",
       "chargeTrackers",
       "effects",
       "languages",
@@ -609,6 +792,7 @@ export class AshdomCharacterSheet extends
       (weapon, index) => ({
         index,
         name: weapon.name,
+        mods: equipmentModRows(weapon.mods, "weapons", index),
         equipped: weapon.equipped,
         note: weapon.note,
         hasNote: Boolean(weapon.note?.trim()),
@@ -628,6 +812,8 @@ export class AshdomCharacterSheet extends
         capacityCurrent: weapon.capacityCurrent,
         capacityMax: weapon.capacityMax,
         itemType: weapon.itemType,
+        ccSuccessModifier: weapon.ccSuccessModifier,
+        ccFailureModifier: weapon.ccFailureModifier,
         reloadAP: weapon.reloadAP,
         ammoType: weapon.ammoType,
         burstLimit: weapon.burstLimit,
@@ -680,12 +866,19 @@ export class AshdomCharacterSheet extends
       (armor, index) => ({
         index,
         name: armor.name,
+        mods: equipmentModRows(armor.mods, "armors", index),
         helmetName: armor.helmetName,
         underArmorName: armor.underArmorName,
         equipped: armor.equipped,
         condition: armor.condition,
         conductive: Boolean(armor.conductive),
         insulated: Boolean(armor.insulated),
+        isRobotBody: Boolean(armor.isRobotBody),
+        targetable: Object.fromEntries(
+          ["head", "torso", "arms", "legs", "groin"].map(location => [
+            location, armor.targetable?.[location] ?? true
+          ])
+        ),
         hardplate: {
           head: Boolean(armor.hardplate?.head),
           torso: Boolean(armor.hardplate?.torso),
@@ -776,10 +969,19 @@ export class AshdomCharacterSheet extends
       weight: item.weight,
       totalWeight: item.totalWeight,
       type: item.type,
+      category: item.category || item.type,
+      subcategory: item.subcategory,
+      specialization: item.specialization,
       condition: item.condition,
       note: item.note,
       hasNote: Boolean(item.note?.trim()),
       open: !closedInventoryItems.has(index)
+    }));
+
+    context.augmentationTypeChoices = Object.fromEntries(AUGMENTATION_TYPES.map(type => [type, type]));
+    context.augmentations = Array.from(this.actor.system.augmentations ?? []).map((entry, index) => ({
+      index, name: entry.name, type: entry.type, note: entry.note,
+      hasNote: Boolean(entry.note?.trim())
     }));
 
     context.perks = Array.from(this.actor.system.perks ?? []).map(
@@ -831,6 +1033,37 @@ export class AshdomCharacterSheet extends
   }
 
 
+  static #weaponCriticalRanges(actor, weapon, successBonus = 0) {
+
+    const d100 = AshdomCharacterSheet.#usesD100(actor);
+    const maximumRoll = d100 ? 100 : 20;
+    const successCapModifier = Number(
+      actor?.system?.settings?.criticalChance?.successCapModifier
+    ) || 0;
+    const successCap = d100
+      ? 25
+      : Math.min(Math.max(Math.ceil(5 + successCapModifier), 1), 20);
+    const successModifier = Number(weapon?.ccSuccessModifier) || 0;
+    const failureModifier = Number(weapon?.ccFailureModifier) || 0;
+    const baseSuccess = Number(actor?.system?.secondary?.cc?.success) || 1;
+    const baseFailure = Number(actor?.system?.secondary?.cc?.failure) || maximumRoll;
+
+    return {
+      success: Math.min(
+        Math.max(Math.ceil(baseSuccess + successModifier + successBonus), 1),
+        successCap
+      ),
+      failure: Math.min(
+        Math.max(Math.ceil(baseFailure + failureModifier), 1),
+        maximumRoll
+      ),
+      successModifier,
+      failureModifier
+    };
+
+  }
+
+
   /* =========================================
      SAVE FORM DATA
   ========================================= */
@@ -841,6 +1074,7 @@ export class AshdomCharacterSheet extends
 
     for (const collection of [
       "perks",
+      "augmentations",
       "chargeTrackers",
       "effects",
       "languages",
@@ -864,6 +1098,7 @@ export class AshdomCharacterSheet extends
         );
         const noteCollections = new Set([
           "perks",
+          "augmentations",
           "armors",
           "weapons",
           "vehicles",
@@ -883,6 +1118,9 @@ export class AshdomCharacterSheet extends
             }
           );
 
+          if (collection === "weapons" || collection === "armors") {
+            mergedEntry.mods = foundry.utils.deepClone(currentEntry.mods ?? []);
+          }
           if (collection === "weapons") {
             mergedEntry.note = String(entry?.note ?? currentEntry.note ?? "");
             mergedEntry.concealedNote = String(
@@ -1075,11 +1313,13 @@ export class AshdomCharacterSheet extends
       modifier: 0
     });
     const defaults = {
+      augmentations: { name: "", type: "Implant", note: "", sourceUuid: "" },
       perks: { name: "", type: "Trait", note: "" },
       chargeTrackers: { name: "", current: 0, max: 0 },
       effects: { name: "", source: "", active: true },
       languages: { name: "" },
       armors: {
+        mods: [],
         name: "",
         helmetName: "",
         underArmorName: "",
@@ -1087,6 +1327,8 @@ export class AshdomCharacterSheet extends
         condition: "Pristine",
         conductive: false,
         insulated: false,
+        isRobotBody: false,
+        targetable: { head: true, torso: true, arms: true, legs: true, groin: true },
         hardplate: {
           head: false,
           torso: false,
@@ -1102,6 +1344,7 @@ export class AshdomCharacterSheet extends
         )
       },
       weapons: {
+        mods: [],
         name: "",
         equipped: false,
         note: "",
@@ -1119,6 +1362,8 @@ export class AshdomCharacterSheet extends
         capacityCurrent: 0,
         capacityMax: 0,
         itemType: "",
+        ccSuccessModifier: 0,
+        ccFailureModifier: 0,
         reloadAP: 0,
         ammoType: "",
         burstLimit: "",
@@ -1147,6 +1392,9 @@ export class AshdomCharacterSheet extends
         weight: 0,
         totalWeight: 0,
         type: "",
+        category: "",
+        subcategory: "",
+        specialization: "",
         condition: "Pristine",
         note: ""
       }
@@ -1175,6 +1423,7 @@ export class AshdomCharacterSheet extends
     const index = Number(target.dataset.index);
     const allowed = new Set([
       "perks",
+      "augmentations",
       "chargeTrackers",
       "effects",
       "languages",
@@ -1207,18 +1456,19 @@ export class AshdomCharacterSheet extends
     event.preventDefault();
 
     const index = Number(target.dataset.index);
-    const perk = this.actor.system.perks?.[index];
+    const collection = target.dataset.collection === "augmentations" ? "augmentations" : "perks";
+    const perk = this.actor.system[collection]?.[index];
 
     if (!perk || !Number.isInteger(index)) return;
 
-    const name = String(perk.name || "Unnamed Perk");
+    const name = String(perk.name || (collection === "augmentations" ? "Unnamed Part" : "Unnamed Perk"));
     const type = String(perk.type || "Trait");
     const note = String(perk.note || "No description provided.");
     const content =
       "<div class='ashdom-perk-chat-card ashdom-themed-chat-card'>" +
         "<div class='ashdom-perk-chat-type'>" + escapeHTML(type) + "</div>" +
         "<div class='ashdom-roll-note'><strong>Notes:</strong><br>" +
-          escapeHTML(note).replace(/\r?\n/g, "<br>") +
+          (await enrichChatNote(note, this.actor)) +
         "</div>" +
       "</div>";
 
@@ -1244,7 +1494,7 @@ export class AshdomCharacterSheet extends
     const content =
       "<div class='ashdom-weapon-chat-card ashdom-themed-chat-card'>" +
         "<div class='ashdom-roll-note'><strong>Notes:</strong><br>" +
-          escapeHTML(note).replace(/\r?\n/g, "<br>") +
+          (await enrichChatNote(note, this.actor)) +
         "</div>" +
       "</div>";
 
@@ -1290,8 +1540,12 @@ export class AshdomCharacterSheet extends
     const acReduction = Number(weapon.ac) || 0;
     const dtReduction = Number(weapon.dt) || 0;
     const damageType = String(weapon.damageType || "").trim() || "—";
-    const ccSuccess = Number(this.actor.system.secondary?.cc?.success) || 1;
-    const ccFailure = Number(this.actor.system.secondary?.cc?.failure) || 20;
+    const weaponCC = AshdomCharacterSheet.#weaponCriticalRanges(
+      this.actor,
+      weapon
+    );
+    const ccSuccess = weaponCC.success;
+    const ccFailure = weaponCC.failure;
     const diceDamage = String(weapon.diceDamage || "0").trim() || "0";
     const flatDamage = Number(weapon.flatDamage) || 0;
     const damageFormula = flatDamage === 0
@@ -1317,7 +1571,7 @@ export class AshdomCharacterSheet extends
       const note = String(weapon.note ?? "").trim();
       const noteContent = note
         ? "<div class='ashdom-roll-note'><strong>Notes:</strong><br>" +
-            escapeHTML(note).replace(/\r?\n/g, "<br>") +
+            (await enrichChatNote(note, this.actor)) +
           "</div>"
         : "";
       const rollDetails = [
@@ -1329,6 +1583,8 @@ export class AshdomCharacterSheet extends
         `Adjusted Total: ${adjustedTotal}`,
         `${d100 ? "D100" : "D20"}: ${attackRoll.total}`,
         `Critical Result: ${criticalLabel}`,
+        `Weapon CC (S): ${weaponCC.successModifier}`,
+        `Weapon CC (F): ${weaponCC.failureModifier}`,
         `CC Success: 1-${ccSuccess}`,
         `CC Failure: ${ccFailure}-${d100 ? 100 : 20}`,
         `${adjustedTotal} - ${attackRoll.total} = ${result}`,
@@ -1449,16 +1705,14 @@ export class AshdomCharacterSheet extends
     const ac = Number(weapon.ac) || 0;
     const dt = Number(weapon.dt) || 0;
     const damageType = String(weapon.damageType || "").trim() || "—";
-    const baseCCSuccess = Number(this.actor.system.secondary?.cc?.success) || 1;
-    const successCapModifier = Number(
-      this.actor.system.settings?.criticalChance?.successCapModifier
-    ) || 0;
-    const criticalSuccessCap = d100
-      ? 25
-      : Math.min(Math.max(Math.ceil(5 + successCapModifier), 1), 20);
     const targetedCCBonus = 2;
-    const ccSuccess = Math.min(baseCCSuccess + targetedCCBonus, criticalSuccessCap);
-    const ccFailure = Number(this.actor.system.secondary?.cc?.failure) || 20;
+    const weaponCC = AshdomCharacterSheet.#weaponCriticalRanges(
+      this.actor,
+      weapon,
+      targetedCCBonus
+    );
+    const ccSuccess = weaponCC.success;
+    const ccFailure = weaponCC.failure;
     const diceDamage = String(weapon.diceDamage || "0").trim() || "0";
     const weaponFlatDamage = Number(weapon.flatDamage) || 0;
     const targetedFlatDamage = Number(targetChoice.flatDamage) || 0;
@@ -1486,7 +1740,7 @@ export class AshdomCharacterSheet extends
       const note = String(weapon.note ?? "").trim();
       const noteContent = note
         ? "<div class='ashdom-roll-note'><strong>Notes:</strong><br>" +
-            escapeHTML(note).replace(/\r?\n/g, "<br>") +
+            (await enrichChatNote(note, this.actor)) +
           "</div>"
         : "";
       const effectContent = targetChoice.effect
@@ -1503,6 +1757,8 @@ export class AshdomCharacterSheet extends
         `Adjusted Total: ${adjustedTotal}`,
         `${d100 ? "D100" : "D20"}: ${attackRoll.total}`,
         `Critical Result: ${criticalLabel}`,
+        `Weapon CC (S): ${weaponCC.successModifier}`,
+        `Weapon CC (F): ${weaponCC.failureModifier}`,
         `CC Success: 1-${ccSuccess} (Targeted +${targetedCCBonus})`,
         `CC Failure: ${ccFailure}-${d100 ? 100 : 20}`,
         `${adjustedTotal} - ${attackRoll.total} = ${result}`,
@@ -1660,8 +1916,12 @@ export class AshdomCharacterSheet extends
     const ac = Number(weapon.ac) || 0;
     const dt = Number(weapon.dt) || 0;
     const damageType = String(weapon.damageType || "").trim() || "—";
-    const ccSuccess = Number(this.actor.system.secondary?.cc?.success) || 1;
-    const ccFailure = Number(this.actor.system.secondary?.cc?.failure) || 20;
+    const weaponCC = AshdomCharacterSheet.#weaponCriticalRanges(
+      this.actor,
+      weapon
+    );
+    const ccSuccess = weaponCC.success;
+    const ccFailure = weaponCC.failure;
     const diceDamage = String(weapon.diceDamage || "0").trim() || "0";
     const weaponFlatDamage = Number(weapon.flatDamage) || 0;
     const halvedFlatDamage = Math.sign(weaponFlatDamage) *
@@ -1698,7 +1958,7 @@ export class AshdomCharacterSheet extends
       const note = String(weapon.note ?? "").trim();
       const noteContent = note
         ? "<div class='ashdom-roll-note'><strong>Notes:</strong><br>" +
-            escapeHTML(note).replace(/\r?\n/g, "<br>") +
+            (await enrichChatNote(note, this.actor)) +
           "</div>"
         : "";
       const tierDetails = tierResults.flatMap(tier => [
@@ -1715,6 +1975,8 @@ export class AshdomCharacterSheet extends
         `Roll Modifier: ${rollModifier}`,
         `${d100 ? "D100" : "D20"}: ${attackRoll.total}`,
         `Critical Result: ${criticalLabel}`,
+        `Weapon CC (S): ${weaponCC.successModifier}`,
+        `Weapon CC (F): ${weaponCC.failureModifier}`,
         `Critical Tier: ${burstChoice.selected.label} (one hit only)`,
         `CC Success: 1-${ccSuccess}`,
         `CC Failure: ${ccFailure}-${d100 ? 100 : 20}`,
@@ -1859,7 +2121,7 @@ export class AshdomCharacterSheet extends
     const note = String(this.actor.system.health?.reaperNote ?? "").trim();
     const noteContent = note
       ? "<div class='ashdom-roll-note'><strong>Notes:</strong><br>" +
-          escapeHTML(note).replace(/\r?\n/g, "<br>") +
+          (await enrichChatNote(note, this.actor)) +
         "</div>"
       : "";
     const details = `Reaper Check\nD10: ${result}`;
@@ -1911,7 +2173,7 @@ export class AshdomCharacterSheet extends
     const note = String(statData.note ?? "").trim();
     const noteContent = note
       ? "<div class='ashdom-roll-note'><strong>Notes:</strong><br>" +
-          escapeHTML(note).replace(/\r?\n/g, "<br>") +
+          (await enrichChatNote(note, this.actor)) +
         "</div>"
       : "";
 
@@ -2038,8 +2300,20 @@ export class AshdomCharacterSheet extends
       ? textarea.value
       : savedNote;
 
+    const equipmentModNote = path.match(/^system\.(armors|weapons)\.(\d+)\.mods\.(\d+)\.note$/);
+    if (equipmentModNote) {
+      const [, collection, equipmentIndex, modIndex] = equipmentModNote;
+      const entries = foundry.utils.deepClone(this.actor.toObject().system[collection] ?? []);
+      const mod = entries[Number(equipmentIndex)]?.mods?.[Number(modIndex)];
+      if (mod) {
+        mod.note = String(noteToSave);
+        await this.actor.update({ [`system.${collection}`]: entries });
+      }
+      return;
+    }
+
     const repeatableNote = path.match(
-      /^system\.(perks|weapons|armors|vehicles|inventoryItems)\.(\d+)\.(note|concealedNote)$/
+      /^system\.(perks|augmentations|weapons|armors|vehicles|inventoryItems)\.(\d+)\.(note|concealedNote)$/
     );
 
     if (repeatableNote) {
@@ -2125,7 +2399,7 @@ export class AshdomCharacterSheet extends
     const noteContent = note
       ? "<div class='ashdom-roll-note'>" +
           "<strong>Notes:</strong><br>" +
-          escapeHTML(note).replace(/\r?\n/g, "<br>") +
+          (await enrichChatNote(note, actor)) +
         "</div>"
       : "";
 

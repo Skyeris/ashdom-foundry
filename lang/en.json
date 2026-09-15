@@ -3,7 +3,8 @@
     "SystemName": "ASHDOM - A Post-Apocalyptic Roleplaying System",
     "CharacterSheet": "ASHDOM Character Sheet",
     "NPCSheet": "ASHDOM NPC Sheet",
-    "ItemSheet": "ASHDOM Item Sheet"
+    "ItemSheet": "ASHDOM Item Sheet",
+    "VehicleSheet": "ASHDOM Vehicle Sheet"
   },
   "TYPES.Actor.character": "Character",
   "TYPES.Actor.npc": "NPC",
@@ -22,5 +23,6 @@
   "TYPES.Item.vehicle": "Vehicle",
   "TYPES.Item.vehicleMod": "Vehicle Mod",
   "TYPES.Item.implant": "Implant",
-  "TYPES.Item.cybernetic": "Cybernetic"
+  "TYPES.Item.cybernetic": "Cybernetic",
+  "TYPES.Actor.vehicle": "Vehicle"
 }

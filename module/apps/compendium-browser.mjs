@@ -12,6 +12,14 @@ const INDEX_FIELDS = [
   "system.value"
 ];
 
+const RARITY_ORDER = Object.freeze({
+  Common: 0,
+  Uncommon: 1,
+  Rare: 2,
+  Radical: 3,
+  Atomic: 4
+});
+
 function text(value) {
   return String(value ?? "").trim();
 }
@@ -94,7 +102,15 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
       }
     }
 
-    entries.sort((a, b) => a.name.localeCompare(b.name));
+    entries.sort((a, b) => {
+      const rarityDifference =
+        (RARITY_ORDER[a.rarity] ?? Number.MAX_SAFE_INTEGER) -
+        (RARITY_ORDER[b.rarity] ?? Number.MAX_SAFE_INTEGER);
+
+      return rarityDifference ||
+        a.name.localeCompare(b.name, undefined, { sensitivity: "base", numeric: true }) ||
+        a.packLabel.localeCompare(b.packLabel);
+    });
 
     return foundry.utils.mergeObject(context, {
       entries,

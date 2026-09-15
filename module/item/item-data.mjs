@@ -76,9 +76,9 @@ export class AshdomWeaponData extends foundry.abstract.TypeDataModel {
       damageType: text(),
       diceDamage: text(),
       flatDamage: number(),
-      capacityCurrent: number({ min: 0 }),
       capacityMax: number({ min: 0 }),
-      itemType: text(),
+      ccSuccessModifier: number(),
+      ccFailureModifier: number(),
       reloadAP: number({ min: 0 }),
       ammoType: text(),
       burstLimit: text(),
@@ -167,7 +167,6 @@ export class AshdomGearData extends AshdomInventoryData {
       quantity: number({ min: 0 }),
       weight: number({ min: 0 }),
       totalWeight: number({ min: 0 }),
-      itemType: text(),
       condition: text({ initial: "Pristine", choices: ["Pristine", "Broken"] }),
       note: text()
     };
@@ -186,8 +185,6 @@ export class AshdomConsumableData extends AshdomInventoryData {
       rarity: rarity(),
       value: number({ min: 0 }),
       quantity: number({ integer: true, min: 0 }),
-      usesCurrent: number({ integer: true, min: 0 }),
-      usesMax: number({ integer: true, min: 0 }),
       weight: number({ min: 0 }),
       totalWeight: number({ min: 0 }),
       note: text()
@@ -200,7 +197,6 @@ export class AshdomModData extends AshdomInventoryData {
     return {
       ...inventoryFields(),
       rarity: rarity(),
-      modType: text(),
       modifier: number()
     };
   }
@@ -211,7 +207,33 @@ export class AshdomAmmunitionData extends AshdomInventoryData {
 }
 
 export class AshdomRobotPartData extends AshdomInventoryData {
-  static defineSchema() { return { ...inventoryFields(), rarity: rarity() }; }
+  static defineSchema() {
+    return {
+      ...inventoryFields(),
+      rarity: rarity(),
+      conductive: new fields.BooleanField({ initial: false }),
+      insulated: new fields.BooleanField({ initial: false }),
+      targetable: new fields.SchemaField({
+        head: new fields.BooleanField({ initial: true }),
+        torso: new fields.BooleanField({ initial: true }),
+        arms: new fields.BooleanField({ initial: true }),
+        legs: new fields.BooleanField({ initial: true }),
+        groin: new fields.BooleanField({ initial: true })
+      }),
+      hardplate: new fields.SchemaField({
+        head: new fields.BooleanField({ initial: false }),
+        torso: new fields.BooleanField({ initial: false }),
+        arms: new fields.BooleanField({ initial: false }),
+        legs: new fields.BooleanField({ initial: false }),
+        groin: new fields.BooleanField({ initial: false })
+      }),
+      ratings: new fields.SchemaField({
+        ac: armorRating(), n: armorRating(), l: armorRating(),
+        f: armorRating(), p: armorRating(), e: armorRating(),
+        dr: armorRating(), rr: armorRating()
+      })
+    };
+  }
 }
 
 export class AshdomLiteratureData extends AshdomInventoryData {
@@ -244,7 +266,6 @@ export class AshdomVehicleData extends foundry.abstract.TypeDataModel {
   static defineSchema() {
     return {
       ...taxonomyFields(),
-      vehicleType: text(),
       hpCurrent: number({ min: 0 }),
       hpMax: number({ min: 0 }),
       cwCurrent: number({ min: 0 }),
