@@ -59,9 +59,16 @@ export function getAshdomItemIcon(
   type,
   category = "",
   subcategory = "",
-  rarity = "Common"
+  rarity = "Common",
+  perkType = ""
 ) {
   const typeName = String(type);
+  if (typeName === "skillSpec") return `${ICON_ROOT}/skill-spec.svg`;
+  if (typeName === "perk") {
+    const kind = String(perkType || category).trim().toLowerCase();
+    const icon = kind === "mutation" ? "mutation" : kind === "trait" ? "trait" : kind === "skill spec" ? "skill-spec" : "perk";
+    return `${ICON_ROOT}/${icon}.svg`;
+  }
   const categoryName = String(category);
   const subcategoryName = String(subcategory);
   const file =

@@ -121,6 +121,7 @@ function createPerk() {
         "Background",
         "Bestiary",
         "FORMULA",
+        "Mutation",
         "Racial",
         "Roleplay",
         "Skill Spec",

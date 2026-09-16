@@ -138,8 +138,9 @@ export class AshdomPerkData extends foundry.abstract.TypeDataModel {
       ...taxonomyFields(),
       perkType: text({
         initial: "Trait",
-        choices: ["Background", "Bestiary", "FORMULA", "Racial", "Roleplay", "Skill Spec", "Trait"]
+        choices: ["Background", "Bestiary", "FORMULA", "Mutation", "Racial", "Roleplay", "Skill Spec", "Trait"]
       }),
+      rank: number({ integer: true, min: 0 }),
       note: text(),
       chargesCurrent: number({ integer: true, min: 0 }),
       chargesMax: number({ integer: true, min: 0 })

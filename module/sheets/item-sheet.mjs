@@ -10,7 +10,7 @@ import {
 } from "../config.mjs";
 
 function optionMap(values) {
-  return Object.fromEntries(values.map(value => [value, value]));
+  return Object.fromEntries([...values].sort((a, b) => a.localeCompare(b)).map(value => [value, value]));
 }
 
 export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
@@ -125,13 +125,15 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     context.isInventoryType = destinations.includes("inventory");
     context.isGeneralInventoryType = context.isInventoryType &&
       !["weapon", "armor"].includes(this.item.type);
-    context.skillChoices = ASHDOM_SKILLS;
+    context.skillChoices = Object.fromEntries(
+      Object.entries(ASHDOM_SKILLS).sort((a, b) => a[1].localeCompare(b[1]))
+    );
     context.damageTypes = {
       "": "", Normal: "Normal", Laser: "Laser", Fire: "Fire", Plasma: "Plasma",
       Explosive: "Explosive", Poison: "Poison", True: "True"
     };
     context.perkTypes = {
-      Background: "Background", Bestiary: "Bestiary", FORMULA: "FORMULA",
+      Background: "Background", Bestiary: "Bestiary", FORMULA: "FORMULA", Mutation: "Mutation",
       Racial: "Racial", Roleplay: "Roleplay", "Skill Spec": "Skill Spec", Trait: "Trait"
     };
     context.conditions = { Pristine: "Pristine", Broken: "Broken" };

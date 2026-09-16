@@ -827,6 +827,7 @@ export class AshdomCharacterSheet extends
       Background: "Background",
       Bestiary: "Bestiary",
       FORMULA: "FORMULA",
+      Mutation: "Mutation",
       Racial: "Racial",
       Roleplay: "Roleplay",
       "Skill Spec": "Skill Spec",
@@ -1070,7 +1071,7 @@ export class AshdomCharacterSheet extends
 
   static async #onSubmitForm(event, form, formData) {
 
-    const updateData = formData.object;
+    const updateData = foundry.utils.expandObject(formData.object);
 
     for (const collection of [
       "perks",
@@ -1088,11 +1089,6 @@ export class AshdomCharacterSheet extends
       const submittedEntries = foundry.utils.getProperty(updateData, path);
 
       if (submittedEntries) {
-        const normalized = Array.isArray(submittedEntries)
-          ? Array.from(submittedEntries)
-          : Object.keys(submittedEntries)
-          .sort((left, right) => Number(left) - Number(right))
-          .map(index => submittedEntries[index]);
         const currentEntries = foundry.utils.deepClone(
           this.actor.toObject().system[collection] ?? []
         );
@@ -1104,7 +1100,10 @@ export class AshdomCharacterSheet extends
           "vehicles",
           "inventoryItems"
         ]);
-        const preserved = normalized.map((entry, index) => {
+        const preserved = foundry.utils.deepClone(currentEntries);
+        for (const [key, entry] of Object.entries(submittedEntries)) {
+          const index = Number(key);
+          if (!Number.isInteger(index) || index < 0 || index >= currentEntries.length) continue;
           const currentEntry = currentEntries[index] ?? {};
           const mergedEntry = foundry.utils.mergeObject(
             currentEntry,
@@ -1130,8 +1129,8 @@ export class AshdomCharacterSheet extends
             mergedEntry.note = String(currentEntry.note ?? "");
           }
 
-          return mergedEntry;
-        });
+          preserved[index] = mergedEntry;
+        }
 
         foundry.utils.setProperty(updateData, path, preserved);
       }
@@ -1536,7 +1535,7 @@ export class AshdomCharacterSheet extends
     const rollModifier = rollModifierInput;
     const singleModifier = Number(weapon.s) || 0;
     const adjustedTotal =
-      skillTotal + singleModifier + rollModifier;
+      skillTotal + rollModifier;
     const acReduction = Number(weapon.ac) || 0;
     const dtReduction = Number(weapon.dt) || 0;
     const damageType = String(weapon.damageType || "").trim() || "—";
@@ -1578,7 +1577,7 @@ export class AshdomCharacterSheet extends
         `${weaponName} — Single Attack`,
         `Skill: ${skillName}`,
         `Skill Total: ${skillTotal}`,
-        `Single Attack Modifier: ${singleModifier}`,
+        `Single Attack AP Cost: ${singleModifier}`,
         `Roll Modifier: ${rollModifier}`,
         `Adjusted Total: ${adjustedTotal}`,
         `${d100 ? "D100" : "D20"}: ${attackRoll.total}`,
@@ -1701,7 +1700,7 @@ export class AshdomCharacterSheet extends
     const rollModifier = rollModifierInput;
     const targetedModifier = Number(weapon.t) || 0;
     const adjustedTotal =
-      skillTotal + targetedModifier + rollModifier + targetChoice.penalty;
+      skillTotal + rollModifier + targetChoice.penalty;
     const ac = Number(weapon.ac) || 0;
     const dt = Number(weapon.dt) || 0;
     const damageType = String(weapon.damageType || "").trim() || "—";
@@ -1752,7 +1751,7 @@ export class AshdomCharacterSheet extends
         `Target: ${targetChoice.label}`,
         `Skill: ${skillName}`,
         `Skill Total: ${skillTotal}`,
-        `Targeted Attack Modifier: ${targetedModifier}`,
+        `Targeted Attack AP Cost: ${targetedModifier}`,
         `Roll Modifier: ${rollModifier}`,
         `Adjusted Total: ${adjustedTotal}`,
         `${d100 ? "D100" : "D20"}: ${attackRoll.total}`,
@@ -1912,7 +1911,7 @@ export class AshdomCharacterSheet extends
     const skillTotal = Number(skillData.total) || 0;
     const rollModifier = rollModifierInput;
     const burstModifier = Number(weapon.b) || 0;
-    const baseTotal = skillTotal + burstModifier + rollModifier;
+    const baseTotal = skillTotal + rollModifier;
     const ac = Number(weapon.ac) || 0;
     const dt = Number(weapon.dt) || 0;
     const damageType = String(weapon.damageType || "").trim() || "—";
@@ -1971,7 +1970,7 @@ export class AshdomCharacterSheet extends
         `${weaponName} — ${burstType.label}`,
         `Skill: ${skillName}`,
         `Skill Total: ${skillTotal}`,
-        `Burst Attack Modifier: ${burstModifier}`,
+        `Burst Attack AP Cost: ${burstModifier}`,
         `Roll Modifier: ${rollModifier}`,
         `${d100 ? "D100" : "D20"}: ${attackRoll.total}`,
         `Critical Result: ${criticalLabel}`,
