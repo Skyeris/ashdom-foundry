@@ -72,12 +72,9 @@
 
     {{#if isPerk}}
       <label class="ashdom-item-field"><span>PERK TYPE</span><select name="system.perkType">{{selectOptions perkTypes selected=system.perkType}}</select></label>
-      <div class="ashdom-item-grid"><label><span>CHARGES</span><input type="number" min="0" name="system.chargesCurrent" value="{{system.chargesCurrent}}"></label><label><span>MAX</span><input type="number" min="0" name="system.chargesMax" value="{{system.chargesMax}}"></label></div>
+      <label class="ashdom-item-field"><span>RANK</span><input type="number" min="0" step="1" name="system.rank" value="{{system.rank}}"></label>
     {{/if}}
 
-    {{#if isSkillSpec}}
-      <div class="ashdom-item-grid"><label><span>CHARGES</span><input type="number" min="0" name="system.chargesCurrent" value="{{system.chargesCurrent}}"></label><label><span>MAX</span><input type="number" min="0" name="system.chargesMax" value="{{system.chargesMax}}"></label></div>
-    {{/if}}
 
     {{#if isGear}}
       <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
@@ -88,7 +85,7 @@
     {{/if}}
 
     {{#if isMod}}
-      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>MODIFIER</span><input type="number" name="system.modifier" value="{{system.modifier}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
+      <div class="ashdom-item-grid"><label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label><label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label><label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label></div>
     {{/if}}
 
     {{#if isGeneralInventoryType}}
@@ -97,7 +94,6 @@
           <label><span>QUANTITY</span><input type="number" min="0" name="system.quantity" value="{{system.quantity}}"></label>
           <label><span>WEIGHT</span><input type="number" min="0" name="system.weight" value="{{system.weight}}"></label>
           <label><span>CONDITION</span><select name="system.condition">{{selectOptions conditions selected=system.condition}}</select></label>
-          {{#if isVehicleMod}}<label><span>MODIFIER</span><input type="number" name="system.modifier" value="{{system.modifier}}"></label>{{/if}}
         </div>
       {{/unless}}{{/unless}}{{/unless}}
     {{/if}}

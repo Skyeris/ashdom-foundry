@@ -20,7 +20,9 @@ for (const filename of fs.readdirSync(directory)) {
       `<g transform="translate(0 ${index * 43}) translate(232 20) scale(2) translate(-232 -20)">${star}</g>`
     ).join("");
     const badge = `<g fill="#fff" stroke="#000" stroke-width="2" stroke-linejoin="round">${stars}</g>`;
-    const result = source.replace("</svg>", `${badge}</svg>`);
+    const result = ["perk", "trait", "mutation", "skill-spec"].includes(basename)
+      ? source
+      : source.replace("</svg>", `${badge}</svg>`);
     fs.writeFileSync(path.join(directory, `${basename}-${rarity}.svg`), result);
   });
 }

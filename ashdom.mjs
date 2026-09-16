@@ -155,7 +155,8 @@ Hooks.on("preCreateItem", (item, data) => {
       data.type ?? item.type,
       data.system?.category ?? item.system?.category,
       data.system?.subcategory ?? item.system?.subcategory,
-      data.system?.rarity ?? item.system?.rarity
+      data.system?.rarity ?? item.system?.rarity,
+      data.system?.perkType ?? item.system?.perkType
     )
   });
 });
@@ -168,7 +169,8 @@ Hooks.on("preUpdateItem", (item, changes) => {
     item.system?.rarity;
   const subcategory = foundry.utils.getProperty(changes, "system.subcategory") ??
     item.system?.subcategory;
-  changes.img = getAshdomItemIcon(item.type, category, subcategory, rarity);
+  const perkType = foundry.utils.getProperty(changes, "system.perkType") ?? item.system?.perkType;
+  changes.img = getAshdomItemIcon(item.type, category, subcategory, rarity, perkType);
 });
 
 Hooks.on("renderCompendiumDirectory", (application, html) => {
