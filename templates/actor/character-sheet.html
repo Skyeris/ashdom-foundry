@@ -1080,6 +1080,56 @@
       <div class="ashdom-data-column">
 
         <section class="ashdom-panel ashdom-data-panel">
+          <h2>PERK &amp; TRAIT CHARGES</h2>
+
+          <div class="ashdom-tracker-header ashdom-charge-grid">
+            <span></span>
+            <span>TRACKER</span>
+            <span>CURRENT</span>
+            <span>MAX</span>
+            <span></span>
+          </div>
+
+          {{#each chargeTrackers}}
+            <div class="ashdom-tracker-row ashdom-charge-grid" data-reorder-entry data-collection="chargeTrackers" data-index="{{index}}">
+              <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag charge tracker to reorder">⠿</button>
+
+              <input
+                type="text"
+                name="system.chargeTrackers.{{index}}.name"
+                value="{{name}}"
+                placeholder="Tracker Name"
+              >
+              <input
+                type="number"
+                name="system.chargeTrackers.{{index}}.current"
+                value="{{current}}"
+                aria-label="Current charges"
+              >
+              <input
+                type="number"
+                min="0"
+                name="system.chargeTrackers.{{index}}.max"
+                value="{{max}}"
+                aria-label="Maximum charges"
+              >
+              <button
+                type="button"
+                class="ashdom-delete-button"
+                data-action="deleteDataEntry"
+                data-collection="chargeTrackers"
+                data-index="{{index}}"
+                aria-label="Delete charge tracker"
+              >×</button>
+            </div>
+          {{/each}}
+
+          <button type="button" class="ashdom-add-button" data-action="addDataEntry" data-collection="chargeTrackers">
+            + ADD TRACKER
+          </button>
+        </section>
+
+        <section class="ashdom-panel ashdom-data-panel">
           <h2>EFFECTS TRACKER</h2>
 
           <div class="ashdom-tracker-header ashdom-effect-grid">
