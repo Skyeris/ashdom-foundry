@@ -11,7 +11,9 @@ ASHDOM is the official Foundry Virtual Tabletop implementation of the ASHDOM tab
 
 ## Current Features
 
-- ASHDOM character sheet
+- Character Sheet
+- NPC Sheet
+- Vehicle Sheet
 - Primary and Secondary Statistics
 - Automatic Skill calculations
 - Tagged Skills
@@ -30,6 +32,7 @@ ASHDOM is the official Foundry Virtual Tabletop implementation of the ASHDOM tab
   - Psychic Anomalies
   - D100 Variant Rule
   - Expanded Crippled Status
+- Drag and drop compatibility with the Core Book Compendium
 
 ## Installation
 
