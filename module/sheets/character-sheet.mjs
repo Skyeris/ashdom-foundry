@@ -144,6 +144,7 @@ export class AshdomCharacterSheet extends
 
     this._activateDataReordering();
     this._activateArmorItemDrops();
+    this._activatePerkWeaponDrops();
     this._activateInventoryItemDrops();
     this._activateAugmentationDrops();
     this._activateEquipmentModDrops();
@@ -284,7 +285,7 @@ export class AshdomCharacterSheet extends
       return blocks.join("\n\n");
     };
 
-    this.element.querySelectorAll("[data-armor-drop-slot]")
+    this.element.querySelectorAll("[data-armor-drop-slot], [data-armor-drop-zone]")
       .forEach(target => {
         target.addEventListener("dragover", event => {
           event.preventDefault();
@@ -297,7 +298,9 @@ export class AshdomCharacterSheet extends
         });
 
         target.addEventListener("drop", async event => {
+          if (this._draggedDataEntry || !this.isEditable) return;
           event.preventDefault();
+          event.stopPropagation();
           target.classList.remove("ashdom-armor-drop-ready");
 
           let dragData;
@@ -316,14 +319,27 @@ export class AshdomCharacterSheet extends
             return ui.notifications.warn("Only ASHDOM Armor Items or Robot Body parts can be dropped into an Armor slot.");
           }
 
-          const index = Number(target.dataset.armorIndex);
-          const targetSlot = target.dataset.armorDropSlot;
+          let index = Number(target.dataset.armorIndex);
+          const targetSlot = target.dataset.armorDropSlot ?? "armorSet";
           const categorySlot = isRobotBody ? "armorSet" : slotFromCategory(item.system.category);
           const resolvedSlot = categorySlot ?? targetSlot;
           const component = slotData[resolvedSlot];
           const armors = foundry.utils.deepClone(
             this.actor.toObject().system.armors ?? []
           );
+
+          if (target.hasAttribute("data-armor-drop-zone")) {
+            index = this.actor.type === "npc" ? 0 : armors.length;
+            if (!armors[index]) {
+              armors[index] = {
+                name: "", helmetName: "", underArmorName: "", note: "", mods: [],
+                equipped: false, condition: "Pristine", drDamage: 0,
+                targetable: Object.fromEntries(["head", "torso", "arms", "legs", "groin"].map(key => [key, true])),
+                hardplate: {},
+                ratings: Object.fromEntries(["ac", "n", "l", "f", "p", "e", "dr", "rr"].map(key => [key, { base: 0, ua: 0, armorSet: 0, helmet: 0, modifier: 0 }]))
+              };
+            }
+          }
 
           if (!component || !Number.isInteger(index) || !armors[index]) return;
 
@@ -379,6 +395,37 @@ export class AshdomCharacterSheet extends
   /* =========================================
      DROP COMPENDIUM ITEMS INTO INVENTORY
   ========================================= */
+
+  _activatePerkWeaponDrops() {
+    this.element.querySelectorAll("[data-item-section]").forEach(target => {
+      target.addEventListener("dragover", event => {
+        if (this._draggedDataEntry || !this.isEditable) return;
+        event.preventDefault();
+        event.dataTransfer.dropEffect = "copy";
+      });
+      target.addEventListener("drop", async event => {
+        if (this._draggedDataEntry || !this.isEditable) return;
+        event.preventDefault();
+        event.stopPropagation();
+        let data;
+        try { data = JSON.parse(event.dataTransfer.getData("text/plain")); } catch { return; }
+        if (data?.type !== "Item" || !data.uuid) return;
+        const item = await fromUuid(data.uuid);
+        const collection = target.dataset.itemSection;
+        if (!item || !(ASHDOM_ITEM_DESTINATIONS[item.type] ?? []).includes(collection)) {
+          return ui.notifications.warn(`Drop a matching Item in the ${collection} section.`);
+        }
+        const source = item.system.toObject?.() ?? item.system;
+        const entries = foundry.utils.deepClone(this.actor.toObject().system[collection] ?? []);
+        if (collection === "perks") {
+          entries.push({ name: item.name, type: item.type === "skillSpec" ? "Skill Spec" : source.perkType || "Trait", note: source.note ?? "", rank: Number(source.rank) || 0 });
+        } else if (collection === "weapons") {
+          entries.push({ ...foundry.utils.deepClone(source), name: item.name, mods: foundry.utils.deepClone(source.mods ?? []), itemType: source.itemType || source.subcategory || source.category || "", capacityCurrent: source.capacityCurrent ?? source.capacityMax ?? 0 });
+        } else return;
+        await this.actor.update({ [`system.${collection}`]: entries });
+      });
+    });
+  }
 
   _activateEquipmentModDrops() {
     this.element.querySelectorAll("[data-equipment-mod-drop]").forEach(target => {
@@ -641,6 +688,7 @@ export class AshdomCharacterSheet extends
 
     context.actor = this.actor;
     context.system = this.actor.system;
+    context.bodyTypeChoices = { Humanoid: "Humanoid", Creature: "Creature", Robot: "Robot" };
     context.activeTab = this._activeTab ?? "character";
     context.tabs = {
       character: context.activeTab === "character",

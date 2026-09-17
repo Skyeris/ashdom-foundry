@@ -38,8 +38,10 @@
         </div>
 
         <div class="ashdom-form-row">
-          <label>AGE</label>
-          <input type="number" name="system.details.age" value="{{system.details.age}}">
+          <label>BODY TYPE</label>
+          <select name="system.details.bodyType" aria-label="Body Type">
+            {{selectOptions bodyTypeChoices selected=system.details.bodyType}}
+          </select>
         </div>
 
         <div class="ashdom-form-row">
@@ -641,7 +643,7 @@
              ARMOR
         ================================== -->
 
-        <section class="ashdom-panel ashdom-armor-panel">
+        <section class="ashdom-panel ashdom-armor-panel" data-armor-drop-zone>
           <h2>ARMOR</h2>
 
           <div class="ashdom-armor-list">
@@ -908,7 +910,7 @@
 
         </div>
 
-        <section class="ashdom-panel ashdom-weapons-panel">
+        <section class="ashdom-panel ashdom-weapons-panel" data-item-section="weapons">
           <h2>WEAPONS</h2>
 
           <div class="ashdom-weapon-list">
@@ -1006,7 +1008,7 @@
     <div class="ashdom-data-layout">
 
       <div class="ashdom-data-column">
-        <section class="ashdom-panel ashdom-data-panel">
+        <section class="ashdom-panel ashdom-data-panel" data-item-section="perks">
           <h2>PERKS, TRAITS &amp; SKILL SPECS</h2>
 
           <div class="ashdom-perk-list">

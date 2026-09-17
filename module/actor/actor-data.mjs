@@ -114,6 +114,7 @@ function createCriticalChance() {
 
 function createPerk() {
   return new fields.SchemaField({
+    rank: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
     name: new fields.StringField({ initial: "" }),
     type: new fields.StringField({
       initial: "Trait",
@@ -318,6 +319,16 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
      DERIVED DATA
   ========================================= */
 
+  _armorBase(key, rating) {
+    if (key === "ac") return this.secondary.baseAC.total;
+    if (key === "rr") return this.secondary.baseRR.total;
+    return Number(rating.base) || 0;
+  }
+
+  _primaryTotal(base, modifier) {
+    return base + modifier;
+  }
+
   prepareDerivedData() {
 
     super.prepareDerivedData();
@@ -350,7 +361,7 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 
 
       this.primary[stat].total =
-        base + modifier;
+        this._primaryTotal(base, modifier);
 
     }
 
@@ -483,11 +494,7 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 
     for (const armor of this.armors ?? []) {
       for (const [ratingKey, rating] of Object.entries(armor.ratings)) {
-        const base = ratingKey === "ac"
-          ? this.secondary.baseAC.total
-          : ratingKey === "rr"
-            ? this.secondary.baseRR.total
-            : (Number(rating.base) || 0);
+        const base = this._armorBase(ratingKey, rating);
 
         rating.base = base;
         const manualTotal =
@@ -697,6 +704,11 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
           initial: "Medium"
         }),
 
+        bodyType: new fields.StringField({
+          initial: "Humanoid",
+          choices: ["Humanoid", "Creature", "Robot"]
+        }),
+
         level: new fields.NumberField({
           initial: 1,
           integer: true,
@@ -899,22 +911,22 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
    ASHDOM NPC DATA
 ========================================= */
 
-export class AshdomNPCData extends foundry.abstract.TypeDataModel {
-
-  static defineSchema() {
-
-    return {
-
-      details: new fields.SchemaField({
-
-        description: new fields.StringField({
-          initial: ""
-        })
-
-      })
-
-    };
-
+export class AshdomNPCData extends AshdomCharacterData {
+  _armorBase(key, rating) {
+    return Number(rating.base) || 0;
   }
 
+  _primaryTotal(base) {
+    return base;
+  }
+
+  static defineSchema() {
+    const schema = super.defineSchema();
+    schema.details.extendFields({
+      description: new fields.StringField({ initial: "" })
+    });
+    schema.immunities = new fields.StringField({ initial: "" });
+    schema.vulnerabilities = new fields.StringField({ initial: "" });
+    return schema;
+  }
 }

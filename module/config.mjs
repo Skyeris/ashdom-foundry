@@ -49,6 +49,7 @@ export const ASHDOM_ITEM_TAXONOMY = Object.freeze({
   perk: {
     "Racial Perk": null,
     "Background Perk": null,
+    "Bestiary Perk": null,
     "FORMULA Perk": null,
     "Roleplay Perk": null,
     Trait: null

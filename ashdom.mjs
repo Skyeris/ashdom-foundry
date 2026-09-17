@@ -1,4 +1,5 @@
 import { applyCompendiumSorting } from "./module/compendium-sorting.mjs";
+import { updateNPCIcon } from "./module/npc-icons.mjs";
 import { AshdomVehicleActorData } from "./module/actor/vehicle-data.mjs";
 import { AshdomVehicleSheet } from "./module/sheets/vehicle-sheet.mjs";
 import {
@@ -160,6 +161,14 @@ Hooks.on("preCreateItem", (item, data) => {
     )
   });
 });
+
+Hooks.on("preCreateActor", (actor, data) => {
+  const changes = { ...data };
+  updateNPCIcon(actor, changes);
+  if (changes.img !== undefined && actor.type === "npc") actor.updateSource({ img: changes.img });
+});
+
+Hooks.on("preUpdateActor", updateNPCIcon);
 
 Hooks.on("preUpdateItem", (item, changes) => {
   if (!isReplaceableItemIcon(item.img)) return;

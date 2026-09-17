@@ -2783,3 +2783,81 @@
   .ashdom-vehicle-columns { display: flex; flex-direction: column; overflow-y: auto; }
   .ashdom-vehicle-columns > section { overflow: visible; flex: 0 0 auto; }
 }
+
+/* NPC layout shares the character sheet's controls and colors. */
+.ashdom-npc-stats { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; }
+.ashdom-npc-stats > div { min-width: 0; }
+.ashdom-npc-primary { grid-template-columns: minmax(35px, 1fr) repeat(2, minmax(35px, 1fr)); }
+.ashdom-npc-stats .ashdom-secondary-row, .ashdom-npc-stats .ashdom-secondary-header { grid-template-columns: minmax(28px, 1fr) repeat(2, minmax(32px, 1fr)) 26px; }
+.ashdom-npc-sheet .ashdom-character-details-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.ashdom-npc-sheet .ashdom-npc-primary-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; margin-top: 8px; }
+.ashdom-npc-sheet .ashdom-npc-primary-strip label { display: grid; gap: 3px; text-align: center; font-weight: bold; color: var(--ashdom-gold); }
+.ashdom-npc-sheet .ashdom-npc-primary-strip input { width: 100%; min-width: 0; text-align: center; }
+.ashdom-npc-sheet .ashdom-npc-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.ashdom-npc-sheet .ashdom-npc-defense-row { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 5px; align-items: center; margin-bottom: 4px; }
+.ashdom-npc-sheet .ashdom-npc-defense-row input { width: 100%; text-align: center; }
+.ashdom-npc-sheet .ashdom-npc-defense-panel .ashdom-secondary-row,
+.ashdom-npc-sheet .ashdom-npc-defense-panel .ashdom-secondary-header { grid-template-columns: minmax(40px, 1fr) repeat(2, minmax(32px, 1fr)); }
+.ashdom-npc-sheet .ashdom-npc-defense-properties { display: flex; gap: 10px; align-items: center; margin: 8px 0; }
+.ashdom-npc-sheet .ashdom-npc-defense-properties label { display: flex; align-items: center; gap: 5px; }
+.ashdom-npc-sheet .ashdom-npc-dr input { background: #a5a5a5; color: #000; }
+.ashdom-npc-sheet .ashdom-npc-dr > label { color: #a5a5a5; }
+
+
+/* Match NPC defenses to the armor palette. */
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row.ashdom-armor-rating-ac input { background: #b9dbe9 !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-row.ashdom-armor-rating-ac > label { color: #b9dbe9; }
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row.ashdom-armor-rating-n input { background: #b9b9b9 !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-row.ashdom-armor-rating-n > label { color: #b9b9b9; }
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row.ashdom-armor-rating-l input { background: #ed2929 !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-row.ashdom-armor-rating-l > label { color: #ed2929; }
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row.ashdom-armor-rating-f input { background: #e84b22 !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-row.ashdom-armor-rating-f > label { color: #e84b22; }
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row.ashdom-armor-rating-p input { background: #07906e !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-row.ashdom-armor-rating-p > label { color: #07906e; }
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row.ashdom-armor-rating-e input { background: #f5e500 !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-row.ashdom-armor-rating-e > label { color: #f5e500; }
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row.ashdom-armor-rating-rr input { background: #22cf2a !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-row.ashdom-armor-rating-rr > label { color: #22cf2a; }
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-dr input { background: #a5a5a5 !important; color: #000 !important; }
+.ashdom-npc-sheet .ashdom-npc-defense-panel .ashdom-secondary-row > span:first-child,
+.ashdom-npc-sheet .ashdom-npc-defense-panel .ashdom-secondary-roll-button,
+.ashdom-npc-sheet .ashdom-npc-defense-row > label { font-size: 1em; font-weight: bold; text-align: center; }
+
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-defense-row input,
+.ashdom-npc-sheet .ashdom-sheet .ashdom-npc-dr input {
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+.ashdom-npc-sheet .ashdom-npc-defense-properties {
+  justify-content: center;
+}
+
+.ashdom-npc-sheet .ashdom-sheet .ashdom-header-vital-row.ashdom-npc-dr > label {
+  color: #a5a5a5 !important;
+}
+
+.ashdom-npc-sheet .ashdom-npc-body-type { white-space: nowrap; }
+
+.ashdom-npc-sheet .ashdom-npc-resistances { display: grid; gap: 6px; margin-top: 10px; }
+.ashdom-npc-sheet .ashdom-npc-resistances label { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 8px; align-items: center; color: var(--ashdom-gold); font-weight: bold; }
+.ashdom-npc-sheet .ashdom-npc-resistances textarea { width: 100%; min-width: 0; min-height: 48px; resize: vertical; box-sizing: border-box; font: inherit; }
+
+.ashdom-npc-sheet .ashdom-weapon-row-two {
+  grid-template-columns: 120px minmax(80px, 1fr) 58px 58px;
+}
+
+.ashdom-character-details-grid .ashdom-form-row select {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  font-size: 0.95em;
+  padding: 3px 22px 3px 6px;
+}
+
+.ashdom-character-details-grid .ashdom-form-row {
+  min-width: 0;
+}
