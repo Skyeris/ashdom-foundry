@@ -762,6 +762,26 @@
             placeholder="Biography"
           >{{system.biography}}</textarea>
         </section>
+{{#if system.settings.showCarryWeight}}
+<section class="ashdom-panel ashdom-carry-panel">
+          <div class="ashdom-carry-title-row">
+            <h2>CARRY WEIGHT</h2>
+          </div>
+
+          <div class="ashdom-carry-grid ashdom-carry-header">
+            <span>SIZE</span><span>MOD</span><span>MAX</span><span>CURRENT</span><span></span>
+          </div>
+          <div class="ashdom-carry-grid">
+            <select name="system.carryWeight.size" aria-label="Character size">
+              {{selectOptions carrySizeChoices selected=system.carryWeight.size}}
+            </select>
+            <input type="number" name="system.carryWeight.modifier" value="{{system.carryWeight.modifier}}" aria-label="Carry Weight modifier">
+            <input type="number" value="{{system.carryWeight.max}}" readonly aria-label="Maximum Carry Weight">
+            <input type="number" value="{{system.carryWeight.current}}" readonly aria-label="Current Carry Weight">
+            <button type="button" class="ashdom-note-button{{#if system.carryWeight.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.carryWeight.note" data-note-label="Carry Weight" title="Edit Carry Weight notes" aria-label="Edit Carry Weight notes">✎</button>
+          </div>
+        </section>
+{{/if}}
 <section class="ashdom-panel ashdom-items-panel" data-inventory-drop-zone>
           <h2>ITEMS</h2>
 
@@ -822,6 +842,7 @@
   >
 
     <div class="ashdom-settings-layout">
+      <div class="ashdom-npc-settings-left">
       <section class="ashdom-panel ashdom-settings-panel">
         <h2>CRITICAL CHANCE</h2>
         <label class="ashdom-settings-number-row">
@@ -851,6 +872,18 @@
         </p>
       </section>
 
+      <section class="ashdom-panel ashdom-settings-panel">
+        <h2>CARRY WEIGHT</h2>
+        <label class="ashdom-variant-rule-row">
+          <span>SHOW CARRY WEIGHT</span>
+          <span class="ashdom-tag-checkbox">
+            <input type="checkbox" name="system.settings.showCarryWeight" {{checked system.settings.showCarryWeight}} aria-label="Show Carry Weight in Data">
+            <span aria-hidden="true">✓</span>
+          </span>
+        </label>
+      </section>
+
+      </div>
       <section class="ashdom-panel ashdom-settings-panel">
         <h2>VARIANT RULES</h2>
         <label class="ashdom-variant-rule-row">

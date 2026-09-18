@@ -2842,6 +2842,7 @@
 
 .ashdom-npc-sheet .ashdom-npc-body-type { white-space: nowrap; }
 
+.ashdom-npc-sheet .ashdom-npc-settings-left { display: grid; gap: 12px; align-content: start; min-width: 0; }
 .ashdom-npc-sheet .ashdom-npc-resistances { display: grid; gap: 6px; margin-top: 10px; }
 .ashdom-npc-sheet .ashdom-npc-resistances label { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 8px; align-items: center; color: var(--ashdom-gold); font-weight: bold; }
 .ashdom-npc-sheet .ashdom-npc-resistances textarea { width: 100%; min-width: 0; min-height: 48px; resize: vertical; box-sizing: border-box; font: inherit; }

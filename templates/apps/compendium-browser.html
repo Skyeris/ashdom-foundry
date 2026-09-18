@@ -2,7 +2,7 @@
   <header class="ashdom-browser-toolbar">
     <label class="ashdom-browser-search">
       <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
-      <input type="search" data-browser-filter="search" placeholder="Search ASHDOM items" autocomplete="off">
+      <input type="search" data-browser-filter="search" placeholder="Search items and actors" autocomplete="off">
     </label>
     <button type="button" data-action="refresh" title="Refresh compendium index">
       <i class="fa-solid fa-rotate" aria-hidden="true"></i> Refresh
@@ -10,6 +10,9 @@
   </header>
 
   <section class="ashdom-browser-filters" aria-label="Compendium filters">
+    <label><span>FORMULA RANK (UP TO)</span><input type="number" min="0" step="1" data-browser-filter="rank" placeholder="All ranks" title="Show FORMULA perks at or below this rank"></label>
+    <label><span>FOLDER</span><select data-browser-filter="folder">{{selectOptions folderChoices blank="All Folders"}}</select></label>
+    <label><span>DEFCON TIER</span><select data-browser-filter="defcon"><option value="">All Tiers</option value="5">5 — Lowest</option><option value="4">4</option><option value="3">3</option><option value="2">2</option><option value="1">1 — Most Dangerous</option></select></label>
     <label><span>PACK</span><select data-browser-filter="pack">{{selectOptions packChoices blank="All Packs"}}</select></label>
     <label><span>TYPE</span><select data-browser-filter="type">{{selectOptions typeChoices blank="All Types"}}</select></label>
     <label><span>CATEGORY</span><select data-browser-filter="category">{{selectOptions categoryChoices blank="All Categories"}}</select></label>
@@ -19,7 +22,7 @@
   </section>
 
   <div class="ashdom-browser-status">
-    Showing <strong data-result-count>{{entryCount}}</strong> of {{entryCount}} Items across {{packCount}} packs
+    Showing <strong data-result-count>{{entryCount}}</strong> of {{entryCount}} entries across {{packCount}} packs
   </div>
 
   <section class="ashdom-browser-results">
@@ -27,6 +30,10 @@
       <article class="ashdom-browser-entry"
         draggable="true"
         data-entry-uuid="{{entry.uuid}}"
+        data-document-name="{{entry.documentName}}"
+        data-defcon="{{entry.defconTier}}"
+        data-formula-rank="{{entry.formulaRank}}"
+        data-folder="{{entry.folderPath}}"
         data-search="{{entry.search}}"
         data-pack="{{entry.packLabel}}"
         data-type="{{entry.type}}"
@@ -39,6 +46,9 @@
           <button type="button" class="ashdom-browser-name" data-action="openEntry" data-uuid="{{entry.uuid}}">{{entry.name}}</button>
           <div class="ashdom-browser-meta">
             <span>{{entry.typeLabel}}</span>
+            {{#if entry.defconTier}}<span>DEFCON {{entry.defconTier}}</span>{{/if}}
+            {{#if entry.hasFormulaRank}}<span>Rank {{entry.formulaRank}}</span>{{/if}}
+            {{#if entry.folderPath}}<span>{{entry.folderPath}}</span>{{/if}}
             {{#if entry.category}}<span>{{entry.category}}</span>{{/if}}
             {{#if entry.subcategory}}<span>{{entry.subcategory}}</span>{{/if}}
             {{#if entry.specialization}}<span>{{entry.specialization}}</span>{{/if}}
@@ -49,14 +59,14 @@
           {{#if entry.weight}}{{entry.weight}} lb{{/if}}
           {{#if entry.value}}<small>Value {{entry.value}}</small>{{/if}}
         </span>
-        <button type="button" class="ashdom-browser-import" data-action="importEntry" data-uuid="{{entry.uuid}}" title="Import to Items directory">
+        <button type="button" class="ashdom-browser-import" data-action="importEntry" data-uuid="{{entry.uuid}}" title="Import to world">
           <i class="fa-solid fa-download" aria-hidden="true"></i>
         </button>
       </article>
     {{/each}}
 
     <p class="ashdom-browser-empty" data-browser-empty {{#if entries}}hidden{{/if}}>
-      No matching Items. Add entries to an ASHDOM compendium, then press Refresh.
+      No matching entries. Change the filters or press Refresh after updating a compendium.
     </p>
   </section>
 </div>

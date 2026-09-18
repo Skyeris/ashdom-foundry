@@ -4,12 +4,16 @@ const INDEX_FIELDS = [
   "name",
   "img",
   "type",
+  "folder",
+  "system.rank",
+  "system.perkType",
   "system.rarity",
   "system.category",
   "system.subcategory",
   "system.specialization",
   "system.weight",
-  "system.value"
+  "system.value",
+  "system.details.level"
 ];
 
 const RARITY_ORDER = Object.freeze({
@@ -32,8 +36,8 @@ function optionMap(values) {
   );
 }
 
-function itemTypeLabel(type) {
-  const key = CONFIG.Item.typeLabels?.[type] ?? `TYPES.Item.${type}`;
+function itemTypeLabel(type, documentName = "Item") {
+  const key = CONFIG[documentName].typeLabels?.[type] ?? `TYPES.${documentName}.${type}`;
   const localized = game.i18n.localize(key);
   return localized === key ? type : localized;
 }
@@ -66,7 +70,7 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
     const context = await super._prepareContext(options);
     const entries = [];
     const packs = game.packs
-      .filter(pack => pack.documentName === "Item" && pack.collection.startsWith("ashdom."))
+      .filter(pack => pack.visible !== false && ((pack.documentName === "Item" && pack.collection.startsWith("ashdom.")) || pack.documentName === "Actor"))
       .sort((a, b) => a.title.localeCompare(b.title));
 
     for (const pack of packs) {
@@ -79,6 +83,20 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
         const specialization = text(foundry.utils.getProperty(entry, "system.specialization"));
         const type = text(entry.type);
         const name = text(entry.name) || "Unnamed Item";
+        const level = Number(foundry.utils.getProperty(entry, "system.details.level"));
+        const defconTier = pack.documentName === "Actor" && type === "npc" && Number.isInteger(level) && level >= 1 && level <= 5 ? String(level) : "";
+        const isFormula = type === "perk" && (foundry.utils.getProperty(entry, "system.perkType") === "FORMULA" || category === "FORMULA Perk");
+        const rank = Number(foundry.utils.getProperty(entry, "system.rank"));
+        const formulaRank = isFormula && Number.isInteger(rank) && rank >= 0 ? String(rank) : "";
+        const folderNames = [];
+        const seenFolders = new Set();
+        let folder = typeof entry.folder === "object" ? entry.folder : pack.folders?.get(entry.folder);
+        while (folder && !seenFolders.has(folder.id ?? folder._id)) {
+          seenFolders.add(folder.id ?? folder._id);
+          folderNames.unshift(folder.name);
+          folder = typeof folder.folder === "object" ? folder.folder : pack.folders?.get(folder.folder);
+        }
+        const folderPath = folderNames.join(" / ");
 
         entries.push({
           id: entry._id,
@@ -86,7 +104,12 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
           name,
           img: entry.img || CONST.DEFAULT_TOKEN,
           type,
-          typeLabel: itemTypeLabel(type),
+          documentName: pack.documentName,
+          typeLabel: itemTypeLabel(type, pack.documentName),
+          defconTier,
+          formulaRank,
+          hasFormulaRank: formulaRank !== "",
+          folderPath,
           pack: pack.collection,
           packLabel: pack.title,
           rarity,
@@ -95,7 +118,7 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
           specialization,
           weight: foundry.utils.getProperty(entry, "system.weight") ?? "",
           value: foundry.utils.getProperty(entry, "system.value") ?? "",
-          search: [name, pack.title, type, itemTypeLabel(type), rarity, category, subcategory, specialization]
+          search: [name, pack.title, type, itemTypeLabel(type, pack.documentName), rarity, category, subcategory, specialization, defconTier ? `DEFCON ${defconTier} DEFCON Tier ${defconTier}` : ""]
             .join(" ")
             .toLocaleLowerCase()
         });
@@ -117,10 +140,10 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
       entryCount: entries.length,
       packCount: packs.length,
       packChoices: optionMap(entries.map(entry => entry.packLabel)),
+      folderChoices: optionMap(entries.map(entry => entry.folderPath)),
       typeChoices: Object.fromEntries(
-        [...new Set(entries.map(entry => entry.type))]
-          .sort((a, b) => itemTypeLabel(a).localeCompare(itemTypeLabel(b)))
-          .map(type => [type, itemTypeLabel(type)])
+        [...new Map(entries.map(entry => [entry.type, entry.typeLabel]))]
+          .sort((a, b) => a[1].localeCompare(b[1]))
       ),
       categoryChoices: optionMap(entries.map(entry => entry.category)),
       subcategoryChoices: optionMap(entries.map(entry => entry.subcategory)),
@@ -144,10 +167,13 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
     });
 
     this.element.querySelectorAll("[data-entry-uuid]").forEach(row => {
+      for (const key of ["pack", "type", "category", "subcategory", "specialization", "rarity", "folder"]) {
+        row.dataset[key] = text(row.dataset[key]).toLocaleLowerCase();
+      }
       row.addEventListener("dragstart", event => {
         event.dataTransfer.effectAllowed = "copy";
         event.dataTransfer.setData("text/plain", JSON.stringify({
-          type: "Item",
+          type: row.dataset.documentName,
           uuid: row.dataset.entryUuid,
           category: row.dataset.category
         }));
@@ -169,7 +195,10 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
       category: value("category"),
       subcategory: value("subcategory"),
       specialization: value("specialization"),
-      rarity: value("rarity")
+      rarity: value("rarity"),
+      defcon: value("defcon"),
+      rank: value("rank"),
+      folder: value("folder")
     };
 
     let visible = 0;
@@ -180,7 +209,10 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
         && (!filters.category || row.dataset.category === filters.category)
         && (!filters.subcategory || row.dataset.subcategory === filters.subcategory)
         && (!filters.specialization || row.dataset.specialization === filters.specialization)
-        && (!filters.rarity || row.dataset.rarity === filters.rarity);
+        && (!filters.rarity || row.dataset.rarity === filters.rarity)
+        && (!filters.defcon || row.dataset.defcon === filters.defcon)
+        && (!filters.folder || row.dataset.folder === filters.folder)
+        && (!filters.rank || (row.dataset.formulaRank !== undefined && row.dataset.formulaRank !== "" && Number(row.dataset.formulaRank) <= Number(filters.rank)));
 
       row.hidden = !matches;
       if (matches) visible += 1;
@@ -210,7 +242,8 @@ export class AshdomCompendiumBrowser extends HandlebarsApplicationMixin(Applicat
     delete data._id;
     delete data.folder;
     delete data._stats;
-    await Item.create(data, { renderSheet: false });
-    ui.notifications.info(`${item.name} imported to the Items directory.`);
+    const documentClass = item.documentName === "Actor" ? Actor : Item;
+    await documentClass.create(data, { renderSheet: false });
+    ui.notifications.info(`${item.name} imported to the ${item.documentName === "Actor" ? "Actors" : "Items"} directory.`);
   }
 }

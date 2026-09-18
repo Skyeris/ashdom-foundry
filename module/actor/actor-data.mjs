@@ -926,6 +926,7 @@ export class AshdomNPCData extends AshdomCharacterData {
       description: new fields.StringField({ initial: "" })
     });
     schema.immunities = new fields.StringField({ initial: "" });
+    schema.settings.extendFields({ showCarryWeight: new fields.BooleanField({ initial: false }) });
     schema.vulnerabilities = new fields.StringField({ initial: "" });
     return schema;
   }
