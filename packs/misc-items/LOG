@@ -1,3 +1,6 @@
-2026/09/16-13:03:53.115 6798 Recovering log #62
-2026/09/16-13:03:53.127 6798 Delete type=0 #62
-2026/09/16-13:03:53.127 6798 Delete type=3 #61
+2026/09/25-11:24:06.594 adec Recovering log #104
+2026/09/25-11:24:06.595 adec Recovering log #138
+2026/09/25-11:24:06.600 adec Delete type=0 #104
+2026/09/25-11:24:06.600 adec Delete type=0 #138
+2026/09/25-11:24:06.602 adec Delete type=3 #92
+2026/09/25-11:24:06.604 adec Delete type=3 #103
