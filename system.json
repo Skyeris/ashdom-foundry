@@ -146,6 +146,13 @@
       "system": "ashdom",
       "path": "packs/cybernetics",
       "type": "Item"
+    },
+    {
+      "name": "bestiary",
+      "label": "ASHDOM Bestiary",
+      "system": "ashdom",
+      "path": "packs/bestiary",
+      "type": "Actor"
     }
   ],
   "documentTypes": {

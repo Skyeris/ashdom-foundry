@@ -1,4 +1,5 @@
 import { appendEquipmentMod, equipmentModRows } from "../actor/equipment-mods.mjs";
+import { mirrorEquipmentDrop } from "../actor/equipment-inventory.mjs";
 import { AUGMENTATION_TYPES, augmentationType, appendAugmentation } from "../actor/augmentations.mjs";
 
 const { HandlebarsApplicationMixin } =
@@ -381,6 +382,7 @@ export class AshdomCharacterSheet extends
           );
 
           const update = { "system.armors": armors };
+          mirrorEquipmentDrop(this.actor.toObject().system, item, update, "armors", this.actor.type);
           if (isRobotBody) {
             update["system.augmentations"] = appendAugmentation(this.actor.toObject().system.augmentations, item);
           }
@@ -420,9 +422,11 @@ export class AshdomCharacterSheet extends
         if (collection === "perks") {
           entries.push({ name: item.name, type: item.type === "skillSpec" ? "Skill Spec" : source.perkType || "Trait", note: source.note ?? "", rank: Number(source.rank) || 0 });
         } else if (collection === "weapons") {
-          entries.push({ ...foundry.utils.deepClone(source), name: item.name, mods: foundry.utils.deepClone(source.mods ?? []), itemType: source.itemType || source.subcategory || source.category || "", capacityCurrent: source.capacityCurrent ?? source.capacityMax ?? 0 });
+          entries.push({ ...foundry.utils.deepClone(source), name: item.name, sourceUuid: item.uuid ?? "", mods: foundry.utils.deepClone(source.mods ?? []), itemType: source.itemType || source.subcategory || source.category || "", capacityCurrent: source.capacityCurrent ?? source.capacityMax ?? 0 });
         } else return;
-        await this.actor.update({ [`system.${collection}`]: entries });
+        const update = { [`system.${collection}`]: entries };
+        mirrorEquipmentDrop(this.actor.toObject().system, item, update, collection, this.actor.type);
+        await this.actor.update(update);
       });
     });
   }
@@ -537,7 +541,13 @@ export class AshdomCharacterSheet extends
       const quantity = Math.max(Number(item.system.quantity) || 1, 0);
       const weight = Math.max(Number(item.system.weight) || 0, 0);
 
-      inventoryItems.push({
+      const mirroredEquipment = item.type === "weapon" || item.type === "armor" ||
+        (item.type === "robotPart" && String(item.system.category).toLowerCase() === "body");
+      const alreadyListed = mirroredEquipment && inventoryItems.some(entry =>
+        (item.uuid && entry.sourceUuid === item.uuid) || (entry.name === item.name && !entry.sourceUuid)
+      );
+      if (!alreadyListed) inventoryItems.push({
+        sourceUuid: item.uuid ?? "",
         name: String(item.name ?? ""),
         quantity,
         weight,
@@ -551,6 +561,7 @@ export class AshdomCharacterSheet extends
       });
 
       const update = { "system.inventoryItems": inventoryItems };
+      mirrorEquipmentDrop(this.actor.toObject().system, item, update, "inventory", this.actor.type);
       if (augmentationType(item)) {
         update["system.augmentations"] = appendAugmentation(this.actor.toObject().system.augmentations, item);
       }

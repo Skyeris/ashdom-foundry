@@ -33,6 +33,7 @@ ASHDOM is the official Foundry Virtual Tabletop implementation of the ASHDOM tab
   - D100 Variant Rule
   - Expanded Crippled Status
 -Item and Perk Compendium
+-Bestiary Compendium
 
 ## Installation
 

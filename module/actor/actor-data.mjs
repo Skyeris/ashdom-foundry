@@ -228,6 +228,7 @@ function createVehicleRating() {
 
 function createWeapon() {
   return new fields.SchemaField({
+    sourceUuid: new fields.StringField({ initial: "" }),
     mods: createEquipmentMods(),
     name: new fields.StringField({ initial: "" }),
     equipped: new fields.BooleanField({ initial: false }),
@@ -291,6 +292,7 @@ function createCurrency() {
 
 function createInventoryItem() {
   return new fields.SchemaField({
+    sourceUuid: new fields.StringField({ initial: "" }),
     name: new fields.StringField({ initial: "" }),
     quantity: new fields.NumberField({ initial: 0, min: 0 }),
     weight: new fields.NumberField({ initial: 0, min: 0 }),
