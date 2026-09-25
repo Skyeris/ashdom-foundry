@@ -2,7 +2,7 @@
   "id": "ashdom",
   "title": "ASHDOM",
   "description": "The ASHDOM Roleplaying Game System",
-  "version": "0.3.9",
+  "version": "0.4",
   "url": "https://github.com/Skyeris/ashdom-foundry",
   "manifest": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/system.json",
   "download": "https://github.com/Skyeris/ashdom-foundry/releases/download/v0.3.9/ashdom.zip",
