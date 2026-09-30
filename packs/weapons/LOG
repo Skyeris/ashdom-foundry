@@ -1,6 +1,5 @@
-2026/09/25-11:24:06.199 adec Recovering log #114
-2026/09/25-11:24:06.199 adec Recovering log #138
-2026/09/25-11:24:06.218 adec Delete type=0 #114
-2026/09/25-11:24:06.218 adec Delete type=0 #138
-2026/09/25-11:24:06.218 adec Delete type=3 #102
-2026/09/25-11:24:06.221 adec Delete type=3 #113
+2026/09/29-15:41:01.335 1854 Recovering log #127
+2026/09/29-15:41:01.336 1854 Level-0 table #129: started
+2026/09/29-15:41:01.345 1854 Level-0 table #129: 864 bytes OK
+2026/09/29-15:41:01.352 1854 Delete type=0 #127
+2026/09/29-15:41:01.352 1854 Delete type=3 #126
