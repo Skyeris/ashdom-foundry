@@ -802,8 +802,8 @@ export class AshdomCharacterSheet extends
             [
               ["charm", "Charm"],
               ["deception", "Deception"],
-              ["intimidation", "Intimidation"],
               ["insight", "Insight"],
+              ["intimidation", "Intimidation"],
               ["mercantile", "Mercantile"]
             ]
           ],
@@ -832,7 +832,7 @@ export class AshdomCharacterSheet extends
         section.groups.flatMap(group =>
           group.skills.map(skill => [skill.key, skill.label])
         )
-      )
+      ).sort((a, b) => a[1].localeCompare(b[1]))
     );
 
     context.weaponDamageTypeChoices = {

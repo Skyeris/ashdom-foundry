@@ -155,6 +155,12 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
       specializations && typeof specializations === "object" ? Object.keys(specializations) : []
     );
     context.hasSubcategories = Object.keys(context.subcategoryChoices).length > 0;
+    // World items remain authorable; actor-owned choices follow that actor's supplement.
+    // Preserve existing selections when the supplement is turned off.
+    if (this.item.actor && !this.item.actor.system.settings?.supplements?.survivors &&
+        this.item.system.specialization !== "Cryo Weapons") {
+      delete context.specializationChoices["Cryo Weapons"];
+    }
     context.hasSpecializations = Object.keys(context.specializationChoices).length > 0;
     return context;
   }

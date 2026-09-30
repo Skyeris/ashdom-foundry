@@ -375,6 +375,15 @@
   grid-template-columns: minmax(0, 1fr) 48px;
 }
 
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.bleed"]) > label { color: #ff3030 !important; }
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.burn"]) > label { color: #ff8c00 !important; }
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.chill"]) > label { color: #add8e6 !important; }
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.dazed"]) > label { color: #ffff00 !important; }
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.drunk"]) > label { color: #00cc66 !important; }
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.pulsed"]) > label { color: #4488ff !important; }
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.stunned"]) > label { color: #ffffff !important; }
+.ashdom-sheet .ashdom-health-status-row:has(input[name="system.health.terrored"]) > label { color: #b56cff !important; }
+
 .ashdom-health-status-row .ashdom-tag-checkbox {
   justify-self: center;
 }
@@ -2842,7 +2851,9 @@
 
 .ashdom-npc-sheet .ashdom-npc-body-type { white-space: nowrap; }
 
+.ashdom-settings-left,
 .ashdom-npc-sheet .ashdom-npc-settings-left { display: grid; gap: 12px; align-content: start; min-width: 0; }
+
 .ashdom-npc-sheet .ashdom-npc-resistances { display: grid; gap: 6px; margin-top: 10px; }
 .ashdom-npc-sheet .ashdom-npc-resistances label { display: grid; grid-template-columns: 130px minmax(0, 1fr); gap: 8px; align-items: center; color: var(--ashdom-gold); font-weight: bold; }
 .ashdom-npc-sheet .ashdom-npc-resistances textarea { width: 100%; min-width: 0; min-height: 48px; resize: vertical; box-sizing: border-box; font: inherit; }

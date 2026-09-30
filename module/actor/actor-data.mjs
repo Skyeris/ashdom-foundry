@@ -759,7 +759,10 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
         dazed: new fields.NumberField({ initial: 0, min: 0 }),
         pulsed: new fields.NumberField({ initial: 0, min: 0 }),
         stunned: new fields.NumberField({ initial: 0, min: 0 }),
-        terrored: new fields.NumberField({ initial: 0, min: 0 })
+        terrored: new fields.NumberField({ initial: 0, min: 0 }),
+        chill: new fields.NumberField({ initial: 0, min: 0 }),
+        drunk: new fields.NumberField({ initial: 0, min: 0 }),
+        immobilized: new fields.BooleanField({ initial: false })
       }),
 
 
@@ -886,6 +889,9 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
       inventoryItems: new fields.ArrayField(createInventoryItem(), { initial: [] }),
 
       settings: new fields.SchemaField({
+        supplements: new fields.SchemaField({
+          survivors: new fields.BooleanField({ initial: false })
+        }),
         criticalChance: new fields.SchemaField({
           successCapModifier: new fields.NumberField({ initial: 0 }),
           failureCapModifier: new fields.NumberField({ initial: 0 })

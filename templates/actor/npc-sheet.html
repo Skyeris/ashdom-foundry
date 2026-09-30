@@ -160,13 +160,22 @@
             <div class="ashdom-expanded-health-layout">
               <div class="ashdom-expanded-health-column">
                 <div class="ashdom-health-status-row"><label>KNOCK DOWN</label><label class="ashdom-tag-checkbox" title="Knock Down"><input type="checkbox" name="system.health.knockDown" {{checked system.health.knockDown}} aria-label="Knock Down"><span aria-hidden="true">✓</span></label></div>
+                {{#if system.settings.supplements.survivors}}
+                <div class="ashdom-health-status-row"><label>IMMOBILIZED</label><label class="ashdom-tag-checkbox" title="Immobilized"><input type="checkbox" name="system.health.immobilized" {{checked system.health.immobilized}} aria-label="Immobilized"><span aria-hidden="true">✓</span></label></div>
+                {{/if}}
                 <div class="ashdom-health-status-row"><label>BLEED</label><input type="number" min="0" name="system.health.bleed" value="{{system.health.bleed}}"></div>
                 <div class="ashdom-health-status-row"><label>BURN</label><input type="number" min="0" name="system.health.burn" value="{{system.health.burn}}"></div>
+                {{#if system.settings.supplements.survivors}}
+                <div class="ashdom-health-status-row"><label for="{{actor.id}}-chill">CHILL</label><input id="{{actor.id}}-chill" type="number" min="0" name="system.health.chill" value="{{system.health.chill}}"></div>
+                {{/if}}
                 <div class="ashdom-health-status-row"><label>DAZED</label><input type="number" min="0" name="system.health.dazed" value="{{system.health.dazed}}"></div>
               </div>
 
               <div class="ashdom-expanded-health-column">
                 <div class="ashdom-health-single-row"><label>FATIGUE</label><select name="system.health.fatigue" aria-label="Fatigue level">{{selectOptions fatigueChoices selected=system.health.fatigue}}</select></div>
+                {{#if system.settings.supplements.survivors}}
+                <div class="ashdom-health-status-row"><label for="{{actor.id}}-drunk">DRUNK</label><input id="{{actor.id}}-drunk" type="number" min="0" name="system.health.drunk" value="{{system.health.drunk}}"></div>
+                {{/if}}
                 <div class="ashdom-health-status-row"><label>PULSED</label><input type="number" min="0" name="system.health.pulsed" value="{{system.health.pulsed}}"></div>
                 <div class="ashdom-health-status-row"><label>STUNNED</label><input type="number" min="0" name="system.health.stunned" value="{{system.health.stunned}}"></div>
                 <div class="ashdom-health-status-row"><label>TERRORED</label><input type="number" min="0" name="system.health.terrored" value="{{system.health.terrored}}"></div>
@@ -177,20 +186,31 @@
               <div class="ashdom-health-column">
                 <div class="ashdom-health-status-row"><label>CRIPPLED</label><label class="ashdom-tag-checkbox" title="Crippled"><input type="checkbox" name="system.health.crippled" {{checked system.health.crippled}} aria-label="Crippled"><span aria-hidden="true">✓</span></label></div>
                 <div class="ashdom-health-status-row"><label>KNOCK DOWN</label><label class="ashdom-tag-checkbox" title="Knock Down"><input type="checkbox" name="system.health.knockDown" {{checked system.health.knockDown}} aria-label="Knock Down"><span aria-hidden="true">✓</span></label></div>
+                {{#if system.settings.supplements.survivors}}
+                <div class="ashdom-health-status-row"><label>IMMOBILIZED</label><label class="ashdom-tag-checkbox" title="Immobilized"><input type="checkbox" name="system.health.immobilized" {{checked system.health.immobilized}} aria-label="Immobilized"><span aria-hidden="true">✓</span></label></div>
+                {{/if}}
                 <div class="ashdom-health-single-row"><label>FATIGUE</label><select name="system.health.fatigue" aria-label="Fatigue level">{{selectOptions fatigueChoices selected=system.health.fatigue}}</select></div>
               </div>
               <div class="ashdom-health-column">
                 <div class="ashdom-health-status-row"><label>BLEED</label><input type="number" min="0" name="system.health.bleed" value="{{system.health.bleed}}"></div>
                 <div class="ashdom-health-status-row"><label>BURN</label><input type="number" min="0" name="system.health.burn" value="{{system.health.burn}}"></div>
+                {{#if system.settings.supplements.survivors}}
+                <div class="ashdom-health-status-row"><label for="{{actor.id}}-chill">CHILL</label><input id="{{actor.id}}-chill" type="number" min="0" name="system.health.chill" value="{{system.health.chill}}"></div>
+                {{/if}}
                 <div class="ashdom-health-status-row"><label>DAZED</label><input type="number" min="0" name="system.health.dazed" value="{{system.health.dazed}}"></div>
               </div>
               <div class="ashdom-health-column">
+                {{#if system.settings.supplements.survivors}}
+                <div class="ashdom-health-status-row"><label for="{{actor.id}}-drunk">DRUNK</label><input id="{{actor.id}}-drunk" type="number" min="0" name="system.health.drunk" value="{{system.health.drunk}}"></div>
+                {{/if}}
                 <div class="ashdom-health-status-row"><label>PULSED</label><input type="number" min="0" name="system.health.pulsed" value="{{system.health.pulsed}}"></div>
                 <div class="ashdom-health-status-row"><label>STUNNED</label><input type="number" min="0" name="system.health.stunned" value="{{system.health.stunned}}"></div>
                 <div class="ashdom-health-status-row"><label>TERRORED</label><input type="number" min="0" name="system.health.terrored" value="{{system.health.terrored}}"></div>
               </div>
             </div>
           {{/if}}
+
+
         </div>
 
 
@@ -255,7 +275,7 @@
 </section>
 
 <section class="ashdom-panel ashdom-data-panel" data-augmentation-drop-zone>
-          <h2>CYBERNETICS, IMPLANTS, &amp; ROBOT PARTS</h2>
+          <h2>CYBERNETICS, IMPLANTS, ROBOT PARTS, &amp; DISEASES</h2>
 
           <div class="ashdom-perk-list">
             {{#each augmentations}}
@@ -883,6 +903,17 @@
         </label>
       </section>
 
+      <section class="ashdom-panel ashdom-settings-panel">
+        <h2>SUPPLEMENTS</h2>
+        <label class="ashdom-variant-rule-row">
+          <span>SURVIVORS</span>
+          <span class="ashdom-tag-checkbox">
+            <input type="checkbox" name="system.settings.supplements.survivors" {{checked system.settings.supplements.survivors}} aria-label="Enable Survivors supplement">
+            <span aria-hidden="true">✓</span>
+          </span>
+        </label>
+        <p class="ashdom-settings-help">Adds Chill, Drunk, and Immobilized status trackers and enables Cryo Weapons under Heavy Guns for actor-owned items.</p>
+      </section>
       </div>
       <section class="ashdom-panel ashdom-settings-panel">
         <h2>VARIANT RULES</h2>

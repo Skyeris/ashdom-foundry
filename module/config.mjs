@@ -31,7 +31,7 @@ const skillSpecHierarchy = Object.fromEntries(
 export const ASHDOM_ITEM_TAXONOMY = Object.freeze({
   weapon: {
     Guns: {
-      "Heavy Guns": { Artillery: null, "Flame Weapons": null, "Machine Guns": null, Miniguns: null },
+      "Heavy Guns": { Artillery: null, "Cryo Weapons": null, "Flame Weapons": null, "Machine Guns": null, Miniguns: null },
       "Light Guns": { "Assault Rifles": null, Handguns: null, Rifles: null, Shotguns: null, "Submachine Guns": null }
     },
     "Melee Weapons": { Bladed: null, Bludgeons: null, Short: null, Special: null },

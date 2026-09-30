@@ -1,5 +1,5 @@
 export const AUGMENTATION_TYPES = [
-  "Implant", "Cybernetic", "Robot Body", "Robot Upgrade", "Robot Variant"
+  "Implant", "Cybernetic", "Robot Body", "Robot Upgrade", "Robot Variant", "Disease"
 ];
 
 export function augmentationType(item) {
