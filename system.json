@@ -7,7 +7,9 @@
       "type": "setup",
       "url": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/ashdom-package.png",
       "thumbnail": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/ashdom-package.png",
-      "caption": "ASHDOM — A Post-Apocalyptic Roleplaying System"
+      "caption": "ASHDOM — A Post-Apocalyptic Roleplaying System",
+      "loop": false,
+      "flags": {}
     }
   ],
   "version": "0.4",
@@ -20,26 +22,31 @@
   "bugs": "https://github.com/Skyeris/ashdom-foundry/issues",
   "compatibility": {
     "minimum": "13",
-    "verified": "14"
+    "verified": "14",
+    "maximum": "14"
   },
   "authors": [
     {
       "name": "Skyeris",
       "url": "https://github.com/Skyeris",
-      "discord": "Skyeris"
+      "discord": "Skyeris",
+      "flags": {}
     }
   ],
   "esmodules": [
     "ashdom.mjs"
   ],
   "styles": [
-    "styles/ashdom.css"
+    {
+      "src": "styles/ashdom.css"
+    }
   ],
   "languages": [
     {
       "lang": "en",
       "name": "English",
-      "path": "lang/en.json"
+      "path": "lang/en.json",
+      "flags": {}
     }
   ],
   "packs": [
@@ -48,119 +55,230 @@
       "label": "ASHDOM Weapons",
       "system": "ashdom",
       "path": "packs/weapons",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "armor",
       "label": "ASHDOM Armor",
       "system": "ashdom",
       "path": "packs/armor",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "perks",
       "label": "ASHDOM Perks & Traits",
       "system": "ashdom",
       "path": "packs/perks",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "skill-specs",
       "label": "ASHDOM Skill Specs",
       "system": "ashdom",
       "path": "packs/skill-specs",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "gear",
       "label": "ASHDOM Gear",
       "system": "ashdom",
       "path": "packs/gear",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "consumables",
       "label": "ASHDOM Consumables",
       "system": "ashdom",
       "path": "packs/consumables",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "modifications",
       "label": "ASHDOM Modifications",
       "system": "ashdom",
       "path": "packs/modifications",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "ammunition",
       "label": "ASHDOM Ammunition",
       "system": "ashdom",
       "path": "packs/ammunition",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "robot-parts",
       "label": "ASHDOM Robot Parts",
       "system": "ashdom",
       "path": "packs/robot-parts",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "literature",
       "label": "ASHDOM Literature",
       "system": "ashdom",
       "path": "packs/literature",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "misc-items",
       "label": "ASHDOM Misc. Items",
       "system": "ashdom",
       "path": "packs/misc-items",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "legendary-items",
       "label": "ASHDOM Legendary Items",
       "system": "ashdom",
       "path": "packs/legendary-items",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "vehicles",
       "label": "ASHDOM Vehicles",
       "system": "ashdom",
       "path": "packs/vehicles",
-      "type": "Actor"
+      "type": "Actor",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "vehicle-mods",
       "label": "ASHDOM Vehicle Mods",
       "system": "ashdom",
       "path": "packs/vehicle-mods",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "implants",
       "label": "ASHDOM Implants",
       "system": "ashdom",
       "path": "packs/implants",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "cybernetics",
       "label": "ASHDOM Cybernetics",
       "system": "ashdom",
       "path": "packs/cybernetics",
-      "type": "Item"
+      "type": "Item",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
     },
     {
       "name": "bestiary",
       "label": "ASHDOM Bestiary",
       "system": "ashdom",
       "path": "packs/bestiary",
-      "type": "Actor"
+      "type": "Actor",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
+    },
+    {
+      "name": "core-rules",
+      "label": "ASHDOM Core Rules",
+      "path": "packs/core-rules",
+      "type": "JournalEntry",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "TRUSTED": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "ashdom",
+      "flags": {}
+    },
+    {
+      "name": "gm-reference",
+      "label": "ASHDOM GM Reference",
+      "path": "packs/gm-reference",
+      "type": "JournalEntry",
+      "ownership": {
+        "PLAYER": "NONE",
+        "TRUSTED": "NONE",
+        "ASSISTANT": "OWNER"
+      },
+      "system": "ashdom",
+      "flags": {}
     }
   ],
   "documentTypes": {
@@ -193,5 +311,6 @@
       "implant": {},
       "cybernetic": {}
     }
-  }
+  },
+  "flags": {}
 }
