@@ -24,7 +24,7 @@
 
         <div class="ashdom-form-row">
           <label>SIZE</label>
-          <input type="text" name="system.details.size" value="{{system.details.size}}">
+          {{#if group.active}}<input type="text" value="{{group.size}}" readonly title="Group size; disable Groups to edit the original size.">{{else}}<input type="text" name="system.details.size" value="{{system.details.size}}">{{/if}}
         </div>
 
         <div class="ashdom-form-row">
@@ -40,7 +40,7 @@
 
         <div class="ashdom-form-row">
           <label>DEFCON TIER</label>
-          <input type="number" name="system.details.level" value="{{system.details.level}}">
+          {{#if group.active}}<input type="number" value="{{group.tier}}" readonly title="Group DEFCON; disable Groups to edit the original tier.">{{else}}<input type="number" name="system.details.level" value="{{system.details.level}}">{{/if}}
         </div>
 
         
@@ -57,17 +57,17 @@
     <div class="ashdom-header-vitals">
       <div class="ashdom-header-vital-row ashdom-header-hp-row">
         <label>HP</label>
-        <input type="number" min="0" name="system.health.hpCurrent" value="{{system.health.hpCurrent}}" aria-label="Current HP">
+        {{#if group.active}}<input type="number" min="0" name="system.groupResources.hpCurrent" value="{{group.hpCurrent}}" aria-label="Current HP">{{else}}<input type="number" min="0" name="system.health.hpCurrent" value="{{system.health.hpCurrent}}" aria-label="Current HP">{{/if}}
         <span>/</span>
-        <input type="number" min="0" name="system.health.hpMax" value="{{system.health.hpMax}}" aria-label="Maximum HP">
+        {{#if group.active}}<input type="number" min="0" readonly value="{{group.hpMax}}" aria-label="Maximum HP">{{else}}<input type="number" min="0" name="system.health.hpMax" value="{{system.health.hpMax}}" aria-label="Maximum HP">{{/if}}
       </div>
 
-      <div class="ashdom-header-vital-row ashdom-npc-dr ashdom-armor-rating-dr"><label>DR</label><input type="number" min="0" name="system.armors.0.drDamage" value="{{npcArmor.drDamage}}" aria-label="Current DR"><span>/</span><input type="number" min="0" name="npcDefense.dr" value="{{npcDefense.dr}}" aria-label="Maximum DR"></div>
+      <div class="ashdom-header-vital-row ashdom-npc-dr ashdom-armor-rating-dr"><label>DR</label>{{#if group.active}}<input type="number" min="0" name="system.groupResources.drCurrent" value="{{group.drCurrent}}" aria-label="Current DR">{{else}}<input type="number" min="0" name="system.armors.0.drDamage" value="{{npcArmor.drDamage}}" aria-label="Current DR">{{/if}}<span>/</span><input type="number" min="0" name="npcDefense.dr" value="{{npcDefense.dr}}" aria-label="Maximum DR" {{#if group.active}}readonly{{/if}}></div>
       <div class="ashdom-header-vital-row">
         <label>TR</label>
-        <input type="number" min="0" name="system.health.trCurrent" value="{{system.health.trCurrent}}" aria-label="Current TR">
+        {{#if group.active}}<input type="number" min="0" name="system.groupResources.trCurrent" value="{{group.trCurrent}}" aria-label="Current TR">{{else}}<input type="number" min="0" name="system.health.trCurrent" value="{{system.health.trCurrent}}" aria-label="Current TR">{{/if}}
         <span>/</span>
-        <input type="number" min="0" name="system.health.trMax" value="{{system.health.trMax}}" aria-label="Maximum TR">
+        {{#if group.active}}<input type="number" min="0" readonly value="{{group.trMax}}" aria-label="Maximum TR">{{else}}<input type="number" min="0" name="system.health.trMax" value="{{system.health.trMax}}" aria-label="Maximum TR">{{/if}}
       </div>
 
       <div class="ashdom-header-vital-row ashdom-header-rads-row">
@@ -147,19 +147,44 @@
 
         <!-- HEALTH -->
 
+        {{#if group.active}}
+        <section class="ashdom-panel ashdom-group-summary">
+          <button type="button" class="ashdom-collapse-toggle ashdom-collapse-toggle-main" data-action="toggleGroupRules" aria-expanded="{{groupRulesOpen}}">
+            <span>GROUP RULES · {{group.members}} MEMBERS</span>
+            <span class="ashdom-collapse-arrow" aria-hidden="true">{{#if groupRulesOpen}}▲{{else}}▼{{/if}}</span>
+          </button>
+          {{#if groupRulesOpen}}
+          <ul class="ashdom-group-rules">
+            <li>Size increases by one category without applying size bonuses.</li>
+            <li>Attacks add one damage die, double flat and poison damage, and apply AC −2 / DT −5 to the target for that attack only. Weapon fields show the original values.</li>
+            <li>Double Rads inflicted.</li>
+            <li>Double damage after rolling from Bleed, Burn, and effects with a radius.</li>
+            <li>Groups cannot make Targeted Attacks, be Knocked Down, or be Crippled.</li>
+            <li>Groups gain no Hit Chance bonus from flanking. The Athletics bonus they grant through flanking increases by +2.</li>
+            <li>Groups cannot occupy the same space as allies or be targeted by Handy Special Moves.</li>
+            <li>For every round a Group would be Stunned, it instead loses 2 AP on its next turn.</li>
+            <li>When a Group takes the Stabilize Action, apply a −2 penalty.</li>
+            <li>If you attempt to make a Group Unconscious, only one member survives and becomes an individual with 1 HP. Depending on the situation, more than one member may survive.</li>
+            <li>Groups occupy Seating equal to their size.</li>
+            <li>Groups cannot drive vehicles. A separate NPC must be the driver.</li>
+          </ul>
+          <p class="ashdom-settings-help">Situational rules are reminders: resolve Rads, incoming damage, flanking, movement, Handy restrictions, Stun, Stabilize, unconsciousness, Seating, and driving manually.</p>
+          {{/if}}
+        </section>
+        {{/if}}
         <div class="ashdom-panel ashdom-health-panel">
           {{#if system.settings.variantRules.expandedCrippledStatus}}
             <div class="ashdom-expanded-crippled-row">
-              <label>HEAD (C)<span class="ashdom-tag-checkbox" title="Head Crippled"><input type="checkbox" name="system.health.crippledHead" {{checked system.health.crippledHead}} aria-label="Head Crippled"><span aria-hidden="true">✓</span></span></label>
-              <label>TORSO (C)<span class="ashdom-tag-checkbox" title="Torso Crippled"><input type="checkbox" name="system.health.crippledTorso" {{checked system.health.crippledTorso}} aria-label="Torso Crippled"><span aria-hidden="true">✓</span></span></label>
-              <label>ARM (C)<span class="ashdom-tag-checkbox" title="Arm Crippled"><input type="checkbox" name="system.health.crippledArm" {{checked system.health.crippledArm}} aria-label="Arm Crippled"><span aria-hidden="true">✓</span></span></label>
-              <label>LEG (C)<span class="ashdom-tag-checkbox" title="Leg Crippled"><input type="checkbox" name="system.health.crippledLeg" {{checked system.health.crippledLeg}} aria-label="Leg Crippled"><span aria-hidden="true">✓</span></span></label>
-              <label>GROIN (C)<span class="ashdom-tag-checkbox" title="Groin Crippled"><input type="checkbox" name="system.health.crippledGroin" {{checked system.health.crippledGroin}} aria-label="Groin Crippled"><span aria-hidden="true">✓</span></span></label>
+              <label>HEAD (C)<span class="ashdom-tag-checkbox" title="Head Crippled"><input type="checkbox" name="system.health.crippledHead" {{#if group.active}}disabled{{else}}{{checked system.health.crippledHead}}{{/if}} aria-label="Head Crippled"><span aria-hidden="true">✓</span></span></label>
+              <label>TORSO (C)<span class="ashdom-tag-checkbox" title="Torso Crippled"><input type="checkbox" name="system.health.crippledTorso" {{#if group.active}}disabled{{else}}{{checked system.health.crippledTorso}}{{/if}} aria-label="Torso Crippled"><span aria-hidden="true">✓</span></span></label>
+              <label>ARM (C)<span class="ashdom-tag-checkbox" title="Arm Crippled"><input type="checkbox" name="system.health.crippledArm" {{#if group.active}}disabled{{else}}{{checked system.health.crippledArm}}{{/if}} aria-label="Arm Crippled"><span aria-hidden="true">✓</span></span></label>
+              <label>LEG (C)<span class="ashdom-tag-checkbox" title="Leg Crippled"><input type="checkbox" name="system.health.crippledLeg" {{#if group.active}}disabled{{else}}{{checked system.health.crippledLeg}}{{/if}} aria-label="Leg Crippled"><span aria-hidden="true">✓</span></span></label>
+              <label>GROIN (C)<span class="ashdom-tag-checkbox" title="Groin Crippled"><input type="checkbox" name="system.health.crippledGroin" {{#if group.active}}disabled{{else}}{{checked system.health.crippledGroin}}{{/if}} aria-label="Groin Crippled"><span aria-hidden="true">✓</span></span></label>
             </div>
 
             <div class="ashdom-expanded-health-layout">
               <div class="ashdom-expanded-health-column">
-                <div class="ashdom-health-status-row"><label>KNOCK DOWN</label><label class="ashdom-tag-checkbox" title="Knock Down"><input type="checkbox" name="system.health.knockDown" {{checked system.health.knockDown}} aria-label="Knock Down"><span aria-hidden="true">✓</span></label></div>
+                <div class="ashdom-health-status-row"><label>KNOCK DOWN</label><label class="ashdom-tag-checkbox" title="Knock Down"><input type="checkbox" name="system.health.knockDown" {{#if group.active}}disabled{{else}}{{checked system.health.knockDown}}{{/if}} aria-label="Knock Down"><span aria-hidden="true">✓</span></label></div>
                 {{#if system.settings.supplements.survivors}}
                 <div class="ashdom-health-status-row"><label>IMMOBILIZED</label><label class="ashdom-tag-checkbox" title="Immobilized"><input type="checkbox" name="system.health.immobilized" {{checked system.health.immobilized}} aria-label="Immobilized"><span aria-hidden="true">✓</span></label></div>
                 {{/if}}
@@ -184,8 +209,8 @@
           {{else}}
             <div class="ashdom-health-layout">
               <div class="ashdom-health-column">
-                <div class="ashdom-health-status-row"><label>CRIPPLED</label><label class="ashdom-tag-checkbox" title="Crippled"><input type="checkbox" name="system.health.crippled" {{checked system.health.crippled}} aria-label="Crippled"><span aria-hidden="true">✓</span></label></div>
-                <div class="ashdom-health-status-row"><label>KNOCK DOWN</label><label class="ashdom-tag-checkbox" title="Knock Down"><input type="checkbox" name="system.health.knockDown" {{checked system.health.knockDown}} aria-label="Knock Down"><span aria-hidden="true">✓</span></label></div>
+                <div class="ashdom-health-status-row"><label>CRIPPLED</label><label class="ashdom-tag-checkbox" title="Crippled"><input type="checkbox" name="system.health.crippled" {{#if group.active}}disabled{{else}}{{checked system.health.crippled}}{{/if}} aria-label="Crippled"><span aria-hidden="true">✓</span></label></div>
+                <div class="ashdom-health-status-row"><label>KNOCK DOWN</label><label class="ashdom-tag-checkbox" title="Knock Down"><input type="checkbox" name="system.health.knockDown" {{#if group.active}}disabled{{else}}{{checked system.health.knockDown}}{{/if}} aria-label="Knock Down"><span aria-hidden="true">✓</span></label></div>
                 {{#if system.settings.supplements.survivors}}
                 <div class="ashdom-health-status-row"><label>IMMOBILIZED</label><label class="ashdom-tag-checkbox" title="Immobilized"><input type="checkbox" name="system.health.immobilized" {{checked system.health.immobilized}} aria-label="Immobilized"><span aria-hidden="true">✓</span></label></div>
                 {{/if}}
@@ -261,13 +286,13 @@
                 <input type="number" value="{{system.secondary.wp.total}}" readonly>
                 <input type="number" name="system.secondary.wp.modifier" value="{{system.secondary.wp.modifier}}">
                 
-              </div></div><div><div class="ashdom-npc-defense-row ashdom-stat-header"><span></span><span>TOTAL</span></div><div class="ashdom-armor-rating-row ashdom-armor-rating-ac ashdom-npc-defense-row"><label>AC</label><input type="number" name="npcDefense.ac" value="{{npcDefense.ac}}" aria-label="AC total"></div>
-<div class="ashdom-armor-rating-row ashdom-armor-rating-n ashdom-npc-defense-row"><label>N</label><input type="number" name="npcDefense.n" value="{{npcDefense.n}}" aria-label="N total"></div>
-<div class="ashdom-armor-rating-row ashdom-armor-rating-l ashdom-npc-defense-row"><label>L</label><input type="number" name="npcDefense.l" value="{{npcDefense.l}}" aria-label="L total"></div>
-<div class="ashdom-armor-rating-row ashdom-armor-rating-f ashdom-npc-defense-row"><label>F</label><input type="number" name="npcDefense.f" value="{{npcDefense.f}}" aria-label="F total"></div>
-<div class="ashdom-armor-rating-row ashdom-armor-rating-p ashdom-npc-defense-row"><label>P</label><input type="number" name="npcDefense.p" value="{{npcDefense.p}}" aria-label="P total"></div>
-<div class="ashdom-armor-rating-row ashdom-armor-rating-e ashdom-npc-defense-row"><label>E</label><input type="number" name="npcDefense.e" value="{{npcDefense.e}}" aria-label="E total"></div>
-<div class="ashdom-armor-rating-row ashdom-armor-rating-rr ashdom-npc-defense-row"><label>RR</label><input type="number" name="npcDefense.rr" value="{{npcDefense.rr}}" aria-label="RR total"></div></div></div>
+              </div></div><div><div class="ashdom-npc-defense-row ashdom-stat-header"><span></span><span>TOTAL</span></div><div class="ashdom-armor-rating-row ashdom-armor-rating-ac ashdom-npc-defense-row"><label>AC</label><input type="number" name="npcDefense.ac" value="{{npcDefense.ac}}" aria-label="AC total" {{#if group.active}}readonly{{/if}}></div>
+<div class="ashdom-armor-rating-row ashdom-armor-rating-n ashdom-npc-defense-row"><label>N</label><input type="number" name="npcDefense.n" value="{{npcDefense.n}}" aria-label="N total" {{#if group.active}}readonly{{/if}}></div>
+<div class="ashdom-armor-rating-row ashdom-armor-rating-l ashdom-npc-defense-row"><label>L</label><input type="number" name="npcDefense.l" value="{{npcDefense.l}}" aria-label="L total" {{#if group.active}}readonly{{/if}}></div>
+<div class="ashdom-armor-rating-row ashdom-armor-rating-f ashdom-npc-defense-row"><label>F</label><input type="number" name="npcDefense.f" value="{{npcDefense.f}}" aria-label="F total" {{#if group.active}}readonly{{/if}}></div>
+<div class="ashdom-armor-rating-row ashdom-armor-rating-p ashdom-npc-defense-row"><label>P</label><input type="number" name="npcDefense.p" value="{{npcDefense.p}}" aria-label="P total" {{#if group.active}}readonly{{/if}}></div>
+<div class="ashdom-armor-rating-row ashdom-armor-rating-e ashdom-npc-defense-row"><label>E</label><input type="number" name="npcDefense.e" value="{{npcDefense.e}}" aria-label="E total" {{#if group.active}}readonly{{/if}}></div>
+<div class="ashdom-armor-rating-row ashdom-armor-rating-rr ashdom-npc-defense-row"><label>RR</label><input type="number" name="npcDefense.rr" value="{{npcDefense.rr}}" aria-label="RR total" {{#if group.active}}readonly{{/if}}></div></div></div>
 <div class="ashdom-npc-resistances">
   <label><span>IMMUNITIES</span><textarea name="system.immunities" rows="2" aria-label="Immunities">{{system.immunities}}</textarea></label>
   <label><span>VULNERABILITIES</span><textarea name="system.vulnerabilities" rows="2" aria-label="Vulnerabilities">{{system.vulnerabilities}}</textarea></label>
@@ -500,7 +525,7 @@
 
                 <div class="ashdom-weapon-attack-row">
                   <span class="ashdom-weapon-attack-pair"><button type="button" class="ashdom-weapon-attack-button" data-action="rollWeaponSingle" data-index="{{index}}" data-skill-label="{{skillLabel}}" title="Roll Single Attack">S</button><input type="number" name="system.weapons.{{index}}.s" value="{{s}}" aria-label="Single Attack modifier"></span>
-                  <span class="ashdom-weapon-attack-pair"><button type="button" class="ashdom-weapon-attack-button" data-action="rollWeaponTargeted" data-index="{{index}}" data-skill-label="{{skillLabel}}" title="Roll Targeted Attack">T</button><input type="number" name="system.weapons.{{index}}.t" value="{{t}}" aria-label="Targeted Attack modifier"></span>
+                  <span class="ashdom-weapon-attack-pair"><button type="button" class="ashdom-weapon-attack-button" data-action="rollWeaponTargeted" data-index="{{index}}" data-skill-label="{{skillLabel}}" title="Roll Targeted Attack" {{#if ../group.active}}disabled{{/if}}>T</button><input type="number" name="system.weapons.{{index}}.t" value="{{t}}" aria-label="Targeted Attack modifier"></span>
                   <span class="ashdom-weapon-attack-pair"><button type="button" class="ashdom-weapon-attack-button" data-action="rollWeaponBurst" data-index="{{index}}" data-skill-label="{{skillLabel}}" title="Roll Burst Attack">B</button><input type="number" name="system.weapons.{{index}}.b" value="{{b}}" aria-label="Burst Attack modifier"></span>
                   <label><span>AC</span><input type="number" name="system.weapons.{{index}}.ac" value="{{ac}}" aria-label="Weapon AC"></label>
                   <label><span>DT</span><input type="number" name="system.weapons.{{index}}.dt" value="{{dt}}" aria-label="Weapon DT"></label>
@@ -890,6 +915,19 @@
         <p class="ashdom-settings-help">
           Negative values lower the beginning of the Failure Range.
         </p>
+      </section>
+
+      <section class="ashdom-panel ashdom-settings-panel">
+        <h2>GROUPS</h2>
+        <label class="ashdom-variant-rule-row">
+          <span>ENABLE GROUPS</span>
+          <span class="ashdom-tag-checkbox">
+            <input type="checkbox" name="system.settings.groups" {{checked system.settings.groups}} {{#unless group.eligible}}{{#unless system.settings.groups}}disabled{{/unless}}{{/unless}} aria-label="Enable NPC Groups">
+            <span aria-hidden="true">✓</span>
+          </span>
+        </label>
+        <p class="ashdom-settings-help">Requires original DEFCON 4 or 5 and Small, Medium, or Large size. Small: 5 members (HP ×4); Medium: 4 members (HP ×3); Large: 3 members (HP ×2). Turning Groups off restores the original NPC; Group resource use is tracked separately.</p>
+        {{#if group.active}}<p class="ashdom-settings-help">Group active: {{group.members}} members. Derived defenses are read-only. Disable Groups to edit original size, DEFCON, maximum resources, or defenses.</p>{{/if}}
       </section>
 
       <section class="ashdom-panel ashdom-settings-panel">
