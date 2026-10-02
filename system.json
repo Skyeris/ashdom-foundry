@@ -2,6 +2,14 @@
   "id": "ashdom",
   "title": "ASHDOM",
   "description": "The ASHDOM Roleplaying Game System",
+  "media": [
+    {
+      "type": "setup",
+      "url": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/ashdom-package.png",
+      "thumbnail": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/ashdom-package.png",
+      "caption": "ASHDOM — A Post-Apocalyptic Roleplaying System"
+    }
+  ],
   "version": "0.4",
   "url": "https://github.com/Skyeris/ashdom-foundry",
   "manifest": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/system.json",
