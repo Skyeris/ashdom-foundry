@@ -1,5 +1,4 @@
-2026/09/29-15:41:01.584 4ebc Recovering log #122
-2026/09/29-15:41:01.585 4ebc Level-0 table #124: started
-2026/09/29-15:41:01.595 4ebc Level-0 table #124: 716 bytes OK
-2026/09/29-15:41:01.600 4ebc Delete type=0 #122
-2026/09/29-15:41:01.601 4ebc Delete type=3 #121
+2026/10/02-14:58:53.407 aab0 Recovering log #201
+2026/10/02-14:58:53.414 aab0 Delete type=0 #201
+2026/10/02-14:58:53.414 aab0 Delete type=3 #126
+2026/10/02-14:58:53.414 aab0 Delete type=3 #199
