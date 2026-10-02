@@ -1,5 +1,6 @@
 import { appendEquipmentMod, equipmentModRows } from "../actor/equipment-mods.mjs";
 import { mirrorEquipmentDrop } from "../actor/equipment-inventory.mjs";
+import { npcGroup, groupWeapon } from "../actor/npc-groups.mjs";
 import { AUGMENTATION_TYPES, augmentationType, appendAugmentation } from "../actor/augmentations.mjs";
 
 const { HandlebarsApplicationMixin } =
@@ -1569,7 +1570,7 @@ export class AshdomCharacterSheet extends
     event.preventDefault();
 
     const index = Number(target.dataset.index);
-    const weapon = this.actor.system.weapons?.[index];
+    const weapon = groupWeapon(this.actor, this.actor.system.weapons?.[index]);
 
     if (!weapon || !Number.isInteger(index)) return;
 
@@ -1723,6 +1724,11 @@ export class AshdomCharacterSheet extends
   }
 
   static async #rollWeaponTargeted(event, target) {
+    if (this.actor.type === "npc" && npcGroup(this.actor.system).active) {
+      event.preventDefault();
+      ui.notifications.warn("Groups cannot make Targeted Attacks.");
+      return;
+    }
 
     event.preventDefault();
 
@@ -1935,7 +1941,7 @@ export class AshdomCharacterSheet extends
     event.preventDefault();
 
     const index = Number(target.dataset.index);
-    const weapon = this.actor.system.weapons?.[index];
+    const weapon = groupWeapon(this.actor, this.actor.system.weapons?.[index]);
 
     if (!weapon || !Number.isInteger(index)) return;
 

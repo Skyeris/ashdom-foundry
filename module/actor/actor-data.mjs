@@ -1,4 +1,5 @@
 import { AUGMENTATION_TYPES } from "./augmentations.mjs";
+import { applyNPCGroupTotals } from "./npc-groups.mjs";
 
 const { fields } = foundry.data;
 
@@ -920,6 +921,10 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 ========================================= */
 
 export class AshdomNPCData extends AshdomCharacterData {
+  prepareDerivedData() {
+    super.prepareDerivedData();
+    applyNPCGroupTotals(this);
+  }
   _armorBase(key, rating) {
     return Number(rating.base) || 0;
   }
@@ -934,7 +939,15 @@ export class AshdomNPCData extends AshdomCharacterData {
       description: new fields.StringField({ initial: "" })
     });
     schema.immunities = new fields.StringField({ initial: "" });
-    schema.settings.extendFields({ showCarryWeight: new fields.BooleanField({ initial: false }) });
+    schema.settings.extendFields({
+      showCarryWeight: new fields.BooleanField({ initial: false }),
+      groups: new fields.BooleanField({ initial: false })
+    });
+    schema.groupResources = new fields.SchemaField({
+      hpCurrent: new fields.NumberField({ initial: null, nullable: true, min: 0 }),
+      trCurrent: new fields.NumberField({ initial: null, nullable: true, min: 0 }),
+      drCurrent: new fields.NumberField({ initial: null, nullable: true, min: 0 })
+    });
     schema.vulnerabilities = new fields.StringField({ initial: "" });
     return schema;
   }
