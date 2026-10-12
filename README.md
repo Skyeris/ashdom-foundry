@@ -32,8 +32,12 @@ ASHDOM is the official Foundry Virtual Tabletop implementation of the ASHDOM tab
   - Psychic Anomalies
   - D100 Variant Rule
   - Expanded Crippled Status
--Item and Perk Compendium
--Bestiary Compendium
+- Item and Perk Compendium
+- Bestiary Compendium
+
+- Loot Generator
+- Encounter Generator
+- Shop Generator
 
 ## Installation
 
@@ -53,3 +57,4 @@ ASHDOM can also be installed using this manifest URL:
 
 ```text
 https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/system.json
+```
