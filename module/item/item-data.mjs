@@ -259,6 +259,10 @@ export class AshdomImplantData extends AshdomInventoryData {
   static defineSchema() { return { ...inventoryFields(), rarity: rarity() }; }
 }
 
+export class AshdomDiseaseData extends foundry.abstract.TypeDataModel {
+  static defineSchema() { return { note: text() }; }
+}
+
 export class AshdomCyberneticData extends AshdomInventoryData {
   static defineSchema() { return { ...inventoryFields(), rarity: rarity() }; }
 }

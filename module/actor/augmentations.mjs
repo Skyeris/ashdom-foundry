@@ -3,6 +3,7 @@ export const AUGMENTATION_TYPES = [
 ];
 
 export function augmentationType(item) {
+  if (item?.type === "disease") return "Disease";
   if (item?.type === "implant") return "Implant";
   if (item?.type === "cybernetic") return "Cybernetic";
   if (item?.type !== "robotPart") return null;

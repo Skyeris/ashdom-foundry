@@ -936,6 +936,7 @@ export class AshdomNPCData extends AshdomCharacterData {
   static defineSchema() {
     const schema = super.defineSchema();
     schema.details.extendFields({
+      defconQualifier: new fields.StringField({ initial: "<", choices: ["<", "-", ">"] }),
       description: new fields.StringField({ initial: "" })
     });
     schema.immunities = new fields.StringField({ initial: "" });

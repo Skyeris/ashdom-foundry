@@ -108,6 +108,7 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     }
     context.itemTypeLabel = game.i18n.localize(`TYPES.Item.${this.item.type}`);
     context.isWeapon = this.item.type === "weapon";
+    context.isDisease = this.item.type === "disease";
     context.isArmor = this.item.type === "armor";
     context.isPerk = this.item.type === "perk";
     context.isSkillSpec = this.item.type === "skillSpec";

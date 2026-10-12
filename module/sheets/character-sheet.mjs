@@ -494,7 +494,7 @@ export class AshdomCharacterSheet extends
       catch { return; }
       if (data?.type !== "Item" || !data.uuid) return;
       const item = await fromUuid(data.uuid);
-      if (!augmentationType(item)) return ui.notifications.warn("Only implants, cybernetics, and robot parts can be added here.");
+      if (!augmentationType(item)) return ui.notifications.warn("Only implants, cybernetics, robot parts, and diseases can be added here.");
       await this.actor.update({
         "system.augmentations": appendAugmentation(this.actor.toObject().system.augmentations, item)
       });

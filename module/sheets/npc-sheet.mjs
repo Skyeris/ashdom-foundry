@@ -1,6 +1,7 @@
 import { AshdomCharacterSheet } from "./character-sheet.mjs";
 import { npcIcon, isDefaultNPCImage } from "../npc-icons.mjs";
 import { npcGroup } from "../actor/npc-groups.mjs";
+import { NPC_DEFCON_CHOICES, npcDefconLabel, parseNPCDefcon } from "../actor/npc-defcon.mjs";
 
 export class AshdomNPCSheet extends AshdomCharacterSheet {
   static DEFAULT_OPTIONS = {
@@ -30,6 +31,9 @@ export class AshdomNPCSheet extends AshdomCharacterSheet {
     context.bodyTypeChoices = { Humanoid: "Humanoid", Creature: "Creature", Robot: "Robot" };
     context.npcDefense = Object.fromEntries((context.npcArmor.ratings ?? []).map(row => [row.key, row.total]));
     context.group = npcGroup(this.actor.system);
+    context.defconChoices = NPC_DEFCON_CHOICES;
+    context.npcDefcon = npcDefconLabel(this.actor.system.details.level, this.actor.system.details.defconQualifier);
+    context.groupDefcon = npcDefconLabel(context.group.tier, this.actor.system.details.defconQualifier);
     context.groupRulesOpen = !this._groupRulesClosed;
     if (!context.system.biography && context.system.details.description) {
       context.system = { ...context.system.toObject(), biography: context.system.details.description };
@@ -39,6 +43,14 @@ export class AshdomNPCSheet extends AshdomCharacterSheet {
 
   static async saveNPC(event, form, formData) {
     const data = foundry.utils.expandObject(formData.object);
+    if (data.npcDefconTier !== undefined) {
+      const selection = parseNPCDefcon(data.npcDefconTier);
+      if (selection && !npcGroup(this.actor.system).active) {
+        foundry.utils.setProperty(data, "system.details.level", selection.level);
+        foundry.utils.setProperty(data, "system.details.defconQualifier", selection.defconQualifier);
+      }
+      delete data.npcDefconTier;
+    }
     const group = npcGroup(this.actor.system);
     if (data.system?.settings?.groups && !npcGroup({
       ...this.actor.system,

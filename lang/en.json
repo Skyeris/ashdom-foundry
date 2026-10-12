@@ -23,6 +23,7 @@
   "TYPES.Item.vehicle": "Vehicle",
   "TYPES.Item.vehicleMod": "Vehicle Mod",
   "TYPES.Item.implant": "Implant",
+  "TYPES.Item.disease": "Disease",
   "TYPES.Item.cybernetic": "Cybernetic",
   "TYPES.Actor.vehicle": "Vehicle"
 }

@@ -63,6 +63,7 @@ export function getAshdomItemIcon(
   perkType = ""
 ) {
   const typeName = String(type);
+  if (typeName === "disease") return `${ICON_ROOT}/misc.svg`;
   if (typeName === "skillSpec") return `${ICON_ROOT}/skill-spec.svg`;
   if (typeName === "perk") {
     const kind = String(perkType || category).trim().toLowerCase();
