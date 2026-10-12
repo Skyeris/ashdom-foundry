@@ -132,6 +132,6 @@
       <div class="ashdom-item-grid"><label><span>HP CURRENT</span><input type="number" min="0" name="system.hpCurrent" value="{{system.hpCurrent}}"></label><label><span>HP MAX</span><input type="number" min="0" name="system.hpMax" value="{{system.hpMax}}"></label><label><span>CW CURRENT</span><input type="number" min="0" name="system.cwCurrent" value="{{system.cwCurrent}}"></label><label><span>CW MAX</span><input type="number" min="0" name="system.cwMax" value="{{system.cwMax}}"></label><label><span>DICE DAMAGE</span><input type="text" name="system.diceDamage" value="{{system.diceDamage}}"></label><label><span>FLAT DAMAGE</span><input type="number" name="system.flatDamage" value="{{system.flatDamage}}"></label></div>
     {{/if}}
 
-    <label class="ashdom-item-notes"><span>NOTES</span><textarea name="system.note">{{system.note}}</textarea></label>
+    <label class="ashdom-item-notes"><span>{{#if isDisease}}DESCRIPTION{{else}}NOTES{{/if}}</span><textarea name="system.note">{{system.note}}</textarea></label>
   </section>
 </div>

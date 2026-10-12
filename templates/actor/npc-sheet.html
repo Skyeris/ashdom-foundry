@@ -40,7 +40,7 @@
 
         <div class="ashdom-form-row">
           <label>DEFCON TIER</label>
-          {{#if group.active}}<input type="number" value="{{group.tier}}" readonly title="Group DEFCON; disable Groups to edit the original tier.">{{else}}<input type="number" name="system.details.level" value="{{system.details.level}}">{{/if}}
+          {{#if group.active}}<input type="text" value="{{groupDefcon}}" readonly title="Group DEFCON; disable Groups to edit the original tier.">{{else}}<select name="npcDefconTier" aria-label="DEFCON Tier">{{selectOptions defconChoices selected=npcDefcon nameAttr="value" labelAttr="label"}}</select>{{/if}}
         </div>
 
         

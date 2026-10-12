@@ -1,0 +1,35 @@
+<div class="ashdom-loot-shell">
+ <p class="ashdom-generator-intro">Create stock for a shop, with optional faction flavor. Choose your options and click Generate Stock. Expand Shopping Check Required for harder-to-find items, or share the list in chat.</p>
+ <button type="button" data-action="custom">Custom Entries</button>
+ <div class="ashdom-loot-controls">
+  <label>MAXIMUM RARITY<select data-loot-field="rarity">{{selectOptions rarities selected=rarity}}</select></label>
+  <label>AMOUNT<select data-loot-field="amount">{{selectOptions amounts selected=amount}}</select></label>
+  <label>SHOP TYPE<select data-loot-field="location">{{selectOptions locations selected=location}}</select></label>
+ </div>
+ <label>FACTION / NATION<select data-loot-field="faction">{{selectOptions factions selected=faction blank="None"}}</select></label>
+ <button type="button" data-action="generate" {{#if busy}}disabled{{/if}}><i class="fa-solid fa-dice"></i> Generate Stock</button>
+ <p>Legendary Items, Literature, Cybernetics, and Implants are not included.</p>
+ <p class="ashdom-loot-summary">{{summary}}</p>
+ {{#if results.length}}<button type="button" data-action="share" {{#if busy}}disabled{{/if}}><i class="fa-solid fa-comment"></i> Show in Chat</button>{{/if}}
+ {{#if results.length}}<h3 class="ashdom-shop-heading">Available Stock</h3>{{/if}}
+ <ol class="ashdom-loot-results">
+ {{#each results}}
+  <li draggable="true" data-loot-uuid="{{uuid}}">
+   <img src="{{img}}" alt="" width="32" height="32">
+   <button type="button" data-action="openItem" data-uuid="{{uuid}}">{{name}}</button>
+   <span>{{rarity}}</span><strong>× {{quantity}}</strong>
+  </li>
+ {{/each}}
+ </ol>
+ {{#if results.length}}
+ <details class="ashdom-shopping-checks">
+  <summary>Shopping Check Required ({{checks.length}})</summary>
+  <p>Roll Chance or Mercantile with the listed penalty. These items are available only after a successful check.</p>
+  <ol>{{#each checks}}<li>
+   <button type="button" data-action="openItem" data-uuid="{{uuid}}">{{name}}</button>
+   <span>{{rarity}}</span><strong>{{penalty}}</strong>
+  </li>{{else}}<li>No higher-rarity items match this shop.</li>{{/each}}</ol>
+ </details>
+ {{/if}}
+ {{#if results.length}}<p>Drag an item onto a sheet, then set its quantity to the amount shown.</p>{{/if}}
+</div>

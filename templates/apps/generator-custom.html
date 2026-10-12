@@ -1,0 +1,12 @@
+<div class="ashdom-custom-shell">
+ <p>Drag {{#if isEncounter}}NPC actors{{else}}items{{/if}} here from a directory or compendium. Changes save automatically for this world.</p>
+ <p>Choose locations to include an entry. {{#if isEncounter}}An empty location list permits only Any Location. Use the same family name for NPCs that belong together.{{else}}An empty location list excludes the entry until you choose a location. Legendary Items, Literature, Cybernetics, and Implants are excluded.{{/if}}</p>
+ {{#each rows}}
+ <section data-custom-uuid="{{uuid}}" class="ashdom-custom-entry">
+  <header><label><input type="checkbox" data-custom-field="enabled" {{checked enabled}}> {{name}}</label><button type="button" data-action="remove" data-uuid="{{uuid}}">Remove</button></header>
+  {{#if missing}}<p>Source entry is missing. It will be skipped.</p>{{/if}}
+  {{#if ../isEncounter}}<label>Encounter Family / Category <input type="text" data-custom-field="family" value="{{family}}" placeholder="Optional family name"></label>{{/if}}
+  <details><summary>Locations</summary><div class="ashdom-custom-locations">{{#each locations}}<label><input type="checkbox" data-custom-field="locations" value="{{name}}" {{checked checked}}> {{name}}</label>{{/each}}</div></details>
+ </section>
+ {{/each}}
+</div>

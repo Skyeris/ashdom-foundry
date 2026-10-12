@@ -1,0 +1,33 @@
+<div class="ashdom-loot-shell">
+ <p class="ashdom-generator-intro">Build encounters from the Bestiary. Choose your location, DEFCON range, size, and composition, then click Generate Encounter. Adjust quantities, add hidden tokens to the scene, or share the encounter in chat.</p>
+ <button type="button" data-action="custom">Custom Entries</button>
+ <div class="ashdom-loot-controls">
+  <label>LOCATION<select data-field="location">{{selectOptions locations selected=location}}</select></label>
+  <label>WEAKEST DEFCON<select data-field="weakest">{{selectOptions tiers selected=weakest nameAttr="value" labelAttr="label"}}</select></label>
+  <label>STRONGEST DEFCON<select data-field="strongest">{{selectOptions tiers selected=strongest nameAttr="value" labelAttr="label"}}</select></label>
+  <label>SIZE<select data-field="size">{{selectOptions sizes selected=size}}</select></label>
+  <label>COMPOSITION<select data-field="composition">{{selectOptions compositions selected=composition}}</select></label>
+  <label>CATEGORY<select data-field="category">{{selectOptions categories selected=category blank="Any"}}</select></label>
+ </div>
+ <label><input type="checkbox" data-field="groups" {{checked groups}}> Allow Groups</label>
+ <p>Groups use their adjusted DEFCON tier. Unique characters are excluded. Tier and size limits are not a party difficulty rating.</p>
+ <button type="button" data-action="generate" {{#if busy}}disabled{{/if}}>Generate Encounter</button>
+ {{#if result}}
+ <p class="ashdom-loot-summary">{{result.selection.location}} — {{result.selection.size}}</p>
+ <div class="ashdom-loot-controls">
+  <button type="button" data-action="place" {{#if busy}}disabled{{/if}}>Add to Scene (Hidden)</button>
+  <button type="button" data-action="share" {{#if busy}}disabled{{/if}}>Show in Chat</button>
+ </div>
+ <ol class="ashdom-encounter-results">
+ {{#each result.rows}}
+ <li>
+  <button type="button" data-action="open" data-uuid="{{uuid}}">{{name}}</button>
+  <span>DEFCON {{tier}}{{#if leader}} · Leader{{/if}}</span>
+  <label>Quantity <input type="number" min="1" max="30" value="{{quantity}}" data-quantity="{{@index}}"></label>
+  <button type="button" data-action="reroll" data-index="{{@index}}" {{#if ../busy}}disabled{{/if}}>Reroll</button>
+ </li>
+ {{/each}}
+ </ol>
+ <p>Scene placement creates new NPC actors and hidden, unlinked tokens. Chat shares names and quantities, without stats.</p>
+ {{/if}}
+</div>
