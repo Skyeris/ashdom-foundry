@@ -1,4 +1,7 @@
-2026/10/02-14:58:53.500 aab0 Recovering log #200
-2026/10/02-14:58:53.506 aab0 Delete type=0 #200
-2026/10/02-14:58:53.506 aab0 Delete type=3 #129
-2026/10/02-14:58:53.506 aab0 Delete type=3 #198
+2026/10/10-11:45:22.845 18f8 Recovering log #147
+2026/10/10-11:45:22.845 18f8 Level-0 table #149: started
+2026/10/10-11:45:22.850 18f8 Level-0 table #149: 27006 bytes OK
+2026/10/10-11:45:22.857 18f8 Delete type=0 #147
+2026/10/10-11:45:22.857 18f8 Delete type=3 #146
+2026/10/10-11:45:22.858 2ddc Compacting 4@0 + 1@1 files
+2026/10/10-11:45:22.862 2ddc compacted to: files[ 4 1 0 0 0 0 0 ]
