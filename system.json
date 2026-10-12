@@ -10,10 +10,10 @@
       "caption": "ASHDOM — A Post-Apocalyptic Roleplaying System"
     }
   ],
-  "version": "0.4",
+  "version": "0.5",
   "url": "https://github.com/Skyeris/ashdom-foundry",
   "manifest": "https://raw.githubusercontent.com/Skyeris/ashdom-foundry/main/system.json",
-  "download": "https://github.com/Skyeris/ashdom-foundry/releases/download/v0.4/ashdom.zip",
+  "download": "https://github.com/Skyeris/ashdom-foundry/releases/download/v0.5/ashdom.zip",
   "readme": "https://github.com/Skyeris/ashdom-foundry/blob/main/README.md",
   "license": "https://github.com/Skyeris/ashdom-foundry/blob/main/LICENSE",
   "changelog": "https://github.com/Skyeris/ashdom-foundry/releases",
@@ -161,28 +161,6 @@
       "system": "ashdom",
       "path": "packs/bestiary",
       "type": "Actor"
-    },
-    {
-      "name": "core-rules",
-      "label": "ASHDOM Core Rules",
-      "path": "packs/core-rules",
-      "type": "JournalEntry",
-      "ownership": {
-        "PLAYER": "OBSERVER",
-        "TRUSTED": "OBSERVER",
-        "ASSISTANT": "OWNER"
-      }
-    },
-    {
-      "name": "gm-reference",
-      "label": "ASHDOM GM Reference",
-      "path": "packs/gm-reference",
-      "type": "JournalEntry",
-      "ownership": {
-        "PLAYER": "NONE",
-        "TRUSTED": "NONE",
-        "ASSISTANT": "OWNER"
-      }
     }
   ],
   "documentTypes": {
@@ -213,6 +191,7 @@
       "vehicle": {},
       "vehicleMod": {},
       "implant": {},
+      "disease": {},
       "cybernetic": {}
     }
   }
