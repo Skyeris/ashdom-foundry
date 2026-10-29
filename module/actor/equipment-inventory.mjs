@@ -8,10 +8,14 @@ export function mirrorEquipmentDrop(system, item, update, origin, actorType) {
   const clone = value => foundry.utils.deepClone(value);
   const inventory = clone(update["system.inventoryItems"] ?? system.inventoryItems ?? []);
   const matches = row => (uuid && row.sourceUuid === uuid) || (row.name === item.name && (!row.sourceUuid || !uuid));
+  if(origin!=="inventory"&&item.generatedQuantity&&inventory.some(matches)){
+    const row=inventory.find(matches);row.quantity=(Number(row.quantity)||0)+item.generatedQuantity;
+    row.totalWeight=row.quantity*(Number(row.weight)||0);update["system.inventoryItems"]=inventory;
+  }
   if (origin !== "inventory" && !inventory.some(matches)) {
     const quantity = Number(source.quantity ?? 1);
     const weight = Number(source.weight ?? 0);
-    inventory.push({ name: item.name, sourceUuid: uuid, quantity, weight, totalWeight: quantity * weight,
+    inventory.push({ rarity:source.rarity??"", documentType:item.type, name: item.name, sourceUuid: uuid, quantity, weight, totalWeight: quantity * weight,
       type: source.category ?? "", category: source.category ?? "", subcategory: source.subcategory ?? "",
       specialization: source.specialization ?? "", condition: source.condition ?? "Pristine", note: source.note ?? "" });
     update["system.inventoryItems"] = inventory;

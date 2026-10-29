@@ -1,3 +1,4 @@
+import {tokenSize} from "../token-sizing.mjs";
 import {AshdomCustomEntries,mergeCustomEntries} from './generator-custom.mjs';
 import {TIERS,SIZES,COMPOSITIONS,LOCATIONS,encounterPool,buildEncounter,combineEncounterRows,leaderCandidates,hasBossPerk} from './encounter-rules.mjs';
 const {ApplicationV2,HandlebarsApplicationMixin}=foundry.applications.api;
@@ -48,11 +49,12 @@ export class AshdomEncounterGenerator extends HandlebarsApplicationMixin(Applica
  });}
  static async place(){await this.perform(async()=>{
   if(!this.result)return;if(!canvas?.ready||!canvas.scene)throw Error('Open a scene before adding an encounter.');
+  if(this.result.rows.some(r=>!Number.isSafeInteger(r.quantity)||r.quantity<1||r.quantity>30))throw Error('Each entry must have between 1 and 30 tokens.');
   const total=this.result.rows.reduce((n,r)=>n+r.quantity,0);if(total>60)throw Error('Limit scene placement to 60 tokens at a time.');
-  const prepared=[];
+  const scene=canvas.scene;const prepared=[];
   const grid=canvas.dimensions.size,bounds=canvas.dimensions.sceneRect;
   let plannedX=bounds.x+grid,plannedY=bounds.y+grid,plannedHeight=0;
-  for(const row of this.result.rows){const original=await fromUuid(row.uuid);if(!original)throw Error('A Bestiary entry could not be found.');const data=original.toObject();delete data._id;delete data.folder;delete data._stats;data.name=row.name;data.system.settings={...data.system.settings,groups:row.group};data.system.groupResources={hpCurrent:null,trCurrent:null,drCurrent:null};data.prototypeToken={...data.prototypeToken,name:row.name,actorLink:false};data.ownership={default:0};const preview=await original.getTokenDocument();const w=preview.width*grid,h=preview.height*grid;
+  for(const row of this.result.rows){const original=await fromUuid(row.uuid);if(!original)throw Error('A Bestiary entry could not be found.');const data=original.toObject();delete data._id;delete data.folder;delete data._stats;data.name=row.name;data.system.settings={...data.system.settings,groups:row.group};data.system.groupResources={hpCurrent:null,trCurrent:null,drCurrent:null};data.prototypeToken={...data.prototypeToken,name:row.name,actorLink:false,texture:{...data.prototypeToken?.texture,src:data.img||data.prototypeToken?.texture?.src}};data.ownership={default:0};const preview=await original.getTokenDocument();const plannedSize=tokenSize(data.system,data.type,scene.grid.distance);if(plannedSize)preview.updateSource(plannedSize);const w=preview.width*grid,h=preview.height*grid;
   if(w>bounds.width-grid||h>bounds.height-grid)throw Error('A token is too large for this scene.');
   for(let i=0;i<row.quantity;i++){
    if(plannedX+w>bounds.x+bounds.width){plannedX=bounds.x+grid;plannedY+=plannedHeight+grid;plannedHeight=0;}
@@ -60,14 +62,16 @@ export class AshdomEncounterGenerator extends HandlebarsApplicationMixin(Applica
    plannedX+=w+grid;plannedHeight=Math.max(plannedHeight,h);
   }
   prepared.push({row,data});}
-  const scene=canvas.scene;
-  const tokens=[];let x=bounds.x+grid,y=bounds.y+grid,lineHeight=0;
-  for(const {row,data}of prepared){const actor=await Actor.create(data,{renderSheet:false});
-   for(let i=0;i<row.quantity;i++){const token=await actor.getTokenDocument({name:row.name,actorLink:false,hidden:true});const w=token.width*grid,h=token.height*grid;
+  if(canvas.scene?.id!==scene.id)throw Error('The active scene changed. Deploy again on the intended scene.');
+  const created=[];const tokens=[];let x=bounds.x+grid,y=bounds.y+grid,lineHeight=0;
+  try {for(const {row,data}of prepared){const actor=await Actor.create(data,{renderSheet:false});created.push(actor);
+   for(let i=0;i<row.quantity;i++){const token=await actor.getTokenDocument({name:row.name,actorLink:false,hidden:true});const sized=tokenSize(actor.system,actor.type,scene.grid.distance);if(sized)token.updateSource(sized);const w=token.width*grid,h=token.height*grid;
     if(x+w>bounds.x+bounds.width){x=bounds.x+grid;y+=lineHeight+grid;lineHeight=0;}
     token.updateSource({x,y});tokens.push(token.toObject());x+=w+grid;lineHeight=Math.max(lineHeight,h);
    }
   }
-  await scene.createEmbeddedDocuments('Token',tokens);ui.notifications.info('Encounter added as hidden tokens near the scene’s upper-left corner. Reveal them when ready.');
+  await scene.createEmbeddedDocuments('Token',tokens);
+  }catch(error){for(const actor of created){try{const placed=scene.tokens.filter(t=>t.actorId===actor.id).map(t=>t.id);if(placed.length)await scene.deleteEmbeddedDocuments('Token',placed);await actor.delete();}catch{ui.notifications.error('Deployment cleanup failed; check the scene and newly created actors.');}}throw error;}
+  ui.notifications.info('Encounter added as hidden tokens near the scene’s upper-left corner. Reveal them when ready.');
  });}
 }

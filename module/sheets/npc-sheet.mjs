@@ -1,3 +1,4 @@
+import {savePreferences} from "./sheet-preferences.mjs";
 import { AshdomCharacterSheet } from "./character-sheet.mjs";
 import { npcIcon, isDefaultNPCImage } from "../npc-icons.mjs";
 import { npcGroup } from "../actor/npc-groups.mjs";
@@ -18,6 +19,7 @@ export class AshdomNPCSheet extends AshdomCharacterSheet {
   static toggleGroupRules(event) {
     event.preventDefault();
     this._groupRulesClosed = !this._groupRulesClosed;
+    savePreferences(this);
     this.render();
   }
 
@@ -66,6 +68,7 @@ export class AshdomNPCSheet extends AshdomCharacterSheet {
       }
     }
     for (const [key, value] of Object.entries(data.npcDefense ?? {})) {
+      if(key === "rr" && (this.actor.system.health?.immuneToRads || data.system?.health?.immuneToRads)) continue;
       if (!["ac", "n", "l", "f", "p", "e", "dr", "rr"].includes(key)) continue;
       const rating = this.actor.system.armors?.[0]?.ratings?.[key] ?? {};
       const components = ["ua", "armorSet", "helmet", "modifier"].reduce((sum, field) => sum + (Number(rating[field]) || 0), 0);

@@ -25,7 +25,7 @@ export function applyNPCGroupTotals(system) {
   for (const key of ["crippled", "crippledHead", "crippledTorso", "crippledArm", "crippledLeg", "crippledGroin", "knockDown"]) {
     if (system.health) system.health[key] = false;
   }
-  for (const [key, skill] of Object.entries(system.skills ?? {})) if (key !== "sneak") skill.total += 5;
+  for (const [key, skill] of Object.entries({...system.skills,...system.customSkills})) if (key !== "sneak") skill.total += 5;
   for (const [key, bonus] of Object.entries({ ap: 1, de: 1, sq: 2, st: 2, wp: 2 })) {
     if (system.secondary?.[key]) system.secondary[key].total += bonus;
   }

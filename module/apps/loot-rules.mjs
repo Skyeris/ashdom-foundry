@@ -1,3 +1,4 @@
+import {schematicResult} from '../actor/schematics.mjs';
 export const RARITIES = ['Common', 'Uncommon', 'Rare', 'Radical', 'Atomic'];
 export const AMOUNTS = {Scarce:'1d4', Low:'1d6+2', Average:'2d6+4', Plentiful:'3d6+8'};
 const TYPES = new Set(['weapon','consumable','armor','gear','misc','mod','robotPart','ammunition']);
@@ -55,6 +56,7 @@ export async function generateLoot(items, {rarity,amount,location,faction=''}, r
  for(let i=0;i<count;i++){
   const drawPool=preferred.length&&(await roll('1d4'))===1?preferred:pool;
   const item=drawPool[(await roll(`1d${drawPool.length}`))-1];
+  if((await roll('1d20'))===1){results.push(schematicResult(item));continue;}
   const formula=quantityFormula(item,rarity);
   results.push({uuid:item.uuid,name:item.name,img:item.img,rarity:item.system.rarity,quantity:await roll(formula),formula});
  }

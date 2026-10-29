@@ -1,0 +1,5 @@
+export const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+export const check=(name,label,checked)=>`<label class="ashdom-enhancement-option"><span class="ashdom-tag-checkbox"><input name="${esc(name)}" type="checkbox" ${checked?'checked':''}><span aria-hidden="true">✓</span></span>${esc(label)}</label>`;
+export const cancel={action:'cancel',label:'Cancel',callback:()=>null};
+export function utilityDialog(title,content,buttons,extra={}) {return foundry.applications.api.DialogV2.wait({classes:['ashdom','ashdom-roll-modifier-window','ashdom-utility-dialog'],window:{title,resizable:true},position:{width:650},content,buttons:[...buttons,cancel],rejectClose:false,modal:true,...extra});}
+export function button(label,fn){const b=document.createElement('button');b.type='button';b.className='ashdom-display-button';b.textContent=label;b.addEventListener('click',async e=>{e.preventDefault();e.stopPropagation();b.disabled=true;try{await fn();}catch(error){ui.notifications.warn(error.message);}finally{b.disabled=false;}});return b;}

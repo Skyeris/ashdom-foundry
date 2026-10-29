@@ -1,3 +1,5 @@
+import {skillChoices} from '../actor/custom-skills.mjs';
+import {usesPL,manualRadius} from '../actor/perk-radius-rules.mjs';
 const { HandlebarsApplicationMixin } = foundry.applications.api;
 const { ItemSheetV2 } = foundry.applications.sheets;
 
@@ -103,6 +105,7 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     const context = await super._prepareContext(options);
     context.item = this.item;
     context.system = this.item.system;
+    if(this.item.type==='perk')context.system={...this.item.system.toObject(),radius:manualRadius({...this.item.system.toObject(),name:this.item.name}),radiusUsePL:usesPL(this.item.system)};
     if (this.item.type === "vehicle" && this.item.system.category === "Sea Vehicle") {
       context.system = { ...this.item.system.toObject(), category: "Sea Vehicles" };
     }
@@ -126,9 +129,7 @@ export class AshdomItemSheet extends HandlebarsApplicationMixin(ItemSheetV2) {
     context.isInventoryType = destinations.includes("inventory");
     context.isGeneralInventoryType = context.isInventoryType &&
       !["weapon", "armor"].includes(this.item.type);
-    context.skillChoices = Object.fromEntries(
-      Object.entries(ASHDOM_SKILLS).sort((a, b) => a[1].localeCompare(b[1]))
-    );
+    context.skillChoices = skillChoices([this.item.system.skill]);
     context.damageTypes = {
       "": "", Normal: "Normal", Laser: "Laser", Fire: "Fire", Plasma: "Plasma",
       Explosive: "Explosive", Poison: "Poison", True: "True"

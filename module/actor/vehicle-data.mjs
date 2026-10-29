@@ -20,6 +20,8 @@ export function createCargoEntry(item) {
   const weight = positive(source.weight);
   const category = String(source.category ?? "");
   return {
+    ...(source.schematic?{equipmentData:structuredClone(source)}:{}),
+    container: "", documentType: item?.type??"", sourceUuid:item?.uuid??"", rarity:source.rarity??"",
     name: String(item?.name ?? ""), quantity, weight,
     totalWeight: entryWeight({ quantity, weight }),
     type: category, category,
@@ -59,6 +61,8 @@ export function createVehicleEntry(item) {
 
 function cargoSchema() {
   return new fields.SchemaField({
+    equipmentData: new fields.ObjectField({initial:{}}),
+    container: text(), documentType: text(), sourceUuid: text(), rarity: text(),
     name: text(), quantity: number({ initial: 1, min: 0 }),
     weight: number({ min: 0 }), totalWeight: number({ min: 0 }),
     type: text(), category: text(), subcategory: text(), specialization: text(),

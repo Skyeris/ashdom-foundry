@@ -141,6 +141,8 @@ export class AshdomPerkData extends foundry.abstract.TypeDataModel {
         choices: ["Background", "Bestiary", "FORMULA", "Mutation", "Racial", "Roleplay", "Skill Spec", "Trait"]
       }),
       rank: number({ integer: true, min: 0 }),
+      radius: number({min:0,initial:null,nullable:true}),
+      radiusUsePL: new fields.BooleanField({initial:null,nullable:true}),
       note: text(),
       chargesCurrent: number({ integer: true, min: 0 }),
       chargesMax: number({ integer: true, min: 0 })

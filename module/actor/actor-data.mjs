@@ -1,3 +1,7 @@
+import {prepareCustomSkills} from './custom-skills.mjs';
+import {enforceRadiationImmunity} from './radiation-immunity.mjs';
+import {hpProgression} from "./hp-progression.mjs";
+import {preparePerkCharges} from "./perk-charges.mjs";
 import { AUGMENTATION_TYPES } from "./augmentations.mjs";
 import { applyNPCGroupTotals } from "./npc-groups.mjs";
 
@@ -86,7 +90,7 @@ function createSkill(initialValue = 5) {
    SECONDARY STAT HELPERS
 ========================================= */
 
-function createSecondaryStat(withNote = false) {
+function createSecondaryStat(withNote = true) {
   const schema = {
     modifier: new fields.NumberField({ initial: 0 }),
     total: new fields.NumberField({ initial: 0 })
@@ -101,6 +105,8 @@ function createSecondaryStat(withNote = false) {
 
 function createCriticalChance() {
   return new fields.SchemaField({
+    successNote: new fields.StringField({initial:""}),
+    failureNote: new fields.StringField({initial:""}),
     successModifier: new fields.NumberField({ initial: 0 }),
     failureModifier: new fields.NumberField({ initial: 0 }),
     success: new fields.NumberField({ initial: 1 }),
@@ -115,6 +121,8 @@ function createCriticalChance() {
 
 function createPerk() {
   return new fields.SchemaField({
+    radius: new fields.NumberField({initial:null,nullable:true,min:0}),
+    radiusUsePL: new fields.BooleanField({initial:null,nullable:true}),
     rank: new fields.NumberField({ initial: 0, integer: true, min: 0 }),
     name: new fields.StringField({ initial: "" }),
     type: new fields.StringField({
@@ -136,6 +144,12 @@ function createPerk() {
 
 function createChargeTracker() {
   return new fields.SchemaField({
+    resetRest: new fields.BooleanField({initial:false}),
+    resetBreak: new fields.BooleanField({initial:false}),
+    formula: new fields.StringField({initial:""}),
+    autoFormula: new fields.StringField({initial:""}),
+    sourceKey: new fields.StringField({initial:""}),
+    review: new fields.BooleanField({initial:false}),
     name: new fields.StringField({ initial: "" }),
     current: new fields.NumberField({ initial: 0, integer: true }),
     max: new fields.NumberField({ initial: 0, integer: true, min: 0 })
@@ -146,7 +160,10 @@ function createEffectTracker() {
   return new fields.SchemaField({
     name: new fields.StringField({ initial: "" }),
     source: new fields.StringField({ initial: "" }),
-    active: new fields.BooleanField({ initial: true })
+    active: new fields.BooleanField({ initial: true }),
+    remaining: new fields.NumberField({initial:0,min:0}),
+    unit: new fields.StringField({initial:"none",choices:["none","rounds","minutes"]}),
+    expired: new fields.BooleanField({initial:false})
   });
 }
 
@@ -229,6 +246,8 @@ function createVehicleRating() {
 
 function createWeapon() {
   return new fields.SchemaField({
+    configurations: new fields.ArrayField(new fields.ObjectField(),{initial:[]}),
+    activeConfiguration: new fields.StringField({initial:""}),
     sourceUuid: new fields.StringField({ initial: "" }),
     mods: createEquipmentMods(),
     name: new fields.StringField({ initial: "" }),
@@ -293,6 +312,10 @@ function createCurrency() {
 
 function createInventoryItem() {
   return new fields.SchemaField({
+    equipmentData: new fields.ObjectField({initial:{}}),
+    container: new fields.StringField({initial:""}),
+    documentType: new fields.StringField({initial:""}),
+    rarity: new fields.StringField({initial:""}),
     sourceUuid: new fields.StringField({ initial: "" }),
     name: new fields.StringField({ initial: "" }),
     quantity: new fields.NumberField({ initial: 0, min: 0 }),
@@ -369,10 +392,13 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
     }
 
 
+    if (this.parent?.type === "character") this.health.hpMax = hpProgression(this).total;
+
     /* =====================================
        SECONDARY STAT TOTALS
     ====================================== */
 
+    preparePerkCharges(this);
     const frt = Number(this.primary.frt.total) || 0;
     const obs = Number(this.primary.obs.total) || 0;
     const ref = Number(this.primary.ref.total) || 0;
@@ -438,6 +464,7 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
         total = Math.min(total, d100Active ? 150 : 30);
       }
 
+      if (stat === "baseRR" && this.health.immuneToRads) total = 999;
       this.secondary[stat].total = total;
     }
 
@@ -673,6 +700,8 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
         : d100Active ? 200 : 40;
       skillData.total = Math.min(Math.max(rawTotal, 1), maximumSkill);
     }
+    prepareCustomSkills(this, {d100Active, allSkillPenalty, combatSkillPenalty, supportSkillPenalty, physicalSkillPenalty});
+    enforceRadiationImmunity(this);
 
   }
 
@@ -733,11 +762,13 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 
       /* HEALTH */
 
+      hpProgression: new fields.ObjectField({initial:{}}),
       health: new fields.SchemaField({
         hpCurrent: new fields.NumberField({ initial: 0, min: 0 }),
         hpMax: new fields.NumberField({ initial: 0, min: 0 }),
         trCurrent: new fields.NumberField({ initial: 0, min: 0 }),
         trMax: new fields.NumberField({ initial: 0, min: 0 }),
+        immuneToRads: new fields.BooleanField({initial:false}),
         rads: new fields.NumberField({ initial: 0, min: 0, max: 500 }),
         horror: new fields.NumberField({ initial: 0, min: 0, max: 500 }),
         success1: new fields.BooleanField({ initial: false }),
@@ -802,6 +833,7 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 
       /* SKILLS */
 
+      customSkills: new fields.ObjectField({initial: {}}),
       skills: new fields.SchemaField({
 
         meleeWeapons: createSkill(),
@@ -854,6 +886,7 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
 
       perks: new fields.ArrayField(createPerk(), { initial: [] }),
 
+      chargeSources: new fields.ObjectField({initial:{}}),
       chargeTrackers: new fields.ArrayField(createChargeTracker(), {
         initial: []
       }),
@@ -890,6 +923,9 @@ export class AshdomCharacterData extends foundry.abstract.TypeDataModel {
       inventoryItems: new fields.ArrayField(createInventoryItem(), { initial: [] }),
 
       settings: new fields.SchemaField({
+        hopePoints: new fields.SchemaField({maxModifier: new fields.NumberField({initial:0,integer:true})}),
+        deferredDamage: new fields.BooleanField({initial:false}),
+        autoSpendAP: new fields.BooleanField({initial:true}),
         supplements: new fields.SchemaField({
           survivors: new fields.BooleanField({ initial: false })
         }),
@@ -924,6 +960,7 @@ export class AshdomNPCData extends AshdomCharacterData {
   prepareDerivedData() {
     super.prepareDerivedData();
     applyNPCGroupTotals(this);
+    enforceRadiationImmunity(this);
   }
   _armorBase(key, rating) {
     return Number(rating.base) || 0;

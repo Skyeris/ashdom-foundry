@@ -1,3 +1,4 @@
+import {schematicDocument} from '../actor/schematics.mjs';
 import {factionFolders,factionEquipment,markFactionItems} from './loot-factions.mjs';
 import {loadGeneratorItems} from './generator-items.mjs';
 import {AshdomCustomEntries,mergeCustomEntries} from './generator-custom.mjs';
@@ -13,7 +14,7 @@ export class AshdomLootGenerator extends HandlebarsApplicationMixin(ApplicationV
  sharing=false;
  _canRender(options){return Boolean(game.user?.isGM);}
  async _prepareContext(options){return {...await super._prepareContext(options),...this.selection,rarities:Object.fromEntries(RARITIES.map(x=>[x,x])),amounts:Object.fromEntries(Object.keys(AMOUNTS).map(k=>[k,k])),locations:Object.fromEntries(Object.keys(LOCATIONS).map(x=>[x,x])),factions:Object.fromEntries(factionFolders(game.packs.get?.('ashdom.bestiary')).map(f=>[f.id??f._id,f.name])),results:this.results,summary:this.summary,busy:this.busy};}
- async _onRender(context,options){await super._onRender(context,options);this.element.querySelectorAll('[data-loot-field]').forEach(el=>el.addEventListener('change',()=>{this.selection[el.dataset.lootField]=el.type==='checkbox'?el.checked:el.value;}));this.element.querySelectorAll('[data-loot-uuid]').forEach(el=>el.addEventListener('dragstart',event=>{event.dataTransfer.setData('text/plain',JSON.stringify({type:'Item',uuid:el.dataset.lootUuid}));}));}
+ async _onRender(context,options){await super._onRender(context,options);this.element.querySelectorAll('[data-loot-field]').forEach(el=>el.addEventListener('change',()=>{this.selection[el.dataset.lootField]=el.type==='checkbox'?el.checked:el.value;}));this.element.querySelectorAll('[data-loot-uuid]').forEach(el=>el.addEventListener('dragstart',event=>{event.dataTransfer.setData('text/plain',JSON.stringify({type:'Item',uuid:el.dataset.lootUuid,ashdomQuantity:Number(el.dataset.lootQuantity),ashdomSchematic:el.dataset.lootSchematic==='true'}));}));}
  static async share(){
   if(!game.user?.isGM||this.busy||this.sharing||!this.results.length)return;
   this.sharing=true;
@@ -26,7 +27,7 @@ export class AshdomLootGenerator extends HandlebarsApplicationMixin(ApplicationV
   finally{this.sharing=false;}
  }
  static custom(){if(game.user?.isGM)new AshdomCustomEntries('loot').render({force:true});}
- static async openItem(event,target){const item=await fromUuid(target.dataset.uuid);item?.sheet.render(true);}
+ static async openItem(event,target){const item=await fromUuid(target.dataset.uuid);if(item&&target.dataset.schematic==='true'){new CONFIG.Item.documentClass(schematicDocument(item)).sheet.render(true);}else item?.sheet.render(true);}
  static async generate(){
   if(!game.user?.isGM||this.busy)return;
   this.busy=true;
@@ -39,6 +40,7 @@ export class AshdomLootGenerator extends HandlebarsApplicationMixin(ApplicationV
    const themed=markFactionItems(entries,await factionEquipment(selection.faction));
    const result=await generateLoot(themed,selection,roll);
    this.results=result.results;
+   this.distributionUncertain=false;
    const factionName=selection.faction?game.packs.get('ashdom.bestiary')?.folders.get(selection.faction)?.name:'';
    this.summary=`${selection.location}${factionName?' / '+factionName:''} • Up to ${selection.rarity} • ${selection.amount}: ${result.count} loot entries`;
   }catch(error){ui.notifications.warn(error.message);}

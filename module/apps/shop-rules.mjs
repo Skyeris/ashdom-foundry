@@ -1,3 +1,4 @@
+import {schematicResult} from '../actor/schematics.mjs';
 import {RARITIES,AMOUNTS,quantityFormula} from './loot-rules.mjs';
 export const SHOPS={
  'Armor Merchant':{types:['armor'],mods:['Armor']},
@@ -17,6 +18,7 @@ export const SHOPS={
  'Raider Black Market':{types:['weapon','armor','ammunition','mod'],categories:['Chems','Concoctions']},
  'Robot Parts Dealer':{types:['robotPart'],words:/memory core|circuit|robot/i},
  'Salvage Dealer':{types:['misc','robotPart'],categories:['Materials','Tools']},
+ 'Schematic Dealer':{schematics:true},
  'Scrap & Materials Trader':{categories:['Materials']},
  'Survival Outfitter':{categories:['General','Tools'],words:/bow|crossbow|hunting|camp|rope|tent|backpack|canteen/i},
  'Tool & Modification Shop':{types:['mod'],categories:['Tools']}
@@ -26,6 +28,7 @@ export function shopEligible(item,rarity,shop,includeFactionArmor=false){
  if(!includeFactionArmor&&item.type==='armor'&&String(item.system?.subcategory??'').trim().toLowerCase()==='faction')return false;
  const rule=SHOPS[shop],rank=RARITIES.indexOf(item.system?.rarity),max=RARITIES.indexOf(rarity);
  if(!rule||rank<0||max<rank||!TYPES.has(item.type)||/\bcopy\b/i.test(item.name)||String(item.uuid??'').includes('.legendary-items.'))return false;
+ if(rule.schematics)return true;
  if(Array.isArray(item.customLocations))return item.customLocations.includes(shop);
  const category=item.system?.category;
  return Boolean(rule.types?.includes(item.type)||(item.type==='mod'?rule.mods?.includes(category):rule.categories?.includes(category))||rule.words?.test(item.name));
@@ -41,8 +44,10 @@ export async function generateShop(items,{rarity,amount,location,includeFactionA
  for(let i=0;i<count;i++){
   const drawPool=preferred.length&&(await roll('1d4'))===1?preferred:pool;
   const item=drawPool[(await roll(`1d${drawPool.length}`))-1],formula=shopQuantityFormula(item,rarity);
-  const quantity=await roll(formula),previous=results.find(r=>r.uuid===item.uuid);
+  const schematic=location==='Schematic Dealer'||(await roll('1d20'))===1;
+  const quantity=schematic?1:await roll(formula),previous=results.find(r=>r.uuid===item.uuid&&Boolean(r.schematic)===schematic);
   if(previous)previous.quantity+=quantity;
+  else if(schematic)results.push(schematicResult(item,quantity));
   else results.push({uuid:item.uuid,name:item.name,img:item.img,rarity:item.system.rarity,quantity});
  }
  return {results,count};
@@ -64,7 +69,8 @@ export function shoppingChecks(items,{rarity,location,includeFactionArmor=false,
   const drawPool=preferred.length&&random()<0.25?preferred:pool;
   const item=drawPool[Math.floor(random()*drawPool.length)];
   pool.splice(pool.indexOf(item),1);
-  results.push({uuid:item.uuid,name:item.name,img:item.img,rarity:item.system.rarity,penalty:SHOPPING_PENALTIES[item.system.rarity][0]+Math.floor(random()*3)});
+  const schematic=location==='Schematic Dealer'||random()<0.05;
+  results.push({...schematicResult(item),schematic,name:schematic?`${item.name} Schematic`:item.name,penalty:SHOPPING_PENALTIES[item.system.rarity][0]+Math.floor(random()*3)});
  }
  return results.sort((a,b)=>a.name.localeCompare(b.name));
 }

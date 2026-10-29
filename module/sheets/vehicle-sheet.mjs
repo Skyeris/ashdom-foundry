@@ -1,3 +1,7 @@
+import {activateInventoryTools} from "./inventory-tools.mjs";
+import {loadPreferences,savePreferences} from "./sheet-preferences.mjs";
+import {undoResourceChange,redoResourceChange} from "../actor/resource-history.mjs";
+import {withDropQuantity} from "../actor/resources.mjs";
 import { VEHICLE_TYPES, normalizeVehicleType, vehicleTypeIcon } from "../vehicle-types.mjs";
 import { createVehicleEntry, createCargoEntry, cargoWeight } from "../actor/vehicle-data.mjs";
 import { ASHDOM_ITEM_DESTINATIONS } from "../config.mjs";
@@ -12,6 +16,8 @@ export class AshdomVehicleSheet extends HandlebarsApplicationMixin(ActorSheetV2)
     position: { width: 1100, height: 780 },
     form: { closeOnSubmit: false, submitOnChange: true, handler: AshdomVehicleSheet.#save },
     actions: {
+      redoResource: async function() { if(this.isEditable) await redoResourceChange(this.actor); },
+      undoResource: async function() { if(this.isEditable) await undoResourceChange(this.actor); },
       removeVehicleMod: AshdomVehicleSheet.#removeVehicleMod,
       addCargo: AshdomVehicleSheet.#addCargo,
       deleteCargo: AshdomVehicleSheet.#deleteCargo,
@@ -30,6 +36,7 @@ export class AshdomVehicleSheet extends HandlebarsApplicationMixin(ActorSheetV2)
   }
 
   async _prepareContext(options) {
+    loadPreferences(this);
     const context = await super._prepareContext(options);
     const vehicles = Array.from(this.actor.system.vehicles ?? []);
     if (!vehicles.length) vehicles.push(createVehicleEntry());
@@ -64,6 +71,7 @@ export class AshdomVehicleSheet extends HandlebarsApplicationMixin(ActorSheetV2)
 
   async _onRender(context, options) {
     await super._onRender(context, options);
+    activateInventoryTools(this);
     this.element.querySelectorAll("[data-vehicle-drop], [data-cargo-drop], [data-vehicle-mod-drop]").forEach(target => {
       target.addEventListener("dragover", event => {
         event.preventDefault();
@@ -86,7 +94,7 @@ export class AshdomVehicleSheet extends HandlebarsApplicationMixin(ActorSheetV2)
     try { data = JSON.parse(event.dataTransfer.getData("text/plain")); }
     catch { return; }
     if (data?.type !== "Item" || !data.uuid || !this.isEditable) return;
-    const item = await fromUuid(data.uuid);
+    const item = withDropQuantity(await fromUuid(data.uuid),data);
     if (!item) return;
     const vehicles = this._vehicles();
     if (target.hasAttribute("data-vehicle-mod-drop")) {
@@ -170,6 +178,7 @@ export class AshdomVehicleSheet extends HandlebarsApplicationMixin(ActorSheetV2)
     const key = `${target.dataset.vehicleIndex}:${target.dataset.cargoIndex}`;
     this._openCargo ??= new Set();
     if (!this._openCargo.delete(key)) this._openCargo.add(key);
+    savePreferences(this);
     this.render({ force: true });
   }
 

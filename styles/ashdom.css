@@ -1107,7 +1107,7 @@
 }
 
 .ashdom-weapon-row-one {
-  grid-template-columns: minmax(110px, 1fr) 96px 92px 82px;
+  grid-template-columns: minmax(151px, 1fr) 96px 68px 78px;
 }
 
 .ashdom-weapon-row-two {
@@ -1433,6 +1433,7 @@
 .ashdom-npc-sheet,
 .ashdom-character-sheet .window-content,
 .ashdom-npc-sheet .window-content,
+.ashdom-roll-modifier-window,
 .ashdom-sheet {
   --ashdom-gold: #ffd400;
   --ashdom-field: #f7c51e;
@@ -2963,3 +2964,456 @@
 .ashdom-shopping-checks button { text-align:left; background:transparent; color:#ffd400; border:0; white-space:normal; }
 
 .ashdom-generator-intro { color:#fff; line-height:1.4; flex-shrink:0; }
+
+/* Resource tools reuse the sheet's shared palette and button styling. */
+.ashdom-sheet .ashdom-resource-undo {
+  flex: 0 0 auto;
+  align-self: flex-end;
+  width: auto;
+  max-width: 100%;
+  min-height: 28px;
+  margin: 0 0 8px;
+  padding: 4px 9px;
+  font-family: inherit;
+  line-height: 1.2;
+}
+.ashdom-sheet .ashdom-timer-help {
+  margin: 0 0 10px;
+  color: #fff;
+  font-size: 0.75em;
+  line-height: 1.4;
+}
+.ashdom-sheet .ashdom-effect-timer {
+  grid-column: 3 / 5;
+  grid-row: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  min-width: 0;
+  padding: 2px 0 5px;
+}
+.ashdom-sheet .ashdom-effect-grid > .ashdom-delete-button {
+  grid-column: 5;
+  grid-row: 1;
+}
+.ashdom-sheet .ashdom-effect-timer label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+}
+.ashdom-sheet .ashdom-effect-timer label > span {
+  font-size: 0.75em;
+}
+.ashdom-sheet .ashdom-effect-timer input,
+.ashdom-sheet .ashdom-effect-timer select {
+  height: 28px;
+  min-width: 0;
+  margin: 0;
+  padding: 2px 5px;
+  font-family: inherit;
+  font-size: 0.85em;
+  line-height: normal;
+}
+.ashdom-sheet .ashdom-effect-timer input { width: 60px; }
+.ashdom-sheet .ashdom-effect-timer select { width: 100px; }
+.ashdom-sheet .ashdom-effect-timer strong {
+  flex-basis: 100%;
+  color: var(--ashdom-gold);
+  font-size: 0.75em;
+  line-height: 1.4;
+}
+
+/* Inventory filtering and personal pinned actions. */
+.ashdom-sheet .ashdom-inventory-filters {display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:8px 0 6px;}
+.ashdom-sheet .ashdom-inventory-filters input {flex:1 1 140px;min-width:0;height:28px;}
+.ashdom-sheet .ashdom-inventory-filters select {flex:1 1 110px;width:auto;min-width:0;height:28px;}
+.ashdom-sheet .ashdom-inventory-filters button {flex:0 0 auto;width:auto;height:28px;}
+.ashdom-sheet .ashdom-filter-status {font-size:.75em;color:#fff;margin:0 0 8px;}
+.ashdom-sheet .ashdom-item-entry[hidden] {display:none!important;}
+.ashdom-sheet .ashdom-pinned-actions {flex:0 0 auto;margin:0 0 8px;padding:6px 8px;border:1px solid var(--ashdom-gold-dark);border-radius:4px;background:var(--ashdom-black);max-height:130px;overflow:auto;scrollbar-color:var(--ashdom-gold) #000;}
+.ashdom-sheet .ashdom-pinned-actions > strong {font-size:.75em;color:var(--ashdom-gold);}
+.ashdom-sheet .ashdom-pin-list {display:flex;flex-wrap:wrap;gap:6px;margin-top:5px;}
+.ashdom-sheet .ashdom-pin-chip,.ashdom-sheet .ashdom-pinnable {display:flex;align-items:center;gap:4px;min-width:0;}
+.ashdom-sheet .ashdom-pinnable > :first-child {flex:1;min-width:0;width:0;}
+.ashdom-sheet .ashdom-pin-chip > button {width:auto;min-height:26px;}
+.ashdom-sheet .ashdom-pin-button {flex:0 0 22px;width:22px;min-width:22px;height:26px;padding:2px;line-height:1;}
+.ashdom-sheet .ashdom-pin-button.is-pinned {background:var(--ashdom-gold)!important;color:var(--ashdom-black)!important;}
+.ashdom-sheet .ashdom-pin-hint {font-size:.75em;color:#fff;}
+.ashdom-sheet .ashdom-pin-chip > button:disabled {opacity:.5;cursor:default;}
+
+/* Keep reload controls in one row and let pinned action labels wrap. */
+.ashdom-sheet .ashdom-weapon-row-two {
+  grid-template-columns: 25px 108px 62px minmax(0, 1fr) 50px 50px;
+  gap: 5px;
+}
+.ashdom-npc-sheet .ashdom-weapon-row-two {
+  grid-template-columns: 25px 108px minmax(0, 1fr) 50px 50px;
+}
+.ashdom-sheet .ashdom-reload-button {
+  width: 25px;
+  min-width: 25px;
+  height: 26px;
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: var(--font-size-14, 0.875rem);
+}
+.ashdom-sheet .ashdom-weapon-row-two label > span:first-child {white-space: nowrap;}
+.ashdom-sheet .ashdom-pin-chip {max-width:100%;align-items:stretch;}
+.ashdom-sheet .ashdom-pin-chip > button:first-child {
+  flex:1 1 auto;min-width:0;max-width:100%;height:auto;min-height:28px;
+  white-space:normal;overflow-wrap:anywhere;line-height:1.3;padding:5px 8px;
+}
+.ashdom-sheet .ashdom-pin-chip > .ashdom-pin-button {align-self:center;}
+.ashdom-sheet .ashdom-pinnable > .ashdom-skill-button {
+  white-space:normal;overflow-wrap:anywhere;height:auto;min-height:28px;line-height:1.2;
+}
+
+.ashdom-sheet .ashdom-pins-setting {display:flex;align-items:center;gap:8px;cursor:pointer;}
+.ashdom-sheet .ashdom-pins-setting .ashdom-tag-checkbox {flex:0 0 auto;}
+
+/* Portrait and compact undo control share the header's left column. */
+.ashdom-sheet .ashdom-portrait-tools {
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  align-self:start;
+  gap:5px;
+  min-width:0;
+}
+.ashdom-sheet .ashdom-portrait-tools .ashdom-resource-undo {
+  align-self:center;
+  width:100%;
+  min-height:23px;
+  margin:0;
+  padding:3px 4px;
+  font-size:0.72em;
+  line-height:1.2;
+  white-space:nowrap;
+}
+
+.ashdom-sheet .ashdom-vitals-undo {display:flex;justify-content:flex-start;margin-top:2px;}
+.ashdom-sheet .ashdom-vitals-undo .ashdom-resource-undo {
+  width:auto;min-height:23px;margin:0;padding:3px 7px;
+  font-size:0.72em;line-height:1.2;white-space:nowrap;
+}
+
+.ashdom-sheet .ashdom-vehicle-name-actions {display:flex;align-items:center;gap:8px;min-width:0;}
+.ashdom-sheet .ashdom-vehicle-name-actions input {flex:1;min-width:0;}
+.ashdom-sheet .ashdom-vehicle-name-actions .ashdom-resource-undo {flex:0 0 auto;margin:0;align-self:center;min-height:26px;white-space:nowrap;}
+.ashdom-sheet .ashdom-inventory-container {margin:8px 0;padding:6px;border:1px solid var(--ashdom-gold-dark);border-radius:4px;}
+.ashdom-sheet .ashdom-inventory-container > summary,.ashdom-sheet .ashdom-vehicle-settings > summary {color:var(--ashdom-gold);font-weight:bold;cursor:pointer;margin-bottom:6px;}
+.ashdom-sheet .ashdom-container-tools {display:flex;align-items:end;gap:8px;margin:5px 0 8px;}
+.ashdom-sheet .ashdom-container-tools label {display:flex;align-items:center;gap:6px;font-size:.75em;flex:1;min-width:0;}
+.ashdom-sheet .ashdom-container-tools input {width:100%;min-width:0;height:26px;}
+.ashdom-sheet .ashdom-container-tools button {width:auto;min-height:26px;}
+.ashdom-sheet .ashdom-resource-history ol {max-height:250px;overflow:auto;padding-left:20px;scrollbar-color:var(--ashdom-gold) #000;color:#fff;font-size:.8em;}
+.ashdom-sheet .ashdom-resource-history li {margin:8px 0;overflow-wrap:anywhere;}
+.ashdom-sheet .ashdom-resource-history strong {color:var(--ashdom-gold);}
+.ashdom-sheet .ashdom-vehicle-settings {flex:0 0 auto;max-height:35%;overflow:auto;}
+.ashdom-transfer-form {display:grid;gap:10px;}
+.ashdom-transfer-form label {display:grid;gap:4px;}
+
+.ashdom-sheet .ashdom-resource-history .ashdom-resource-undo {width:auto;min-height:26px;margin:0 0 4px;padding:4px 9px;}
+
+.ashdom-sheet .ashdom-item-details > .ashdom-container-tools,
+.ashdom-sheet .ashdom-cargo-details > .ashdom-container-tools {grid-column:1 / -1;}
+
+#ashdom-ap-tracker {position:fixed;bottom:100px;left:50%;transform:translateX(-50%);z-index:60;display:flex;flex-wrap:wrap;align-items:center;gap:8px;max-width:calc(100vw - 40px);padding:8px 12px;border:1px solid #ffd400;border-radius:5px;background:#000;color:#ffd400;font-family:Arial,sans-serif;box-shadow:0 2px 8px #000;}
+#ashdom-ap-tracker[hidden] {display:none;}
+#ashdom-ap-tracker .ashdom-ap-title {max-width:220px;overflow-wrap:anywhere;}
+#ashdom-ap-tracker .ashdom-ap-value {color:#65b0ff;font-weight:bold;}
+#ashdom-ap-tracker button {width:auto;min-width:32px;background:#000;color:#e0b900;border:1px solid #e0b900;border-radius:4px;padding:4px 8px;line-height:1.2;}
+#ashdom-ap-tracker button:hover,#ashdom-ap-tracker button:focus-visible {background:#e0b900;color:#000;}
+
+#ashdom-ap-tracker .ashdom-hp-tools {display:flex;flex-basis:100%;align-items:center;gap:8px;border-top:1px solid #6b5700;padding-top:6px;}
+#ashdom-ap-tracker .ashdom-hp-value {color:#45d264;}
+#ashdom-ap-tracker .ashdom-hp-tools input {width:64px;min-width:0;background:#f7c51e;color:#000;border:1px solid #ffd400;border-radius:4px;text-align:center;}
+
+.ashdom-apply-damage {display:flex;flex-wrap:wrap;gap:5px;margin-top:8px;padding-top:6px;border-top:1px solid #6b5700;}
+.ashdom-apply-damage p {flex-basis:100%;color:#fff;font-size:.8em;margin:0 0 4px;}
+.ashdom-apply-damage button {width:auto;background:#000;color:#e0b900;border:1px solid #e0b900;border-radius:4px;padding:4px 7px;}
+.ashdom-apply-damage button:hover {background:#e0b900;color:#000;}
+
+.ashdom-roll-modifier-window .ashdom-misc-damage {display:flex;align-items:center;gap:8px;color:#ffd400;font-weight:bold;margin-top:10px;}
+.ashdom-roll-modifier-window .ashdom-misc-damage input {width:90px;min-width:0;background:#f7c51e;color:#000;border:1px solid #ffd400;border-radius:4px;text-align:center;}
+.ashdom-roll-modifier-window .ashdom-misc-help {color:#fff;font-size:.8em;line-height:1.4;}
+
+#ashdom-ap-tracker .ashdom-dr-value {color:#bbb;}
+.ashdom-sheet .ashdom-inventory-filters input[type="search"] {flex:1 0 165px;min-width:165px;font-size:13px;padding:3px 7px;}
+ .ashdom-sheet .ashdom-weapon-summary:has(.ashdom-notes-pinnable) {grid-template-columns:24px 24px 58px 51px minmax(0,1fr) 26px;}
+.ashdom-sheet .ashdom-notes-pinnable > .ashdom-weapon-a-button {flex:0 0 25px;width:25px;}
+
+.ashdom-charge-formula {grid-column:2 / -1;display:flex;align-items:center;gap:8px;color:#ffd700;}
+.ashdom-charge-formula input{flex:1;min-width:0;}
+.ashdom-charge-help{grid-column:2 / -1;color:white;}
+.ashdom-roll-damage{background:#000;color:#ffd700;border:1px solid #ffd700;font-weight:bold;}
+
+.ashdom-charge-grid {grid-template-columns:50px minmax(100px,1fr) 72px 72px 30px;}
+.ashdom-charge-controls {display:flex;align-items:center;gap:2px;}
+.ashdom-charge-controls button {width:24px;min-width:0;padding:0;color:#ffd700;background:#000;border:0;}
+.ashdom-charge-formula-details {grid-column:2 / -1;}
+.ashdom-charge-formula-details[hidden] {display:none;}
+
+.ashdom-effect-name {display:flex;align-items:center;gap:4px;min-width:0;}
+.ashdom-effect-name input {min-width:0;flex:1;}
+.ashdom-effect-name button {width:24px;min-width:24px;padding:0;color:#ffd700;background:#000;border:0;}
+.ashdom-sheet .ashdom-effect-timer[hidden] {display:none;}
+
+.ashdom-sheet .ashdom-header-dr-row label{color:#999;}
+.ashdom-sheet .ashdom-header-dr-row input{background:#999;color:#000;border:0;}
+.ashdom-recovery-buttons{display:flex;gap:5px;margin:3px 0;}
+.ashdom-sheet .ashdom-recovery-buttons .ashdom-skill-button {flex:1;width:auto;min-width:0;}
+
+.ashdom-charge-reset-options{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:4px 0 6px;color:#ffd700;font-size:11px;}
+.ashdom-charge-reset-options label{display:flex;align-items:center;gap:4px;}
+
+.ashdom-character-sheet .ashdom-sheet .ashdom-header-vital-row.ashdom-header-dr-row > label {color:#a5a5a5 !important;}
+.ashdom-character-sheet .ashdom-sheet .ashdom-header-dr-row input {background:#a5a5a5 !important;color:#000 !important;border:0 !important;box-shadow:none !important;}
+.ashdom-sheet .ashdom-health-panel .ashdom-status-rads {width:220px;max-width:100%;margin:10px auto 0;}
+
+.ashdom-sheet .ashdom-health-panel .ashdom-status-horror {width:220px;max-width:100%;margin:6px auto 0;}
+
+.ashdom-sheet .ashdom-health-panel .ashdom-status-resources {display:flex;flex-direction:row;justify-content:center;align-items:center;gap:16px;flex-wrap:wrap;width:100%;margin-top:10px;}
+.ashdom-sheet .ashdom-health-panel .ashdom-status-resources .ashdom-header-vital-row {width:220px;max-width:100%;margin:0;}
+
+.ashdom-sheet .ashdom-health-panel .ashdom-status-resources {flex-wrap:nowrap;padding-left:0;border-left:0;gap:12px;}
+.ashdom-sheet .ashdom-health-panel .ashdom-status-resources .ashdom-header-vital-row {flex:1;min-width:0;max-width:220px;grid-template-columns:40px minmax(30px,1fr) 8px 28px;}
+
+.ashdom-sheet .ashdom-health-panel .ashdom-status-resources {flex-direction:column;align-items:center;gap:6px;}
+.ashdom-sheet .ashdom-health-panel .ashdom-status-resources .ashdom-header-vital-row {flex:none;width:100%;}
+.ashdom-status-bottom {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;align-items:center;margin-top:10px;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-resources {margin:0;}
+.ashdom-status-reaper {display:grid;gap:6px;min-width:0;}
+.ashdom-section-heading {color:var(--ashdom-gold);font-weight:bold;font-size:14px;cursor:pointer;line-height:1.3;}
+.ashdom-sheet details.ashdom-panel[open] > .ashdom-section-heading {margin-bottom:10px;}
+.ashdom-sheet details.ashdom-panel:not([open]) > :not(summary) {display:none;}
+
+.ashdom-status-reaper .ashdom-secondary-reaper-row {grid-template-columns:minmax(0,1fr) 24px;}
+.ashdom-status-reaper .ashdom-secondary-reaper-row .ashdom-health-roll-button {grid-column:1;min-width:0;font-size:11px;}
+.ashdom-status-reaper .ashdom-secondary-reaper-row .ashdom-note-button {grid-column:2;}
+.ashdom-status-reaper .ashdom-secondary-tracker-row {grid-template-columns:minmax(68px,1fr) auto;}
+.ashdom-status-reaper .ashdom-secondary-checks {grid-column:2;gap:6px;}
+
+.ashdom-sheet .ashdom-section-heading {position:relative;display:block;text-align:center;padding:0 18px;list-style:none;}
+.ashdom-sheet .ashdom-section-heading::-webkit-details-marker {display:none;}
+.ashdom-sheet .ashdom-section-heading::before {content:"▸";position:absolute;left:0;top:2px;color:var(--ashdom-gold);}
+.ashdom-sheet details[open] > .ashdom-section-heading::before {content:"▾";}
+.ashdom-sheet .ashdom-section-heading h2 {text-align:center;}
+.ashdom-status-resources .ashdom-secondary-reaper-row {width:100%;max-width:220px;grid-template-columns:minmax(0,1fr) 24px;}
+.ashdom-status-resources .ashdom-secondary-reaper-row .ashdom-health-roll-button {grid-column:1;min-width:0;font-size:11px;}
+.ashdom-status-resources .ashdom-secondary-reaper-row .ashdom-note-button {grid-column:2;}
+
+/* Share the Settings heading divider across actor-sheet section titles. */
+.ashdom-sheet h2 {
+  padding-bottom:4px;
+  border-bottom:1px solid var(--ashdom-gold);
+}
+
+/* Match collapsible headings to the Weapons heading size. */
+.ashdom-sheet .ashdom-section-heading {font-size:1em;}
+.ashdom-sheet .ashdom-section-heading h2 {font-size:1em;margin:0 0 7px;}
+.ashdom-sheet .ashdom-health-panel .ashdom-status-resources label {font-size:1em;}
+.ashdom-status-reaper .ashdom-secondary-tracker-row {grid-template-columns:30px minmax(65px,1fr) auto;gap:4px;}
+.ashdom-status-reaper .ashdom-secondary-checks {grid-column:3;gap:4px;}
+
+/* Share row tracks so resources line up with their Reaper counters. */
+.ashdom-sheet .ashdom-status-bottom {grid-template-rows:28px 28px;row-gap:6px;align-items:center;}
+.ashdom-sheet .ashdom-status-bottom > .ashdom-status-resources,
+.ashdom-sheet .ashdom-status-bottom > .ashdom-status-reaper {display:contents;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-header-rads-row {grid-column:1;grid-row:1;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-header-horror-row {grid-column:1;grid-row:2;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:first-child {grid-column:2;grid-row:1;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:last-child {grid-column:2;grid-row:2;}
+
+.ashdom-rads-immunity{display:flex;align-items:center;gap:6px;font-size:12px;margin:4px 0 8px;}
+
+.ashdom-sheet .ashdom-status-bottom {grid-template-rows:auto 28px 28px;}
+.ashdom-status-stat-rolls {grid-column:1 / -1;grid-row:1;display:flex;justify-content:center;gap:16px;margin:0 0 6px;}
+.ashdom-sheet .ashdom-status-stat-rolls .ashdom-secondary-roll-button {width:56px;flex:0 0 56px;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-header-rads-row {grid-row:2;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-header-horror-row {grid-row:3;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:first-child {grid-row:2;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:last-child {grid-row:3;}
+
+/* Keep stat rolls over RADS, alongside the Reaper Check row. */
+.ashdom-sheet .ashdom-status-bottom {grid-template-rows:28px 28px 28px;}
+.ashdom-sheet .ashdom-status-stat-rolls {grid-column:1;grid-row:1;gap:10px;margin:0;align-items:center;}
+.ashdom-sheet .ashdom-status-stat-rolls .ashdom-secondary-roll-button {width:48px;flex:0 1 48px;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:first-child {grid-row:1;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:last-child {grid-row:2;}
+
+.ashdom-settings-right{display:grid;gap:12px;align-content:start;min-width:0;}
+.ashdom-sheet :is([data-action="reloadWeapon"],[data-action="rollWeaponSingle"],[data-action="rollWeaponTargeted"],[data-action="rollWeaponBurst"],[data-action="displayWeapon"],[data-action="displayPerk"],[data-action="rollSecondary"]) {background:var(--ashdom-black) !important;color:var(--ashdom-gold) !important;border-color:var(--ashdom-gold) !important;}
+.ashdom-sheet :is([data-action="reloadWeapon"],[data-action="rollWeaponSingle"],[data-action="rollWeaponTargeted"],[data-action="rollWeaponBurst"],[data-action="displayWeapon"],[data-action="displayPerk"],[data-action="rollSecondary"]):is(:hover,:focus-visible) {background:var(--ashdom-gold) !important;color:var(--ashdom-black) !important;}
+
+.ashdom-hp-level{border-top:1px solid var(--ashdom-gold-dark);padding:8px 0;color:var(--ashdom-gold);}
+.ashdom-hp-level-values{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:5px 0;}
+.ashdom-hp-level-values label{font-size:11px;text-align:center;}
+.ashdom-hp-level input{width:100%;min-width:0;}
+.ashdom-hp-perk{display:grid;grid-template-columns:24px minmax(0,1fr) 60px;gap:6px;align-items:center;}
+
+.ashdom-sheet .ashdom-status-bottom {grid-template-rows:auto auto auto;row-gap:6px;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-reaper-actions {grid-column:2;grid-row:1;display:grid;grid-template-columns:minmax(0,1fr) 30px;gap:6px;align-items:center;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:nth-child(2) {grid-column:2;grid-row:2;}
+.ashdom-sheet .ashdom-status-bottom .ashdom-status-reaper > .ashdom-secondary-tracker-row:nth-child(3) {grid-column:2;grid-row:3;}
+.ashdom-status-reaper .ashdom-secondary-tracker-row {grid-template-columns:minmax(65px,1fr) auto;}
+.ashdom-status-reaper .ashdom-secondary-checks {grid-column:2;}
+.ashdom-sheet .ashdom-reaper-actions [data-action="rollReaper"] {height:28px;background:var(--ashdom-black) !important;color:var(--ashdom-gold) !important;border-color:var(--ashdom-gold) !important;}
+.ashdom-sheet .ashdom-status-stat-rolls .ashdom-secondary-roll-button {height:28px;}
+.ashdom-sheet .ashdom-reaper-actions [data-action="rollReaper"]:is(:hover,:focus-visible) {background:var(--ashdom-gold) !important;color:var(--ashdom-black) !important;}
+
+.ashdom-sheet .ashdom-reaper-actions [data-action="rollReaper"] {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  line-height:1;
+}
+.ashdom-sheet .ashdom-reaper-actions [data-action="rollReaper"] i {
+  display:inline-block;
+  line-height:1;
+  margin:0;
+  flex:0 0 auto;
+}
+
+/* Maximum resources in the Character header. */
+.ashdom-character-sheet:not(.ashdom-npc-sheet) .ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row input:last-child,
+.ashdom-character-sheet:not(.ashdom-npc-sheet) .ashdom-sheet .ashdom-header-vitals .ashdom-header-hp-row input:last-child:is(:hover,:focus) {
+  color:#b6ff00 !important;
+  background:#000 !important;
+  border:1px solid #000 !important;
+  box-shadow:none !important;
+}
+.ashdom-character-sheet:not(.ashdom-npc-sheet) .ashdom-sheet .ashdom-header-vitals .ashdom-header-dr-row input:last-child,
+.ashdom-character-sheet:not(.ashdom-npc-sheet) .ashdom-sheet .ashdom-header-vitals .ashdom-header-dr-row input:last-child:is(:hover,:focus) {
+  color:#a5a5a5 !important;
+  background:#000 !important;
+  border:1px solid #000 !important;
+  box-shadow:none !important;
+}
+.ashdom-character-sheet:not(.ashdom-npc-sheet) .ashdom-sheet .ashdom-header-vitals input[aria-label="Total TR"] {
+  border:1px solid #000 !important;
+  box-shadow:none !important;
+}
+
+.ashdom-hp-level-values.ashdom-hp-with-gain{grid-template-columns:repeat(4,minmax(0,1fr));}
+
+.ashdom-resource-alert{color:#ff7766 !important;font-weight:bold;}
+.ashdom-alert-banner{background:#000;border:1px solid #b54;padding:6px;font-size:12px;margin:4px 0;}
+.ashdom-enhancement-option,.ashdom-capacity-setting{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:5px 0;font-size:12px;}
+.ashdom-enhancement-option input[type=number],.ashdom-capacity-setting input{width:65px;}
+.ashdom-config-controls{grid-column:1 / -1;display:flex;flex-wrap:wrap;gap:6px;align-items:center;border-bottom:1px solid var(--ashdom-gold-dark);padding-bottom:8px;margin-bottom:6px;color:var(--ashdom-gold);}
+.ashdom-config-controls select{flex:1;min-width:100px;}.ashdom-config-controls button{width:auto;}.ashdom-config-controls small{flex-basis:100%;color:white;}
+.ashdom-settings-panel ol{max-height:240px;overflow:auto;font-size:12px;overflow-wrap:anywhere;}
+
+.ashdom-saved-controls{display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid #ffd400;padding-bottom:8px;}
+.ashdom-saved-controls select{flex:1;min-width:160px;}.ashdom-saved-controls button{width:auto;font-size:12px;}
+.ashdom-trade-lines{max-height:350px;overflow:auto;}.ashdom-trade-lines table{width:100%;}.ashdom-trade-lines input{width:75px;}
+.ashdom-trade-chat-button{background:#000;color:#ffd400;border:1px solid #ffd400;font-weight:bold;}
+
+/* Keep resource undo and redo together on every actor sheet. */
+.ashdom-sheet .ashdom-resource-history-actions {display:flex;flex-direction:row;align-items:center;gap:6px;margin-bottom:4px;}
+.ashdom-sheet .ashdom-resource-history-actions .ashdom-resource-undo {flex:0 1 auto;width:auto;margin:0;white-space:nowrap;}
+
+.ashdom-sheet .ashdom-perk-radius {grid-column:1 / -1;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ashdom-gold);}
+.ashdom-sheet .ashdom-perk-radius input {width:65px;}
+.ashdom-sheet .ashdom-weapon-skill-notes {display:flex;gap:5px;align-items:flex-end;min-width:0;}
+.ashdom-sheet .ashdom-weapon-skill-notes label {flex:1;min-width:0;}
+.ashdom-sheet .ashdom-weapon-skill-notes .ashdom-note-button {flex:0 0 28px;}
+.ashdom-sheet .ashdom-weapon-summary {grid-template-columns:24px 24px 58px 25px minmax(0,1fr) 26px;}
+
+/* Separate weapon entries using the sheet heading color. */
+.ashdom-sheet .ashdom-weapon-list > .ashdom-weapon-entry + .ashdom-weapon-entry {border-top:1px solid var(--ashdom-gold);padding-top:10px;}
+
+.ashdom-sheet .ashdom-perk-radius-details {grid-column:1 / -1;color:var(--ashdom-gold);font-size:11px;}
+.ashdom-perk-radius-details > summary {cursor:pointer;color:var(--ashdom-gold);font-weight:bold;}
+.ashdom-sheet .ashdom-perk-radius-details .ashdom-perk-radius {margin-top:5px;gap:12px;}
+.ashdom-perk-radius-value,.ashdom-perk-radius-pl {display:flex;align-items:center;gap:6px;}
+
+.ashdom-sheet .ashdom-perk-row[data-collection="perks"] {grid-template-columns:24px 24px 25px 30px minmax(0,1fr) 30px;}
+.ashdom-sheet .ashdom-perk-radius-details[hidden] {display:none !important;}
+
+.ashdom-sheet .ashdom-perk-type-group {min-width:0;margin:0;}
+
+.ashdom-sheet .ashdom-perk-row[data-collection="perks"] > .ashdom-perk-radius-details {grid-column:2 / -1;}
+.ashdom-sheet .ashdom-perk-row[data-collection="perks"] > [data-action="displayPerk"] {width:25px;min-width:25px;justify-self:stretch;}
+.ashdom-sheet .ashdom-perk-row[data-collection="perks"]:has(> .ashdom-pinnable) {grid-template-columns:24px 24px 51px 30px minmax(0,1fr) 30px;}
+.ashdom-sheet .ashdom-perk-row[data-collection="perks"] > .ashdom-pinnable > [data-action="displayPerk"] {flex:0 0 25px;width:25px;}
+.ashdom-sheet .ashdom-perk-radius {flex-wrap:wrap;}
+.ashdom-sheet .ashdom-perk-type-field {display:flex;align-items:center;gap:6px;flex:1;min-width:130px;}
+.ashdom-sheet .ashdom-perk-type-field select {flex:1;min-width:0;}
+
+.ashdom-custom-skill-row {display:flex;align-items:center;gap:6px;margin:6px 0;flex-wrap:wrap;}
+.ashdom-custom-skill-row > span {flex:1;}
+.ashdom-custom-skill-row button {width:auto;}
+.ashdom-custom-skill-editor {display:grid;gap:8px;}
+.ashdom-custom-skill-editor label {display:grid;gap:4px;color:#ffd700;}
+
+/* Crafting follows the existing black-and-gold sheet controls. */
+.ashdom-crafting-panel > summary, .ashdom-currency-panel > summary, details[data-augmentation-drop-zone] > summary {cursor:pointer;}
+.ashdom-crafting-actions {display:flex;flex-wrap:wrap;gap:6px;margin:6px 0;}
+.ashdom-crafting-actions button {width:auto;flex:1 1 auto;}
+.ashdom-crafting-entry {border-top:1px solid #ffd700;padding:8px 0;margin-top:6px;}
+.ashdom-crafting-entry > summary {color:#ffd700;cursor:pointer;font-weight:bold;}
+.ashdom-crafting-entry p, .ashdom-crafting-entry li {color:white;overflow-wrap:anywhere;}
+.ashdom-crafting-editor {display:grid;gap:8px;}
+.ashdom-crafting-editor label {display:grid;gap:4px;}
+.ashdom-crafting-reference {white-space:pre-wrap;max-height:220px;overflow:auto;color:white;font:inherit;}
+.ashdom-container-transfer {width:auto!important;margin-left:8px;font-size:11px;}
+.ashdom-collapsible-body {border:0!important;padding:0!important;margin:0!important;background:transparent!important;}
+
+/* Keep crafting actions visible even when recipes have long notes. */
+.ashdom-crafting-dialog {max-height:90vh;max-height:90dvh;}
+.ashdom-crafting-dialog .window-content {min-height:0;overflow:hidden;}
+.ashdom-crafting-dialog .dialog-form {display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.ashdom-crafting-dialog .dialog-content {flex:1 1 auto;min-height:0;max-height:60vh;max-height:60dvh;overflow-y:auto;overflow-x:hidden;padding-right:8px;scrollbar-color:#ffd400 #000;}
+.ashdom-crafting-dialog .form-footer {display:flex;flex:0 0 auto;gap:8px;margin-top:10px;padding-top:10px;border-top:1px solid #ffd400;background:#000;}
+.ashdom-crafting-dialog .form-footer button {flex:1;min-height:34px;}
+
+/* Dialog checkboxes retain the same visible box and alignment as sheet toggles. */
+.ashdom-roll-modifier-window .ashdom-tag-checkbox {display:inline-block;flex:0 0 18px;width:18px;height:18px;}
+.ashdom-crafting-editor label.ashdom-enhancement-option {display:flex;align-items:center;justify-content:space-between;gap:8px;}
+
+/* Crafting subsection headings use the same size as the main title. */
+.ashdom-sheet .ashdom-crafting-panel > h3 {font-size:1em;}
+
+/* Journal help stays at the right edge while titles remain centered. */
+.ashdom-sheet .ashdom-help-heading {position:relative;padding-left:26px;padding-right:26px;min-height:22px;}
+.ashdom-sheet .ashdom-journal-help {position:absolute;right:0;top:0;width:22px;height:22px;min-width:22px;min-height:22px;margin:0;padding:0;display:inline-flex;align-items:center;justify-content:center;font-size:12px;line-height:1;}
+.ashdom-sheet .ashdom-journal-help i {margin:0;pointer-events:none;}
+
+/* Standalone help headings share the inset divider used by Primary Stats. */
+.ashdom-sheet h2.ashdom-help-heading {border-bottom-color:transparent;}
+.ashdom-sheet h2.ashdom-help-heading::after {
+  content:"";position:absolute;left:26px;right:26px;bottom:-1px;
+  border-bottom:1px solid var(--ashdom-gold);pointer-events:none;
+}
+
+/* Inventory, validation, crew and merchant controls share the actor theme. */
+.ashdom-utility-dialog {max-height:90dvh;}
+.ashdom-utility-dialog .window-content {min-height:0;overflow:hidden;}
+.ashdom-utility-dialog form {display:flex;flex-direction:column;min-height:0;overflow:hidden;}
+.ashdom-utility-dialog .dialog-content {overflow:auto;max-height:65dvh;min-height:0;}
+.ashdom-utility-dialog .dialog-buttons {flex-shrink:0;}
+.ashdom-utility-checks {display:grid;grid-template-columns:1fr 1fr;gap:6px;}
+.ashdom-utility-dialog .ashdom-enhancement-option {display:flex;align-items:center;gap:7px;}
+.ashdom-utility-dialog .ashdom-tag-checkbox {flex:0 0 18px;}
+.ashdom-allocation-table {overflow:auto;}
+.ashdom-allocation-table input {min-width:65px;}
+.ashdom-sheet .ashdom-validation-row {display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--ashdom-gold-dark);}
+.ashdom-validation-row span {flex:1;}
+.ashdom-validation-row button {flex:0 0 auto;}
+.ashdom-sheet .ashdom-crew-panel {margin-top:10px;}
+.ashdom-sheet .ashdom-crew-row {display:grid;grid-template-columns:minmax(0,1fr) auto auto 24px;gap:5px;align-items:center;padding:5px 0;}
+.ashdom-crew-row button {overflow-wrap:anywhere;white-space:normal;}
+.ashdom-sheet .ashdom-validation-focus {box-shadow:0 0 5px var(--ashdom-gold);}
+
+/* Compact Hope current / maximum fits the existing header field width. */
+.ashdom-sheet .ashdom-hope-tracker {display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:5px;align-items:center;min-width:0;}
+.ashdom-sheet .ashdom-hope-tracker input {width:100%;min-width:0;text-align:center;padding-left:3px;padding-right:3px;}
+.ashdom-sheet .ashdom-hope-tracker span {color:var(--ashdom-gold);font-weight:bold;}
+
+/* Separate the Hope Points adjustment and calculated maximum rows. */
+.ashdom-sheet .ashdom-hope-settings .ashdom-settings-number-row + .ashdom-settings-number-row {margin-top:8px;}

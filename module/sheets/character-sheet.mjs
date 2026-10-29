@@ -1,3 +1,15 @@
+import {hopePointsMaximum} from '../actor/hope-points.mjs';
+import {customDefinitions,actorSkill,skillChoices} from '../actor/custom-skills.mjs';
+import {usesPL,manualRadius,effectiveRadius} from '../actor/perk-radius-rules.mjs';
+import {remindStatuses} from "../actor/sheet-enhancements.mjs";
+import {hpProgression} from "../actor/hp-progression.mjs";
+import {recover} from "../actor/rest.mjs";
+import {attackMessageData} from "../apps/deferred-damage.mjs";
+import {activateInventoryTools} from "./inventory-tools.mjs";
+import {activateSheetTools} from "./sheet-tools.mjs";
+import {loadPreferences,savePreferences} from "./sheet-preferences.mjs";
+import {undoResourceChange,redoResourceChange} from "../actor/resource-history.mjs";
+import {BURST_AMMO,withDropQuantity,generatedQuantity,isConsumable,isCookedFood,consumeOne,resourceAction,spendAmmo,reloadWeapon} from "../actor/resources.mjs";
 import { appendEquipmentMod, equipmentModRows } from "../actor/equipment-mods.mjs";
 import { mirrorEquipmentDrop } from "../actor/equipment-inventory.mjs";
 import { npcGroup, groupWeapon } from "../actor/npc-groups.mjs";
@@ -73,13 +85,21 @@ export class AshdomCharacterSheet extends
     },
 
     actions: {
+      takeBreak: async function(){if(this.isEditable)await recover(this.actor,"break");},
+      takeRest: async function(){if(this.isEditable)await recover(this.actor,"rest");},
+      redoResource: async function() { if(this.isEditable) await redoResourceChange(this.actor); },
+      undoResource: async function() { if(this.isEditable) await undoResourceChange(this.actor); },
+      useConsumable: AshdomCharacterSheet.useConsumable,
+      reloadWeapon: AshdomCharacterSheet.reloadWeapon,
       changeTab: AshdomCharacterSheet.#changeTab,
       openNote: AshdomCharacterSheet.#openNote,
       addDataEntry: AshdomCharacterSheet.#addDataEntry,
       deleteDataEntry: AshdomCharacterSheet.#deleteDataEntry,
       displayPerk: AshdomCharacterSheet.#displayPerk,
       removeEquipmentMod: AshdomCharacterSheet.#removeEquipmentMod,
+      displayWeaponNotes: AshdomCharacterSheet.displayWeaponNotes,
       displayWeapon: AshdomCharacterSheet.#displayWeapon,
+      rollPinnedWeapon: AshdomCharacterSheet.rollPinnedWeapon,
       rollWeaponSingle: AshdomCharacterSheet.#rollWeaponSingle,
       rollWeaponTargeted: AshdomCharacterSheet.#rollWeaponTargeted,
       rollWeaponBurst: AshdomCharacterSheet.#rollWeaponBurst,
@@ -150,6 +170,8 @@ export class AshdomCharacterSheet extends
     this._activateInventoryItemDrops();
     this._activateAugmentationDrops();
     this._activateEquipmentModDrops();
+    activateSheetTools(this);
+    activateInventoryTools(this);
 
   }
 
@@ -314,7 +336,7 @@ export class AshdomCharacterSheet extends
 
           if (dragData?.type !== "Item" || !dragData.uuid) return;
 
-          const item = await fromUuid(dragData.uuid);
+          const item = withDropQuantity(await fromUuid(dragData.uuid), dragData);
           const isRobotBody = item?.type === "robotPart" &&
             String(item.system.category ?? "").trim().toLocaleLowerCase() === "body";
           if (!item || (item.type !== "armor" && !isRobotBody)) {
@@ -413,7 +435,7 @@ export class AshdomCharacterSheet extends
         let data;
         try { data = JSON.parse(event.dataTransfer.getData("text/plain")); } catch { return; }
         if (data?.type !== "Item" || !data.uuid) return;
-        const item = await fromUuid(data.uuid);
+        const item = withDropQuantity(await fromUuid(data.uuid), data);
         const collection = target.dataset.itemSection;
         if (!item || !(ASHDOM_ITEM_DESTINATIONS[item.type] ?? []).includes(collection)) {
           return ui.notifications.warn(`Drop a matching Item in the ${collection} section.`);
@@ -421,7 +443,7 @@ export class AshdomCharacterSheet extends
         const source = item.system.toObject?.() ?? item.system;
         const entries = foundry.utils.deepClone(this.actor.toObject().system[collection] ?? []);
         if (collection === "perks") {
-          entries.push({ name: item.name, type: item.type === "skillSpec" ? "Skill Spec" : source.perkType || "Trait", note: source.note ?? "", rank: Number(source.rank) || 0 });
+          entries.push({ name: item.name, type: item.type === "skillSpec" ? "Skill Spec" : source.perkType || "Trait", note: source.note ?? "", rank: Number(source.rank) || 0, radius: manualRadius({...source,name:item.name}), radiusUsePL: usesPL(source) });
         } else if (collection === "weapons") {
           entries.push({ ...foundry.utils.deepClone(source), name: item.name, sourceUuid: item.uuid ?? "", mods: foundry.utils.deepClone(source.mods ?? []), itemType: source.itemType || source.subcategory || source.category || "", capacityCurrent: source.capacityCurrent ?? source.capacityMax ?? 0 });
         } else return;
@@ -453,7 +475,7 @@ export class AshdomCharacterSheet extends
         try { data = JSON.parse(event.dataTransfer.getData("text/plain")); }
         catch { return; }
         if (data?.type !== "Item" || !data.uuid) return;
-        const item = await fromUuid(data.uuid);
+        const item = withDropQuantity(await fromUuid(data.uuid), data);
         if (item?.type !== "mod") return ui.notifications.warn("Drop a Modification Item here.");
         const collection = target.dataset.collection;
         const index = Number(target.dataset.equipmentIndex);
@@ -493,7 +515,7 @@ export class AshdomCharacterSheet extends
       try { data = JSON.parse(event.dataTransfer.getData("text/plain")); }
       catch { return; }
       if (data?.type !== "Item" || !data.uuid) return;
-      const item = await fromUuid(data.uuid);
+      const item = withDropQuantity(await fromUuid(data.uuid), data);
       if (!augmentationType(item)) return ui.notifications.warn("Only implants, cybernetics, robot parts, and diseases can be added here.");
       await this.actor.update({
         "system.augmentations": appendAugmentation(this.actor.toObject().system.augmentations, item)
@@ -530,7 +552,7 @@ export class AshdomCharacterSheet extends
       }
 
       if (dragData?.type !== "Item" || !dragData.uuid) return;
-      const item = await fromUuid(dragData.uuid);
+      const item = withDropQuantity(await fromUuid(dragData.uuid), dragData);
       if (!item || !(ASHDOM_ITEM_DESTINATIONS[item.type] ?? []).includes("inventory")) {
         return ui.notifications.warn("That ASHDOM Item cannot be added to Inventory.");
       }
@@ -548,6 +570,9 @@ export class AshdomCharacterSheet extends
         (item.uuid && entry.sourceUuid === item.uuid) || (entry.name === item.name && !entry.sourceUuid)
       );
       if (!alreadyListed) inventoryItems.push({
+        documentType: item.type,
+        ...(item.system.schematic?{equipmentData:foundry.utils.deepClone(item.system)}:{}),
+        rarity: String(item.system.rarity ?? ""),
         sourceUuid: item.uuid ?? "",
         name: String(item.name ?? ""),
         quantity,
@@ -561,6 +586,11 @@ export class AshdomCharacterSheet extends
         note: String(item.system.note ?? "")
       });
 
+      if(alreadyListed && generatedQuantity(dragData)!==null){
+        const existing=inventoryItems.find(entry=>(item.uuid&&entry.sourceUuid===item.uuid)||(entry.name===item.name&&!entry.sourceUuid));
+        existing.quantity=(Number(existing.quantity)||0)+quantity;
+        existing.totalWeight=existing.quantity*(Number(existing.weight)||0);
+      }
       const update = { "system.inventoryItems": inventoryItems };
       mirrorEquipmentDrop(this.actor.toObject().system, item, update, "inventory", this.actor.type);
       if (augmentationType(item)) {
@@ -694,12 +724,17 @@ export class AshdomCharacterSheet extends
 
 
   async _prepareContext(options) {
+    loadPreferences(this);
 
     const context =
       await super._prepareContext(options);
 
     context.actor = this.actor;
     context.system = this.actor.system;
+    if(this.actor.type === "character") context.hopePoints = hopePointsMaximum(this.actor.system);
+    if(this.actor.type === "character") context.hpProgression = hpProgression(this.actor.system);
+    context.sizeChoices = Object.fromEntries(["Small","Medium","Large","Huge","Gargantuan"].map(x=>[x,x]));
+    context.selectedSize = Object.keys(context.sizeChoices).find(x=>x.toLowerCase()===String(this.actor.system.details.size??'').trim().toLowerCase())??'';
     context.bodyTypeChoices = { Humanoid: "Humanoid", Creature: "Creature", Robot: "Robot" };
     context.activeTab = this._activeTab ?? "character";
     context.tabs = {
@@ -723,18 +758,19 @@ export class AshdomCharacterSheet extends
     const prepareSkill = ([key, label]) => ({
       key,
       label,
-      total: this.actor.system.skills[key].total,
-      tagged: this.actor.system.skills[key].tagged,
-      modifier: this.actor.system.skills[key].modifier,
-      temp: this.actor.system.skills[key].temp,
-      hasNote: Boolean(this.actor.system.skills[key].note?.trim())
+      path: `system.${key.startsWith("custom_")?"customSkills":"skills"}.${key}`,
+      total: actorSkill(this.actor.system,key)?.total ?? 5,
+      tagged: actorSkill(this.actor.system,key)?.tagged,
+      modifier: actorSkill(this.actor.system,key)?.modifier,
+      temp: actorSkill(this.actor.system,key)?.temp,
+      hasNote: Boolean(actorSkill(this.actor.system,key)?.note?.trim())
     });
 
     const prepareGroup = ([id, label, skills]) => ({
       id,
       label,
       open: !closedGroups.has(id),
-      skills: skills.map(prepareSkill)
+      skills: [...skills,...customDefinitions().filter(d=>d.enabled!==false && d.category===id).map(d=>[d.id,d.name])].sort((a,b)=>a[1].localeCompare(b[1])).map(prepareSkill)
     });
 
     context.skillSections = [
@@ -836,6 +872,7 @@ export class AshdomCharacterSheet extends
       ).sort((a, b) => a[1].localeCompare(b[1]))
     );
 
+    context.weaponSkillChoices = skillChoices((this.actor.system.weapons??[]).map(w=>w.skill));
     context.weaponDamageTypeChoices = {
       "": "",
       Normal: "Normal",
@@ -1029,6 +1066,8 @@ export class AshdomCharacterSheet extends
       quantity: item.quantity,
       weight: item.weight,
       totalWeight: item.totalWeight,
+      canUse: isConsumable(item),
+      useLabel: isCookedFood(item)?"Use 1 lb":"Use",
       type: item.type,
       category: item.category || item.type,
       subcategory: item.subcategory,
@@ -1049,18 +1088,25 @@ export class AshdomCharacterSheet extends
       (perk, index) => ({
         index,
         name: perk.name,
+        radius: manualRadius(perk),
+        radiusUsePL: usesPL(perk),
+        effectiveRadius: effectiveRadius(perk,this.actor.system),
         type: perk.type,
         note: perk.note,
         hasNote: Boolean(perk.note?.trim())
       })
     );
 
+    const equippedIndex = (this.actor.system.armors ?? []).findIndex(a => a.equipped);
+    context.equippedDR = equippedIndex < 0 ? null : {current:this.actor.system.armors[equippedIndex].drDamage,max:this.actor.system.armors[equippedIndex].ratings.dr.total};
     context.chargeTrackers = Array.from(
       this.actor.system.chargeTrackers ?? []
     ).map((tracker, index) => ({
       index,
       name: tracker.name,
       current: tracker.current,
+      resetRest: tracker.resetRest, resetBreak: tracker.resetBreak,
+      formula: tracker.formula, review: tracker.review, formulaError: tracker.formulaError,
       max: tracker.max
     }));
 
@@ -1069,7 +1115,9 @@ export class AshdomCharacterSheet extends
         index,
         name: effect.name,
         source: effect.source,
-        active: effect.active
+        active: effect.active,
+        remaining: effect.remaining, unit: effect.unit, expired: effect.expired,
+        timerUnits: {none:"No timer",rounds:"Rounds",minutes:"Minutes"}
       })
     );
 
@@ -1269,6 +1317,7 @@ export class AshdomCharacterSheet extends
       closedGroups.add(groupId);
     }
 
+    savePreferences(this);
     await this.render();
 
   }
@@ -1289,6 +1338,7 @@ export class AshdomCharacterSheet extends
       closedArmors.add(index);
     }
 
+    savePreferences(this);
     await this.render();
 
   }
@@ -1309,6 +1359,7 @@ export class AshdomCharacterSheet extends
       closedWeapons.add(index);
     }
 
+    savePreferences(this);
     await this.render();
 
   }
@@ -1329,6 +1380,7 @@ export class AshdomCharacterSheet extends
       closedVehicles.add(index);
     }
 
+    savePreferences(this);
     await this.render();
 
   }
@@ -1349,6 +1401,7 @@ export class AshdomCharacterSheet extends
       closedInventoryItems.add(index);
     }
 
+    savePreferences(this);
     await this.render();
 
   }
@@ -1539,6 +1592,24 @@ export class AshdomCharacterSheet extends
 
   }
 
+
+  static async reloadWeapon(event,target){
+    if(!this.isEditable)return;
+    try{const loaded=await reloadWeapon(this.actor,Number(target.dataset.index));ui.notifications.info(`Loaded ${loaded} round(s).`);}
+    catch(error){ui.notifications.warn(error.message);}
+  }
+  static async useConsumable(event,target){
+    if(!this.isEditable)return;
+    try{await resourceAction(this.actor,async()=>{
+      const rows=foundry.utils.deepClone(this.actor.toObject().system.inventoryItems??[]),row=rows[Number(target.dataset.index)];
+      if(!row||!isConsumable(row))throw Error('Choose a consumable item.');
+      consumeOne(row);
+      const content="<div class='ashdom-themed-chat-card'><strong>Used: "+escapeHTML(row.name)+"</strong><div>"+(await enrichChatNote(row.note||'No effect notes provided.',this.actor))+"</div></div>";
+      await this.actor.update({'system.inventoryItems':rows});
+      await ChatMessage.create({speaker:ChatMessage.getSpeaker({actor:this.actor}),content});
+    });}catch(error){ui.notifications.warn(error.message);}
+  }
+
   static async #displayWeapon(event, target) {
 
     event.preventDefault();
@@ -1565,19 +1636,56 @@ export class AshdomCharacterSheet extends
 
   }
 
+  static async displayWeaponNotes(event,target){
+    event.preventDefault();
+    const weapon=this.actor.system.weapons?.[Number(target.dataset.index)];if(!weapon)return;
+    await ChatMessage.create({speaker:ChatMessage.getSpeaker({actor:this.actor}),content:"<div class='ashdom-themed-chat-card'><strong>"+escapeHTML(weapon.name||'Weapon')+" Notes</strong><div>"+await enrichChatNote(weapon.note||'No notes provided.',this.actor)+"</div></div>"});
+  }
+
+  static async rollPinnedWeapon(event, target) {
+    event.preventDefault();
+    if (!this.isEditable) return;
+    const index = Number(target.dataset.index);
+    const weapon = this.actor.system.weapons?.[index];
+    if (!weapon) return;
+    const selected = await foundry.applications.api.DialogV2.wait({
+      classes: ["ashdom", "ashdom-burst-attack-window"],
+      window: {title: `${weapon.name || "Weapon"} — Attack`},
+      position: {width: 360},
+      content: "<p>Choose an attack.</p>",
+      buttons: [
+        {action:"single",label:"S — Single",callback:()=>"rollWeaponSingle"},
+        {action:"targeted",label:"T — Targeted",callback:()=>"rollWeaponTargeted"},
+        {action:"burst",label:"B — Burst",callback:()=>"rollWeaponBurst"},
+        {action:"cancel",label:"Cancel",callback:()=>null}
+      ],
+      rejectClose: false,
+      modal: true
+    });
+    if (!["rollWeaponSingle", "rollWeaponTargeted", "rollWeaponBurst"].includes(selected)) return;
+    if (this.actor.system.weapons?.[index] !== weapon) {
+      ui.notifications.warn("The weapon changed while the prompt was open. Please select it again.");
+      return;
+    }
+    return AshdomCharacterSheet.DEFAULT_OPTIONS.actions[selected].call(this, event, target);
+  }
+
   static async #rollWeaponSingle(event, target) {
 
     event.preventDefault();
+    if(!this.isEditable)return;
+    remindStatuses(this.actor);
 
     const index = Number(target.dataset.index);
     const weapon = groupWeapon(this.actor, this.actor.system.weapons?.[index]);
 
     if (!weapon || !Number.isInteger(index)) return;
 
-    const weaponName = String(weapon.name || "Unnamed Weapon");
+    const configurationName = weapon.configurations?.find(c=>c.id===weapon.activeConfiguration)?.name;
+    const weaponName = String(weapon.name || "Unnamed Weapon") + (configurationName ? ` — ${configurationName}` : "");
     const skillKey = String(weapon.skill || "");
     const skillName = String(target.dataset.skillLabel || skillKey || "Skill");
-    const skillData = this.actor.system.skills?.[skillKey];
+    const skillData = actorSkill(this.actor.system,skillKey);
 
     if (!skillData) {
       ui.notifications.warn("Select a valid skill for this weapon first.");
@@ -1613,7 +1721,7 @@ export class AshdomCharacterSheet extends
 
     try {
       const attackRoll = await new Roll(d100 ? "1d100" : "1d20").evaluate();
-      const damageRoll = await new Roll(damageFormula).evaluate();
+      const damageRoll = this.actor.system.settings.deferredDamage ? {total:0} : await new Roll(damageFormula).evaluate();
       const result = adjustedTotal - attackRoll.total;
       const criticalSuccess = attackRoll.total <= ccSuccess;
       const criticalFailure = !criticalSuccess && attackRoll.total >= ccFailure;
@@ -1664,14 +1772,16 @@ export class AshdomCharacterSheet extends
           noteContent +
         "</div>";
 
-      await ChatMessage.create({
+      await spendAmmo(this.actor,index,1);
+      await ChatMessage.create(attackMessageData({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: `${weaponName} — Single Attack`,
+        flags: {ashdom:{damage:{amount:damageRoll.total,type:damageType,dt:dtReduction,hits:1}}},
         content,
         rolls: [attackRoll, damageRoll]
-      });
+      }, this.actor.system.settings.deferredDamage, damageFormula));
     } catch (error) {
-      ui.notifications.error("The weapon's damage formula is invalid.");
+      ui.notifications.error(error.message || "The attack could not be completed.");
       console.error("ASHDOM | Invalid weapon damage formula", error);
     }
 
@@ -1726,6 +1836,8 @@ export class AshdomCharacterSheet extends
   static async #rollWeaponTargeted(event, target) {
     if (this.actor.type === "npc" && npcGroup(this.actor.system).active) {
       event.preventDefault();
+    if(!this.isEditable)return;
+    remindStatuses(this.actor);
       ui.notifications.warn("Groups cannot make Targeted Attacks.");
       return;
     }
@@ -1737,10 +1849,11 @@ export class AshdomCharacterSheet extends
 
     if (!weapon || !Number.isInteger(index)) return;
 
-    const weaponName = String(weapon.name || "Unnamed Weapon");
+    const configurationName = weapon.configurations?.find(c=>c.id===weapon.activeConfiguration)?.name;
+    const weaponName = String(weapon.name || "Unnamed Weapon") + (configurationName ? ` — ${configurationName}` : "");
     const skillKey = String(weapon.skill || "");
     const skillName = String(target.dataset.skillLabel || skillKey || "Skill");
-    const skillData = this.actor.system.skills?.[skillKey];
+    const skillData = actorSkill(this.actor.system,skillKey);
 
     if (!skillData) {
       ui.notifications.warn("Select a valid skill for this weapon first.");
@@ -1787,7 +1900,7 @@ export class AshdomCharacterSheet extends
 
     try {
       const attackRoll = await new Roll(d100 ? "1d100" : "1d20").evaluate();
-      const damageRoll = await new Roll(damageFormula).evaluate();
+      const damageRoll = this.actor.system.settings.deferredDamage ? {total:0} : await new Roll(damageFormula).evaluate();
       const result = adjustedTotal - attackRoll.total;
       const criticalSuccess = attackRoll.total <= ccSuccess;
       const criticalFailure = !criticalSuccess && attackRoll.total >= ccFailure;
@@ -1848,14 +1961,16 @@ export class AshdomCharacterSheet extends
           noteContent +
         "</div>";
 
-      await ChatMessage.create({
+      await spendAmmo(this.actor,index,1,'t');
+      await ChatMessage.create(attackMessageData({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: `${weaponName} — Targeted Attack`,
+        flags: {ashdom:{damage:{amount:damageRoll.total,type:damageType,dt:dt,hits:1}}},
         content,
         rolls: [attackRoll, damageRoll]
-      });
+      }, this.actor.system.settings.deferredDamage, damageFormula));
     } catch (error) {
-      ui.notifications.error("The weapon's damage formula is invalid.");
+      ui.notifications.error(error.message || "The attack could not be completed.");
       console.error("ASHDOM | Invalid weapon targeted damage formula", error);
     }
 
@@ -1939,16 +2054,19 @@ export class AshdomCharacterSheet extends
   static async #rollWeaponBurst(event, target) {
 
     event.preventDefault();
+    if(!this.isEditable)return;
+    remindStatuses(this.actor);
 
     const index = Number(target.dataset.index);
     const weapon = groupWeapon(this.actor, this.actor.system.weapons?.[index]);
 
     if (!weapon || !Number.isInteger(index)) return;
 
-    const weaponName = String(weapon.name || "Unnamed Weapon");
+    const configurationName = weapon.configurations?.find(c=>c.id===weapon.activeConfiguration)?.name;
+    const weaponName = String(weapon.name || "Unnamed Weapon") + (configurationName ? ` — ${configurationName}` : "");
     const skillKey = String(weapon.skill || "");
     const skillName = String(target.dataset.skillLabel || skillKey || "Skill");
-    const skillData = this.actor.system.skills?.[skillKey];
+    const skillData = actorSkill(this.actor.system,skillKey);
 
     if (!skillData) {
       ui.notifications.warn("Select a valid skill for this weapon first.");
@@ -1996,7 +2114,7 @@ export class AshdomCharacterSheet extends
 
     try {
       const attackRoll = await new Roll(d100 ? "1d100" : "1d20").evaluate();
-      const damageRoll = await new Roll(damageFormula).evaluate();
+      const damageRoll = this.actor.system.settings.deferredDamage ? {total:0} : await new Roll(damageFormula).evaluate();
       const criticalSuccess = attackRoll.total <= ccSuccess;
       const criticalFailure = !criticalSuccess && attackRoll.total >= ccFailure;
       const criticalClass = criticalSuccess
@@ -2077,14 +2195,16 @@ export class AshdomCharacterSheet extends
           noteContent +
         "</div>";
 
-      await ChatMessage.create({
+      await spendAmmo(this.actor,index,BURST_AMMO[burstChoice.selected.key],'b');
+      await ChatMessage.create(attackMessageData({
         speaker: ChatMessage.getSpeaker({ actor: this.actor }),
         flavor: `${weaponName} — ${burstType.label}`,
+        flags: {ashdom:{damage:{amount:damageRoll.total,type:damageType,dt:dt,hits:burstChoice.selected.hits}}},
         content,
         rolls: [attackRoll, damageRoll]
-      });
+      }, this.actor.system.settings.deferredDamage, damageFormula));
     } catch (error) {
-      ui.notifications.error("The weapon's damage formula is invalid.");
+      ui.notifications.error(error.message || "The attack could not be completed.");
       console.error("ASHDOM | Invalid weapon burst damage formula", error);
     }
 
@@ -2429,7 +2549,7 @@ export class AshdomCharacterSheet extends
 
 
     const skillData =
-      actor.system.skills?.[skill];
+      actorSkill(actor.system,skill);
 
     if (!skillData || !skillName) return;
 
