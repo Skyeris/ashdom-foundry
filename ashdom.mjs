@@ -1,3 +1,24 @@
+import {registerCrewRefresh} from './module/sheets/crew-controls.mjs';
+import {registerJournalHelp} from './module/sheets/journal-help.mjs';
+import {registerCustomSkills} from './module/actor/custom-skills.mjs';
+import {registerPerkRadii} from './module/apps/perk-radii.mjs';
+import {registerSavedGenerators} from "./module/apps/saved-generators.mjs";
+import {registerShopTrading} from "./module/apps/shop-trading.mjs";
+registerSavedGenerators();
+registerShopTrading();
+import {registerEnhancementHooks} from "./module/actor/sheet-enhancements.mjs";
+registerEnhancementHooks();
+import {registerHPProgression} from "./module/actor/hp-progression.mjs";
+registerHPProgression();
+import {registerPerkCharges} from "./module/actor/perk-charges.mjs";
+import {registerDeferredDamage} from "./module/apps/deferred-damage.mjs";
+registerPerkCharges();
+registerDeferredDamage();
+import {registerTokenSizing} from "./module/token-sizing.mjs";
+import {registerChatDamage} from "./module/apps/chat-damage.mjs";
+import {registerTokenResources} from "./module/apps/token-resources.mjs";
+import {rememberResourceChange} from "./module/actor/resource-history.mjs";
+import {registerEffectTimers} from "./module/actor/effect-timers.mjs";
 import {AshdomShopGenerator} from "./module/apps/shop-generator.mjs";
 import {registerCustomEntries} from "./module/apps/generator-custom.mjs";
 import { AshdomEncounterGenerator } from "./module/apps/encounter-generator.mjs";
@@ -58,7 +79,16 @@ import {
 
 
 Hooks.once("init", () => {
+  registerJournalHelp();
+  registerCrewRefresh();
+  registerCustomSkills();
   registerCustomEntries();
+  Hooks.on("preUpdateActor",rememberResourceChange);
+  registerEffectTimers();
+  registerTokenResources();
+  registerPerkRadii();
+  registerTokenSizing();
+  registerChatDamage();
 
   console.log("ASHDOM | Initializing system");
 
