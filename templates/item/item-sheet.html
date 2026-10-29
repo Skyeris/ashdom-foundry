@@ -73,6 +73,7 @@
     {{#if isPerk}}
       <label class="ashdom-item-field"><span>PERK TYPE</span><select name="system.perkType">{{selectOptions perkTypes selected=system.perkType}}</select></label>
       <label class="ashdom-item-field"><span>RANK</span><input type="number" min="0" step="1" name="system.rank" value="{{system.rank}}"></label>
+      <details class="ashdom-perk-radius-details"><summary>RADIUS</summary><label class="ashdom-item-field"><span>RADIUS (FT)</span><input type="number" min="0" step="any" name="system.radius" value="{{system.radius}}" title="0 disables the private token range ring"></label><label class="ashdom-perk-radius-pl"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.radiusUsePL" {{checked system.radiusUsePL}}><span aria-hidden="true">✓</span></span> Use actor PL</label></details>
     {{/if}}
 
 

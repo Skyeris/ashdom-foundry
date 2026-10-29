@@ -24,7 +24,7 @@
 
         <div class="ashdom-form-row">
           <label>SIZE</label>
-          {{#if group.active}}<input type="text" value="{{group.size}}" readonly title="Group size; disable Groups to edit the original size.">{{else}}<input type="text" name="system.details.size" value="{{system.details.size}}">{{/if}}
+          {{#if group.active}}<input type="text" value="{{group.size}}" readonly title="Group size; disable Groups to edit the original size.">{{else}}<select name="system.details.size" aria-label="Size">{{selectOptions sizeChoices selected=selectedSize}}</select>{{/if}}
         </div>
 
         <div class="ashdom-form-row">
@@ -69,22 +69,11 @@
         <span>/</span>
         {{#if group.active}}<input type="number" min="0" readonly value="{{group.trMax}}" aria-label="Maximum TR">{{else}}<input type="number" min="0" name="system.health.trMax" value="{{system.health.trMax}}" aria-label="Maximum TR">{{/if}}
       </div>
+<div class="ashdom-recovery-buttons"><button type="button" class="ashdom-skill-button" data-action="takeBreak" title="Restore HP: FRT + the displayed DEFCON tier recovery bonus">Break</button><button type="button" class="ashdom-skill-button" data-action="takeRest" title="Restore HP, DR, and R&amp;R-enabled charges">R&amp;R</button></div>
 
-      <div class="ashdom-header-vital-row ashdom-header-rads-row">
-        <label>RADS</label>
-        <input type="number" min="0" max="500" name="system.health.rads" value="{{system.health.rads}}" aria-label="Current Rads">
-        <span>/</span>
-        <strong>500</strong>
-      </div>
 
-      {{#if system.settings.variantRules.psychicAnomalies}}
-        <div class="ashdom-header-vital-row ashdom-header-horror-row">
-          <label>HRR</label>
-          <input type="number" min="0" max="500" name="system.health.horror" value="{{system.health.horror}}" aria-label="Current Horror">
-          <span>/</span>
-          <strong>500</strong>
-        </div>
-      {{/if}}
+
+
     </div>
   </header>
 
@@ -236,6 +225,22 @@
           {{/if}}
 
 
+          <div class="ashdom-status-resources ashdom-header-vitals">
+      {{#unless system.health.immuneToRads}}<div class="ashdom-header-vital-row ashdom-header-rads-row">
+        <label>RADS</label>
+        <input type="number" min="0" max="500" name="system.health.rads" value="{{system.health.rads}}" aria-label="Current Rads">
+        <span>/</span>
+        <strong>500</strong>
+      </div>{{/unless}}
+      {{#if system.settings.variantRules.psychicAnomalies}}
+        <div class="ashdom-header-vital-row ashdom-header-horror-row">
+          <label>HRR</label>
+          <input type="number" min="0" max="500" name="system.health.horror" value="{{system.health.horror}}" aria-label="Current Horror">
+          <span>/</span>
+          <strong>500</strong>
+        </div>
+      {{/if}}
+          </div>
         </div>
 
 
@@ -244,7 +249,7 @@
         ================================== -->
 
 <section class="ashdom-panel ashdom-npc-defense-panel" data-armor-drop-zone><div class="ashdom-hardplate-row"><b>TARGETABLE</b><label>HEAD <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.targetable.head" {{checked npcArmor.targetable.head}}><span aria-hidden="true">✓</span></span></label><label>TORSO <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.targetable.torso" {{checked npcArmor.targetable.torso}}><span aria-hidden="true">✓</span></span></label><label>ARMS <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.targetable.arms" {{checked npcArmor.targetable.arms}}><span aria-hidden="true">✓</span></span></label><label>LEGS <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.targetable.legs" {{checked npcArmor.targetable.legs}}><span aria-hidden="true">✓</span></span></label><label>GROIN <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.targetable.groin" {{checked npcArmor.targetable.groin}}><span aria-hidden="true">✓</span></span></label></div>
-<div class="ashdom-hardplate-row"><b>HARDPLATE</b><label>HEAD <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.head" {{checked npcArmor.hardplate.head}}><span aria-hidden="true">✓</span></span></label><label>TORSO <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.torso" {{checked npcArmor.hardplate.torso}}><span aria-hidden="true">✓</span></span></label><label>ARMS <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.arms" {{checked npcArmor.hardplate.arms}}><span aria-hidden="true">✓</span></span></label><label>LEGS <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.legs" {{checked npcArmor.hardplate.legs}}><span aria-hidden="true">✓</span></span></label><label>GROIN <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.groin" {{checked npcArmor.hardplate.groin}}><span aria-hidden="true">✓</span></span></label></div><div class="ashdom-npc-defense-properties"><label>C <span class="ashdom-tag-checkbox" title="Conductive"><input type="checkbox" name="system.armors.0.conductive" {{checked npcArmor.conductive}} aria-label="Conductive"><span aria-hidden="true">✓</span></span></label><label>I <span class="ashdom-tag-checkbox" title="Insulated"><input type="checkbox" name="system.armors.0.insulated" {{checked npcArmor.insulated}} aria-label="Insulated"><span aria-hidden="true">✓</span></span></label><label class="ashdom-npc-body-type">BODY TYPE <select name="system.details.bodyType" aria-label="Body Type">{{selectOptions bodyTypeChoices selected=system.details.bodyType}}</select></label><button type="button" class="ashdom-note-button{{#if npcArmor.hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.armors.0.note" data-note-label="Armor Notes" title="Edit armor notes" aria-label="Edit armor notes">✎</button></div><div class="ashdom-npc-stats"><div class="ashdom-secondary-column"><div class="ashdom-secondary-header"><span></span><span>TOTAL</span><span>MOD</span></div><div class="ashdom-secondary-row">
+<div class="ashdom-hardplate-row"><b>HARDPLATE</b><label>HEAD <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.head" {{checked npcArmor.hardplate.head}}><span aria-hidden="true">✓</span></span></label><label>TORSO <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.torso" {{checked npcArmor.hardplate.torso}}><span aria-hidden="true">✓</span></span></label><label>ARMS <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.arms" {{checked npcArmor.hardplate.arms}}><span aria-hidden="true">✓</span></span></label><label>LEGS <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.legs" {{checked npcArmor.hardplate.legs}}><span aria-hidden="true">✓</span></span></label><label>GROIN <span class="ashdom-tag-checkbox"><input type="checkbox" name="system.armors.0.hardplate.groin" {{checked npcArmor.hardplate.groin}}><span aria-hidden="true">✓</span></span></label></div><div class="ashdom-npc-defense-properties"><label>C <span class="ashdom-tag-checkbox" title="Conductive"><input type="checkbox" name="system.armors.0.conductive" {{checked npcArmor.conductive}} aria-label="Conductive"><span aria-hidden="true">✓</span></span></label><label>I <span class="ashdom-tag-checkbox" title="Insulated"><input type="checkbox" name="system.armors.0.insulated" {{checked npcArmor.insulated}} aria-label="Insulated"><span aria-hidden="true">✓</span></span></label><label class="ashdom-npc-body-type">BODY TYPE <select name="system.details.bodyType" aria-label="Body Type">{{selectOptions bodyTypeChoices selected=system.details.bodyType}}</select></label><button type="button" class="ashdom-note-button{{#if npcArmor.hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.armors.0.note" data-note-label="Armor Notes" title="Armor Notes" aria-label="Edit armor notes">✎</button></div><div class="ashdom-npc-stats"><div class="ashdom-secondary-column"><div class="ashdom-secondary-header"><span></span><span>TOTAL</span><span>MOD</span></div><div class="ashdom-secondary-row">
                 <span>AP</span>
                 <input type="number" value="{{system.secondary.ap.total}}" readonly>
                 <input type="number" name="system.secondary.ap.modifier" value="{{system.secondary.ap.modifier}}">
@@ -292,7 +297,7 @@
 <div class="ashdom-armor-rating-row ashdom-armor-rating-f ashdom-npc-defense-row"><label>F</label><input type="number" name="npcDefense.f" value="{{npcDefense.f}}" aria-label="F total" {{#if group.active}}readonly{{/if}}></div>
 <div class="ashdom-armor-rating-row ashdom-armor-rating-p ashdom-npc-defense-row"><label>P</label><input type="number" name="npcDefense.p" value="{{npcDefense.p}}" aria-label="P total" {{#if group.active}}readonly{{/if}}></div>
 <div class="ashdom-armor-rating-row ashdom-armor-rating-e ashdom-npc-defense-row"><label>E</label><input type="number" name="npcDefense.e" value="{{npcDefense.e}}" aria-label="E total" {{#if group.active}}readonly{{/if}}></div>
-<div class="ashdom-armor-rating-row ashdom-armor-rating-rr ashdom-npc-defense-row"><label>RR</label><input type="number" name="npcDefense.rr" value="{{npcDefense.rr}}" aria-label="RR total" {{#if group.active}}readonly{{/if}}></div></div></div>
+<div class="ashdom-armor-rating-row ashdom-armor-rating-rr ashdom-npc-defense-row"><label>RR</label><input type="number" name="npcDefense.rr" value="{{npcDefense.rr}}" aria-label="RR total" {{#if system.health.immuneToRads}}readonly{{else}}{{#if group.active}}readonly{{/if}}{{/if}}></div></div></div>
 <div class="ashdom-npc-resistances">
   <label><span>IMMUNITIES</span><textarea name="system.immunities" rows="2" aria-label="Immunities">{{system.immunities}}</textarea></label>
   <label><span>VULNERABILITIES</span><textarea name="system.vulnerabilities" rows="2" aria-label="Vulnerabilities">{{system.vulnerabilities}}</textarea></label>
@@ -323,7 +328,7 @@
                   data-action="openNote"
                   data-note-path="system.augmentations.{{index}}.note"
                   data-note-label="{{#if name}}{{name}}{{else}}Part{{/if}}"
-                  title="Edit description"
+                  title="{{#if name}}{{name}}{{else}}Part{{/if}} Notes"
                   aria-label="Edit part description"
                 >✎</button>
 
@@ -353,6 +358,7 @@
                 >
                   ×
                 </button>
+              
               </div>
             {{else}}
               <p class="ashdom-empty-message">No cybernetics, implants, or robot parts added.</p>
@@ -455,7 +461,7 @@
                                 >
                                   <input
                                     type="checkbox"
-                                    name="system.skills.{{key}}.tagged"
+                                    name="{{path}}.tagged"
                                     {{checked tagged}}
                                     aria-label="Tag {{label}}"
                                   >
@@ -464,14 +470,14 @@
 
                                 <input
                                   type="number"
-                                  name="system.skills.{{key}}.modifier"
+                                  name="{{path}}.modifier"
                                   value="{{modifier}}"
                                   aria-label="{{label}} modifier"
                                 >
 
                                 <input
                                   type="number"
-                                  name="system.skills.{{key}}.temp"
+                                  name="{{path}}.temp"
                                   value="{{temp}}"
                                   aria-label="{{label}} temporary modifier"
                                 >
@@ -480,9 +486,9 @@
                                   type="button"
                                   class="ashdom-note-button{{#if hasNote}} has-note{{/if}}"
                                   data-action="openNote"
-                                  data-note-path="system.skills.{{key}}.note"
+                                  data-note-path="{{path}}.note"
                                   data-note-label="{{label}}"
-                                  title="Edit {{label}} notes"
+                                  title="{{label}} Notes"
                                   aria-label="Edit {{label}} notes"
                                 >
                                   ✎
@@ -517,7 +523,7 @@
                     <span class="ashdom-armor-equip-label">EQUIP</span>
                     <label class="ashdom-tag-checkbox" title="Equip {{name}}"><input type="checkbox" name="system.weapons.{{index}}.equipped" {{checked equipped}} aria-label="Weapon equipped"><span aria-hidden="true">✓</span></label>
                   </div>
-                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.weapons.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Weapon{{/if}}" title="Edit weapon notes" aria-label="Edit weapon notes">✎</button>
+                  
                   <button type="button" class="ashdom-weapon-a-button" data-action="displayWeapon" data-index="{{index}}" title="Display {{#if name}}{{name}}{{else}}weapon{{/if}} in chat" aria-label="Display {{#if name}}{{name}}{{else}}weapon{{/if}} in chat">A</button>
                   <input type="text" name="system.weapons.{{index}}.name" value="{{name}}" placeholder="Weapon Name" aria-label="Weapon name">
                   <button type="button" class="ashdom-delete-button" data-action="deleteDataEntry" data-collection="weapons" data-index="{{index}}" title="Delete weapon" aria-label="Delete weapon">×</button>
@@ -536,13 +542,14 @@
                   <div class="ashdom-weapon-details">
 
                     <div class="ashdom-weapon-row-one">
-                      <label><span>SKILL</span><select name="system.weapons.{{index}}.skill" aria-label="Weapon skill">{{selectOptions ../weaponSkillChoices selected=skill}}</select></label>
+                      <div class="ashdom-weapon-skill-notes"><button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.weapons.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Weapon{{/if}}" title="{{#if name}}{{name}}{{else}}Weapon{{/if}} Notes" aria-label="Edit weapon notes">✎</button><label><span>SKILL</span><select name="system.weapons.{{index}}.skill" aria-label="Weapon skill">{{selectOptions ../weaponSkillChoices selected=skill}}</select></label></div>
                       <label><span>DAMAGE TYPE</span><select name="system.weapons.{{index}}.damageType" aria-label="Weapon damage type">{{selectOptions ../weaponDamageTypeChoices selected=damageType}}</select></label>
                       <label><span>DICE DAMAGE</span><input type="text" name="system.weapons.{{index}}.diceDamage" value="{{diceDamage}}" aria-label="Weapon dice damage"></label>
                       <label><span>FLAT DAMAGE</span><input type="number" name="system.weapons.{{index}}.flatDamage" value="{{flatDamage}}" aria-label="Weapon flat damage"></label>
                     </div>
 
                     <div class="ashdom-weapon-row-two">
+                      <button type="button" class="ashdom-weapon-attack-button ashdom-reload-button" data-action="reloadWeapon" data-index="{{index}}" title="Reload: load matching ammunition from inventory" aria-label="Reload weapon">R</button>
                       <label class="ashdom-weapon-capacity"><span>CAPACITY</span><span><input type="number" min="0" name="system.weapons.{{index}}.capacityCurrent" value="{{capacityCurrent}}" aria-label="Current weapon capacity"><b>/</b><input type="number" min="0" name="system.weapons.{{index}}.capacityMax" value="{{capacityMax}}" aria-label="Maximum weapon capacity"></span></label>
                       <label><span>ITEM TYPE</span><input type="text" name="system.weapons.{{index}}.itemType" value="{{itemType}}" aria-label="Weapon item type"></label>
                       <label><span>CC (S)</span><input type="number" name="system.weapons.{{index}}.ccSuccessModifier" value="{{ccSuccessModifier}}" aria-label="Weapon critical success modifier"></label>
@@ -555,7 +562,7 @@
                       <label><span>BURST LIMIT</span><input type="text" name="system.weapons.{{index}}.burstLimit" value="{{burstLimit}}" aria-label="Weapon burst limit"></label>
                       <label><span>IGNORE TARGET HIT CHANCE</span><input type="number" min="0" name="system.weapons.{{index}}.ignoreTargetHitChance" value="{{ignoreTargetHitChance}}" aria-label="Ignore Target Hit Chance"></label>
                       <label><span>SET-UP AP</span><input type="number" min="0" name="system.weapons.{{index}}.setupAP" value="{{setupAP}}" aria-label="Weapon set-up AP"></label>
-                      <button type="button" class="ashdom-note-button{{#if hasConcealedNote}} has-note{{/if}} ashdom-weapon-concealed-note" data-action="openNote" data-note-path="system.weapons.{{index}}.concealedNote" data-note-label="Concealed Notes" title="Edit concealed notes" aria-label="Edit concealed notes"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+                      <button type="button" class="ashdom-note-button{{#if hasConcealedNote}} has-note{{/if}} ashdom-weapon-concealed-note" data-action="openNote" data-note-path="system.weapons.{{index}}.concealedNote" data-note-label="Concealed Notes" title="Concealed Notes Notes" aria-label="Edit concealed notes"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
                     </div>
                     
 
@@ -597,7 +604,7 @@
           <div class="ashdom-perk-list">
             {{#each perks}}
               <div class="ashdom-perk-row" data-reorder-entry data-collection="perks" data-index="{{index}}">
-                <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag {{name}} to reorder">⠿</button>
+                <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag {{name}} to reorder">⠿</button><button type="button" class="ashdom-weapon-toggle" data-perk-radius-toggle aria-expanded="false" title="Expand perk details" aria-label="Expand {{name}} details">▼</button>
 
                 <button
                   type="button"
@@ -614,7 +621,7 @@
                   data-action="openNote"
                   data-note-path="system.perks.{{index}}.note"
                   data-note-label="{{#if name}}{{name}}{{else}}Perk / Trait{{/if}}"
-                  title="Edit description"
+                  title="{{#if name}}{{name}}{{else}}Perk / Trait{{/if}} Notes"
                   aria-label="Edit perk or trait description"
                 >✎</button>
 
@@ -626,12 +633,7 @@
                   aria-label="Perk or trait name"
                 >
 
-                <select
-                  name="system.perks.{{index}}.type"
-                  aria-label="Perk type"
-                >
-                  {{selectOptions ../perkTypeChoices selected=type}}
-                </select>
+                
 
                 <button
                   type="button"
@@ -644,6 +646,17 @@
                 >
                   ×
                 </button>
+              <div class="ashdom-perk-radius-details" hidden>
+                <div class="ashdom-perk-radius">
+                  <label class="ashdom-perk-radius-value"><span>RADIUS (FT)</span>{{#if radiusUsePL}}<input type="number" value="{{effectiveRadius}}" readonly aria-label="{{name}} radius from PL">{{else}}<input type="number" min="0" step="any" name="system.perks.{{index}}.radius" value="{{radius}}" title="0 disables the private range ring" aria-label="{{name}} radius in feet">{{/if}}</label>
+                  <label class="ashdom-perk-radius-pl"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.perks.{{index}}.radiusUsePL" {{checked radiusUsePL}} aria-label="Use PL for {{name}} radius"><span aria-hidden="true">✓</span></span> Use PL</label>
+                  <label class="ashdom-perk-type-field"><span>TYPE</span><select
+                  name="system.perks.{{index}}.type"
+                  aria-label="Perk type"
+                >
+                  {{selectOptions ../perkTypeChoices selected=type}}
+                </select></label>
+                </div></div>
               </div>
             {{else}}
               <p class="ashdom-empty-message">No perks or traits added.</p>
@@ -678,7 +691,7 @@
 
           {{#each chargeTrackers}}
             <div class="ashdom-tracker-row ashdom-charge-grid" data-reorder-entry data-collection="chargeTrackers" data-index="{{index}}">
-              <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag charge tracker to reorder">⠿</button>
+              <span class="ashdom-charge-controls"><button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag charge tracker to reorder">⠿</button><button type="button" class="ashdom-collapse-button" data-charge-formula-toggle aria-label="Toggle charge formula" aria-expanded="false">▸</button></span>
 
               <input
                 type="text"
@@ -697,6 +710,7 @@
                 min="0"
                 name="system.chargeTrackers.{{index}}.max"
                 value="{{max}}"
+                {{#if formula}}readonly{{/if}}
                 aria-label="Maximum charges"
               >
               <button
@@ -707,6 +721,15 @@
                 data-index="{{index}}"
                 aria-label="Delete charge tracker"
               >×</button>
+              <div class="ashdom-charge-formula-details" hidden>
+              <div class="ashdom-charge-reset-options"><span>RESET AFTER</span>
+                <label><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.chargeTrackers.{{index}}.resetRest" {{checked resetRest}}><span aria-hidden="true">✓</span></span> R&amp;R</label>
+                <label><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.chargeTrackers.{{index}}.resetBreak" {{checked resetBreak}}><span aria-hidden="true">✓</span></span> Break</label>
+              </div>
+              <label class="ashdom-charge-formula">Formula <input type="text" name="system.chargeTrackers.{{index}}.formula" value="{{formula}}" placeholder="e.g. ceil(FRT / 2)"></label>
+              {{#if review}}<small class="ashdom-charge-help">Review this description and enter its charge formula.</small>{{/if}}
+              {{#if formulaError}}<small class="ashdom-charge-help">{{formulaError}}</small>{{/if}}
+              </div>
             </div>
           {{/each}}
 
@@ -740,18 +763,25 @@
                 <span aria-hidden="true">✓</span>
               </label>
 
+              <div class="ashdom-effect-name"><button type="button" class="ashdom-collapse-button" data-effect-timer-toggle aria-label="Toggle effect timer" aria-expanded="false">▸</button>
               <input
                 type="text"
                 name="system.effects.{{index}}.name"
                 value="{{name}}"
                 placeholder="Effect Name"
               >
+              </div>
               <input
                 type="text"
                 name="system.effects.{{index}}.source"
                 value="{{source}}"
                 placeholder="Effect Source"
               >
+              <div class="ashdom-effect-timer" hidden>
+                <label><span>REMAINING</span> <input type="number" min="0" step="any" name="system.effects.{{index}}.remaining" value="{{remaining}}" aria-label="Effect time remaining"></label>
+                <select name="system.effects.{{index}}.unit" aria-label="Effect duration unit">{{selectOptions timerUnits selected=unit}}</select>
+                {{#if expired}}<strong role="status">Expired - review effect</strong>{{/if}}
+              </div>
               <button
                 type="button"
                 class="ashdom-delete-button"
@@ -823,12 +853,12 @@
             <input type="number" name="system.carryWeight.modifier" value="{{system.carryWeight.modifier}}" aria-label="Carry Weight modifier">
             <input type="number" value="{{system.carryWeight.max}}" readonly aria-label="Maximum Carry Weight">
             <input type="number" value="{{system.carryWeight.current}}" readonly aria-label="Current Carry Weight">
-            <button type="button" class="ashdom-note-button{{#if system.carryWeight.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.carryWeight.note" data-note-label="Carry Weight" title="Edit Carry Weight notes" aria-label="Edit Carry Weight notes">✎</button>
+            <button type="button" class="ashdom-note-button{{#if system.carryWeight.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.carryWeight.note" data-note-label="Carry Weight" title="Carry Weight Notes" aria-label="Edit Carry Weight notes">✎</button>
           </div>
         </section>
 {{/if}}
 <section class="ashdom-panel ashdom-items-panel" data-inventory-drop-zone>
-          <h2>ITEMS</h2>
+          <h2>INVENTORY</h2>
 
           <div class="ashdom-item-summary-grid ashdom-item-header">
             <span></span><span></span><span>ITEM</span><span>QTY</span><span>WEIGHT</span><span>TOTAL</span><span></span><span></span>
@@ -844,12 +874,14 @@
                   <input type="number" min="0" name="system.inventoryItems.{{index}}.quantity" value="{{quantity}}" aria-label="Item quantity">
                   <input type="number" min="0" name="system.inventoryItems.{{index}}.weight" value="{{weight}}" aria-label="Item weight">
                   <input type="number" value="{{totalWeight}}" readonly aria-label="Total item weight">
-                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.inventoryItems.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Item{{/if}}" title="Edit item notes" aria-label="Edit item notes">✎</button>
+                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.inventoryItems.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Item{{/if}}" title="{{#if name}}{{name}}{{else}}Item{{/if}} Notes" aria-label="Edit item notes">✎</button>
+                  
                   <button type="button" class="ashdom-delete-button" data-action="deleteDataEntry" data-collection="inventoryItems" data-index="{{index}}" title="Delete item" aria-label="Delete item">×</button>
                 </div>
 
                 {{#if open}}
                   <div class="ashdom-item-details">
+                    {{#if canUse}}<button type="button" class="ashdom-display-button" data-action="useConsumable" data-index="{{index}}" title="Use one serving and display its effects; cooked food consumes 1 lb">{{useLabel}}</button>{{/if}}
                     <label><span>CATEGORY</span><input type="text" name="system.inventoryItems.{{index}}.category" value="{{category}}" placeholder="Category" aria-label="Item category" readonly></label>
                     <label><span>SUBCATEGORY</span><input type="text" name="system.inventoryItems.{{index}}.subcategory" value="{{subcategory}}" placeholder="Subcategory" aria-label="Item subcategory" readonly></label>
                     <label><span>SPECIALIZATION</span><input type="text" name="system.inventoryItems.{{index}}.specialization" value="{{specialization}}" placeholder="Specialization" aria-label="Item specialization" readonly></label>
@@ -889,6 +921,13 @@
     <div class="ashdom-settings-layout">
       <div class="ashdom-npc-settings-left">
       <section class="ashdom-panel ashdom-settings-panel">
+        <h2>AUTOMATIC AP</h2>
+        <label class="ashdom-pins-setting"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.settings.deferredDamage" {{checked system.settings.deferredDamage}}><span aria-hidden="true">✓</span></span><span>Roll attack before damage</span></label>
+        <p class="ashdom-settings-help">Show the attack first, then choose Roll Damage in chat after confirming a hit.</p>
+        <label class="ashdom-pins-setting"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.settings.autoSpendAP" {{checked system.settings.autoSpendAP}}><span aria-hidden="true">✓</span></span><span>Spend AP on attacks and reloads</span></label>
+        <p class="ashdom-settings-help">Uses the weapon's S, T, B, and Reload AP costs. Actions require enough AP. Cancelled prompts spend nothing. Turn off to track AP manually.</p>
+      </section>
+      <section class="ashdom-panel ashdom-settings-panel">
         <h2>CRITICAL CHANCE</h2>
         <label class="ashdom-settings-number-row">
           <span>SUCCESS CAP</span>
@@ -900,7 +939,7 @@
           >
         </label>
         <p class="ashdom-settings-help">
-          Adds to the normal Success Cap of 5.
+          Changes the d20 critical-success limit: 0 = cap 5, +2 = cap 7, −2 = cap 3. Raising the cap does not directly add Critical Chance. The d100 cap stays at 25.
         </p>
 
         <label class="ashdom-settings-number-row">
@@ -913,10 +952,13 @@
           >
         </label>
         <p class="ashdom-settings-help">
-          Negative values lower the beginning of the Failure Range.
+          Shifts the start of the critical-failure range. From 19: −1 means 18–20 (more failures), +1 means 20 only (fewer). The threshold stays within the die’s range; this also applies in d100.
         </p>
       </section>
 
+      <section class="ashdom-panel ashdom-settings-panel"><h2>RADIATION</h2>
+        <label class="ashdom-rads-immunity"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.health.immuneToRads" {{checked system.health.immuneToRads}}><span aria-hidden="true">✓</span></span> Immune to Rads</label>
+        <p class="ashdom-settings-help">Hides RADS and locks RR at 999, ignoring additional RR. Uncheck to restore normal radiation tracking.</p></section>
       <section class="ashdom-panel ashdom-settings-panel">
         <h2>GROUPS</h2>
         <label class="ashdom-variant-rule-row">
@@ -951,6 +993,17 @@
           </span>
         </label>
         <p class="ashdom-settings-help">Adds Chill, Drunk, and Immobilized status trackers and enables Cryo Weapons under Heavy Guns for actor-owned items.</p>
+      </section>
+      <section class="ashdom-panel ashdom-settings-panel">
+        <h2>PINNED ACTIONS</h2>
+        <label class="ashdom-pins-setting">
+          <span class="ashdom-tag-checkbox">
+            <input type="checkbox" data-pinned-actions-enabled aria-label="Enable pinned actions">
+            <span aria-hidden="true">✓</span>
+          </span>
+          <span>Enable Pinned Actions</span>
+        </label>
+        <p class="ashdom-settings-help">Pin skills, weapons, and perks for quick access at the top of your sheet. Turning this off hides the pin buttons and shortcuts without deleting your saved pins. This preference is saved for you in this browser.</p>
       </section>
       </div>
       <section class="ashdom-panel ashdom-settings-panel">

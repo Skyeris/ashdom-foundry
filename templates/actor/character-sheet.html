@@ -24,7 +24,7 @@
 
         <div class="ashdom-form-row">
           <label>SIZE</label>
-          <input type="text" name="system.details.size" value="{{system.details.size}}">
+          <select name="system.details.size" aria-label="Size">{{selectOptions sizeChoices selected=selectedSize}}</select>
         </div>
 
         <div class="ashdom-form-row">
@@ -56,7 +56,7 @@
 
         <div class="ashdom-form-row">
           <label>HOPE POINTS</label>
-          <input type="number" name="system.details.hopePoints" value="{{system.details.hopePoints}}">
+          <div class="ashdom-hope-tracker"><input type="number" name="system.details.hopePoints" value="{{system.details.hopePoints}}" aria-label="Current Hope Points"><span aria-hidden="true">/</span><input type="number" readonly value="{{hopePoints.max}}" aria-label="Maximum Hope Points" title="Maximum Hope Points"></div>
         </div>
       </div>
     </div>
@@ -66,31 +66,26 @@
         <label>HP</label>
         <input type="number" min="0" name="system.health.hpCurrent" value="{{system.health.hpCurrent}}" aria-label="Current HP">
         <span>/</span>
-        <input type="number" min="0" name="system.health.hpMax" value="{{system.health.hpMax}}" aria-label="Maximum HP">
+        <input type="number" min="0" readonly value="{{system.health.hpMax}}" aria-label="Maximum HP">
       </div>
 
+      {{#if equippedDR}}
+      <div class="ashdom-header-vital-row ashdom-header-dr-row">
+        <label>DR</label><input type="number" min="0" data-equipped-dr value="{{equippedDR.current}}" aria-label="Equipped armor current DR"><span>/</span><input type="number" readonly value="{{equippedDR.max}}" aria-label="Equipped armor maximum DR">
+      </div>
+      {{/if}}
       <div class="ashdom-header-vital-row">
         <label>TR</label>
         <input type="number" min="0" name="system.health.trCurrent" value="{{system.health.trCurrent}}" aria-label="Current TR">
         <span>/</span>
-        <input type="number" min="0" name="system.health.trMax" value="{{system.health.trMax}}" aria-label="Maximum TR">
+        <input type="number" min="0" readonly value="{{system.secondary.tr.total}}" aria-label="Total TR">
       </div>
+      <div class="ashdom-recovery-buttons"><button type="button" class="ashdom-skill-button" data-action="takeBreak" title="Restore HP: FRT + half Level, rounded up">Break</button><button type="button" class="ashdom-skill-button" data-action="takeRest" title="Restore HP, equipped armor DR, and R&amp;R-enabled charge trackers">R&amp;R</button></div>
 
-      <div class="ashdom-header-vital-row ashdom-header-rads-row">
-        <label>RADS</label>
-        <input type="number" min="0" max="500" name="system.health.rads" value="{{system.health.rads}}" aria-label="Current Rads">
-        <span>/</span>
-        <strong>500</strong>
-      </div>
 
-      {{#if system.settings.variantRules.psychicAnomalies}}
-        <div class="ashdom-header-vital-row ashdom-header-horror-row">
-          <label>HRR</label>
-          <input type="number" min="0" max="500" name="system.health.horror" value="{{system.health.horror}}" aria-label="Current Horror">
-          <span>/</span>
-          <strong>500</strong>
-        </div>
-      {{/if}}
+
+
+
     </div>
   </header>
 
@@ -160,7 +155,7 @@
 
         <!-- HEALTH -->
 
-        <div class="ashdom-panel ashdom-health-panel">
+        <details class="ashdom-panel ashdom-health-panel" data-sheet-section="status" open><summary class="ashdom-section-heading"><h2>STATUS EFFECTS, FATIGUE, &amp; REAPER CHECKS</h2></summary>
           {{#if system.settings.variantRules.expandedCrippledStatus}}
             <div class="ashdom-expanded-crippled-row">
               <label>HEAD (C)<span class="ashdom-tag-checkbox" title="Head Crippled"><input type="checkbox" name="system.health.crippledHead" {{checked system.health.crippledHead}} aria-label="Head Crippled"><span aria-hidden="true">✓</span></span></label>
@@ -224,14 +219,56 @@
           {{/if}}
 
 
+
+          <div class="ashdom-status-bottom">
+          <div class="ashdom-status-resources ashdom-header-vitals">
+<div class="ashdom-status-stat-rolls"><button type="button" class="ashdom-secondary-roll-button" data-action="rollSecondary" data-secondary="st" data-secondary-label="ST" data-roll-mode="d20">ST</button><button type="button" class="ashdom-secondary-roll-button" data-action="rollSecondary" data-secondary="sq" data-secondary-label="SQ" data-roll-mode="d10-plus">SQ</button><button type="button" class="ashdom-secondary-roll-button" data-action="rollSecondary" data-secondary="wp" data-secondary-label="WP" data-roll-mode="d20">WP</button></div>
+
+      {{#unless system.health.immuneToRads}}<div class="ashdom-header-vital-row ashdom-header-rads-row ashdom-status-rads">
+        <label>RADS</label>
+        <input type="number" min="0" max="500" name="system.health.rads" value="{{system.health.rads}}" aria-label="Current Rads">
+        <span>/</span>
+        <strong>500</strong>
+      </div>{{/unless}}
+      {{#if system.settings.variantRules.psychicAnomalies}}
+        <div class="ashdom-header-vital-row ashdom-header-horror-row ashdom-status-horror">
+          <label>HRR</label>
+          <input type="number" min="0" max="500" name="system.health.horror" value="{{system.health.horror}}" aria-label="Current Horror">
+          <span>/</span>
+          <strong>500</strong>
         </div>
+      {{/if}}
+          </div>
+<div class="ashdom-status-reaper"><div class="ashdom-reaper-actions"><button type="button" class="ashdom-secondary-roll-button" data-action="rollReaper" title="Reaper Check" aria-label="Reaper Check">Reaper Check <i class="fa-solid fa-skull" aria-hidden="true"></i></button><button type="button" class="ashdom-note-button{{#if system.health.reaperNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.health.reaperNote" data-note-label="Reaper Check" aria-label="Edit Reaper Check notes" title="Reaper Check Notes">✎</button></div>              
+
+              <div class="ashdom-secondary-row ashdom-secondary-tracker-row">
+                
+                <span>SUCCESSES</span>
+                <div class="ashdom-secondary-checks">
+                  <label class="ashdom-tag-checkbox" title="Success 1"><input type="checkbox" name="system.health.success1" {{checked system.health.success1}} aria-label="Success 1"><span aria-hidden="true">✓</span></label>
+                  <label class="ashdom-tag-checkbox" title="Success 2"><input type="checkbox" name="system.health.success2" {{checked system.health.success2}} aria-label="Success 2"><span aria-hidden="true">✓</span></label>
+                  <label class="ashdom-tag-checkbox" title="Success 3"><input type="checkbox" name="system.health.success3" {{checked system.health.success3}} aria-label="Success 3"><span aria-hidden="true">✓</span></label>
+                </div>
+              </div>
+
+              <div class="ashdom-secondary-row ashdom-secondary-tracker-row">
+                
+                <span>FAILURES</span>
+                <div class="ashdom-secondary-checks">
+                  <label class="ashdom-tag-checkbox" title="Failure 1"><input type="checkbox" name="system.health.failure1" {{checked system.health.failure1}} aria-label="Failure 1"><span aria-hidden="true">✓</span></label>
+                  <label class="ashdom-tag-checkbox" title="Failure 2"><input type="checkbox" name="system.health.failure2" {{checked system.health.failure2}} aria-label="Failure 2"><span aria-hidden="true">✓</span></label>
+                  <label class="ashdom-tag-checkbox" title="Failure 3"><input type="checkbox" name="system.health.failure3" {{checked system.health.failure3}} aria-label="Failure 3"><span aria-hidden="true">✓</span></label>
+                </div>
+              </div></div>
+</div>
+        </details>
 
 
         <!-- =================================
              PRIMARY STATS
         ================================== -->
 
-        <div class="ashdom-panel">
+        <details class="ashdom-panel" data-sheet-section="primary" open><summary class="ashdom-section-heading"><h2>PRIMARY STATS</h2></summary>
 
           <div class="ashdom-stats-table">
 
@@ -283,7 +320,7 @@
               value="{{system.primary.frt.max}}"
             >
 
-            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.frt.note" data-note-label="FRT" title="Edit FRT notes" aria-label="Edit FRT notes">✎</button>
+            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.frt.note" data-note-label="FRT" title="FRT Notes" aria-label="Edit FRT notes">✎</button>
 
 
             <!-- OBS -->
@@ -322,7 +359,7 @@
               value="{{system.primary.obs.max}}"
             >
 
-            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.obs.note" data-note-label="OBS" title="Edit OBS notes" aria-label="Edit OBS notes">✎</button>
+            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.obs.note" data-note-label="OBS" title="OBS Notes" aria-label="Edit OBS notes">✎</button>
 
 
             <!-- REF -->
@@ -361,7 +398,7 @@
               value="{{system.primary.ref.max}}"
             >
 
-            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.ref.note" data-note-label="REF" title="Edit REF notes" aria-label="Edit REF notes">✎</button>
+            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.ref.note" data-note-label="REF" title="REF Notes" aria-label="Edit REF notes">✎</button>
 
 
             <!-- MGT -->
@@ -400,7 +437,7 @@
               value="{{system.primary.mgt.max}}"
             >
 
-            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.mgt.note" data-note-label="MGT" title="Edit MGT notes" aria-label="Edit MGT notes">✎</button>
+            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.mgt.note" data-note-label="MGT" title="MGT Notes" aria-label="Edit MGT notes">✎</button>
 
 
             <!-- UND -->
@@ -439,7 +476,7 @@
               value="{{system.primary.und.max}}"
             >
 
-            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.und.note" data-note-label="UND" title="Edit UND notes" aria-label="Edit UND notes">✎</button>
+            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.und.note" data-note-label="UND" title="UND Notes" aria-label="Edit UND notes">✎</button>
 
 
             <!-- LCK -->
@@ -478,7 +515,7 @@
               value="{{system.primary.lck.max}}"
             >
 
-            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.lck.note" data-note-label="LCK" title="Edit LCK notes" aria-label="Edit LCK notes">✎</button>
+            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.lck.note" data-note-label="LCK" title="LCK Notes" aria-label="Edit LCK notes">✎</button>
 
 
             <!-- APL -->
@@ -517,19 +554,19 @@
               value="{{system.primary.apl.max}}"
             >
 
-            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.apl.note" data-note-label="APL" title="Edit APL notes" aria-label="Edit APL notes">✎</button>
+            <button type="button" class="ashdom-note-button" data-action="openNote" data-note-path="system.primary.apl.note" data-note-label="APL" title="APL Notes" aria-label="Edit APL notes">✎</button>
 
 
           </div>
 
-        </div>
+        </details>
 
 
         <!-- =================================
              SECONDARY STATS
         ================================== -->
 
-        <div class="ashdom-panel ashdom-secondary-panel">
+        <details class="ashdom-panel ashdom-secondary-panel" data-sheet-section="secondary" open><summary class="ashdom-section-heading"><h2>SECONDARY STATS</h2></summary>
           <div class="ashdom-secondary-columns">
             <div class="ashdom-secondary-column">
               <div class="ashdom-secondary-header">
@@ -540,57 +577,49 @@
                 <span>AC (B)</span>
                 <input type="number" value="{{system.secondary.baseAC.total}}" readonly>
                 <input type="number" name="system.secondary.baseAC.modifier" value="{{system.secondary.baseAC.modifier}}">
-                <span></span>
+                <button type="button" class="ashdom-note-button{{#if system.secondary.baseAC.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.baseAC.note" data-note-label="AC (B)" title="AC (B) Notes" aria-label="AC (B) Notes">✎</button>
               </div>
 
               <div class="ashdom-secondary-row">
                 <span>AP</span>
                 <input type="number" value="{{system.secondary.ap.total}}" readonly>
                 <input type="number" name="system.secondary.ap.modifier" value="{{system.secondary.ap.modifier}}">
-                <span></span>
+                <button type="button" class="ashdom-note-button{{#if system.secondary.ap.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.ap.note" data-note-label="AP" title="AP Notes" aria-label="AP Notes">✎</button>
               </div>
 
               <div class="ashdom-secondary-row">
                 <span>CC (S)</span>
                 <input type="number" value="{{system.secondary.cc.success}}" readonly title="Critical Chance Success">
                 <input type="number" name="system.secondary.cc.successModifier" value="{{system.secondary.cc.successModifier}}" aria-label="Critical chance success modifier">
-                <span></span>
+                <button type="button" class="ashdom-note-button{{#if system.secondary.cc.successNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.cc.successNote" data-note-label="CC (S)" title="CC (S) Notes" aria-label="CC (S) Notes">✎</button>
               </div>
 
               <div class="ashdom-secondary-row">
                 <span>CC (F)</span>
                 <input type="number" value="{{system.secondary.cc.failure}}" readonly title="Critical Chance Failure">
                 <input type="number" name="system.secondary.cc.failureModifier" value="{{system.secondary.cc.failureModifier}}" aria-label="Critical chance failure modifier">
-                <span></span>
+                <button type="button" class="ashdom-note-button{{#if system.secondary.cc.failureNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.cc.failureNote" data-note-label="CC (F)" title="CC (F) Notes" aria-label="CC (F) Notes">✎</button>
               </div>
 
               <div class="ashdom-secondary-row">
                 <span>DE</span>
                 <input type="number" value="{{system.secondary.de.total}}" readonly>
                 <input type="number" name="system.secondary.de.modifier" value="{{system.secondary.de.modifier}}">
-                <span></span>
+                <button type="button" class="ashdom-note-button{{#if system.secondary.de.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.de.note" data-note-label="DE" title="DE Notes" aria-label="DE Notes">✎</button>
+              </div>
+<div class="ashdom-secondary-row">
+                <span>PL</span>
+                <input type="number" value="{{system.secondary.pl.total}}" readonly>
+                <input type="number" name="system.secondary.pl.modifier" value="{{system.secondary.pl.modifier}}">
+                <button type="button" class="ashdom-note-button{{#if system.secondary.pl.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.pl.note" data-note-label="PL" title="PL Notes" aria-label="PL Notes">✎</button>
               </div>
 
-              <div class="ashdom-secondary-row">
-                <button type="button" class="ashdom-secondary-roll-button" data-action="rollSecondary" data-secondary="sq" data-secondary-label="SQ" data-roll-mode="d10-plus">SQ</button>
-                <input type="number" value="{{system.secondary.sq.total}}" readonly>
-                <input type="number" name="system.secondary.sq.modifier" value="{{system.secondary.sq.modifier}}">
-                <button type="button" class="ashdom-note-button{{#if system.secondary.sq.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.sq.note" data-note-label="SQ" aria-label="Edit SQ notes">✎</button>
-              </div>
 
-              <div class="ashdom-secondary-row">
-                <button type="button" class="ashdom-secondary-roll-button" data-action="rollSecondary" data-secondary="st" data-secondary-label="ST" data-roll-mode="d20">ST</button>
-                <input type="number" value="{{system.secondary.st.total}}" readonly>
-                <input type="number" name="system.secondary.st.modifier" value="{{system.secondary.st.modifier}}">
-                <button type="button" class="ashdom-note-button{{#if system.secondary.st.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.st.note" data-note-label="ST" aria-label="Edit ST notes">✎</button>
-              </div>
 
-              <div class="ashdom-secondary-row">
-                <button type="button" class="ashdom-secondary-roll-button" data-action="rollSecondary" data-secondary="wp" data-secondary-label="WP" data-roll-mode="d20">WP</button>
-                <input type="number" value="{{system.secondary.wp.total}}" readonly>
-                <input type="number" name="system.secondary.wp.modifier" value="{{system.secondary.wp.modifier}}">
-                <button type="button" class="ashdom-note-button{{#if system.secondary.wp.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.wp.note" data-note-label="WP" aria-label="Edit WP notes">✎</button>
-              </div>
+
+              
+
+              
             </div>
 
             <div class="ashdom-secondary-column">
@@ -598,66 +627,56 @@
                 <span></span><span>TOTAL</span><span>MOD</span><span></span>
               </div>
 
-              <div class="ashdom-secondary-row">
-                <span>HP PER LVL</span>
-                <input type="number" value="{{system.secondary.hpPerLevel.total}}" readonly>
-                <input type="number" name="system.secondary.hpPerLevel.modifier" value="{{system.secondary.hpPerLevel.modifier}}">
-                <span></span>
-              </div>
+              
 
-              <div class="ashdom-secondary-row">
+              
+<div class="ashdom-secondary-row">
                 <span>RR (B)</span>
                 <input type="number" value="{{system.secondary.baseRR.total}}" readonly>
-                <input type="number" name="system.secondary.baseRR.modifier" value="{{system.secondary.baseRR.modifier}}">
-                <span></span>
+                <input type="number" {{#if system.health.immuneToRads}}readonly{{/if}} name="system.secondary.baseRR.modifier" value="{{system.secondary.baseRR.modifier}}">
+                <button type="button" class="ashdom-note-button{{#if system.secondary.baseRR.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.baseRR.note" data-note-label="RR (B)" title="RR (B) Notes" aria-label="RR (B) Notes">✎</button>
               </div>
 
-              <div class="ashdom-secondary-row">
-                <span>PL</span>
-                <input type="number" value="{{system.secondary.pl.total}}" readonly>
-                <input type="number" name="system.secondary.pl.modifier" value="{{system.secondary.pl.modifier}}">
-                <span></span>
-              </div>
+              
 
               <div class="ashdom-secondary-row">
                 <span>SP</span>
                 <input type="number" value="{{system.secondary.sp.total}}" readonly>
                 <input type="number" name="system.secondary.sp.modifier" value="{{system.secondary.sp.modifier}}">
-                <span></span>
+                <button type="button" class="ashdom-note-button{{#if system.secondary.sp.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.sp.note" data-note-label="SP" title="SP Notes" aria-label="SP Notes">✎</button>
               </div>
 
+              
+
               <div class="ashdom-secondary-row">
+                <span>ST</span>
+                <input type="number" value="{{system.secondary.st.total}}" readonly>
+                <input type="number" name="system.secondary.st.modifier" value="{{system.secondary.st.modifier}}">
+                <button type="button" class="ashdom-note-button{{#if system.secondary.st.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.st.note" data-note-label="ST" aria-label="Edit ST notes" title="ST Notes">✎</button>
+              </div>
+<div class="ashdom-secondary-row">
+                <span>SQ</span>
+                <input type="number" value="{{system.secondary.sq.total}}" readonly>
+                <input type="number" name="system.secondary.sq.modifier" value="{{system.secondary.sq.modifier}}">
+                <button type="button" class="ashdom-note-button{{#if system.secondary.sq.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.sq.note" data-note-label="SQ" aria-label="Edit SQ notes" title="SQ Notes">✎</button>
+              </div>
+<div class="ashdom-secondary-row">
                 <span>TR</span>
                 <input type="number" value="{{system.secondary.tr.total}}" readonly>
                 <input type="number" name="system.secondary.tr.modifier" value="{{system.secondary.tr.modifier}}">
-                <span></span>
+                <button type="button" class="ashdom-note-button{{#if system.secondary.tr.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.tr.note" data-note-label="TR" title="TR Notes" aria-label="TR Notes">✎</button>
+              </div>
+<div class="ashdom-secondary-row">
+                <span>WP</span>
+                <input type="number" value="{{system.secondary.wp.total}}" readonly>
+                <input type="number" name="system.secondary.wp.modifier" value="{{system.secondary.wp.modifier}}">
+                <button type="button" class="ashdom-note-button{{#if system.secondary.wp.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.secondary.wp.note" data-note-label="WP" aria-label="Edit WP notes" title="WP Notes">✎</button>
               </div>
 
-              <div class="ashdom-secondary-row ashdom-secondary-reaper-row">
-                <button type="button" class="ashdom-health-roll-button" data-action="rollReaper">REAPER CHECK <i class="fa-solid fa-skull" aria-hidden="true"></i></button>
-                <button type="button" class="ashdom-note-button{{#if system.health.reaperNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.health.reaperNote" data-note-label="Reaper Check" aria-label="Edit Reaper Check notes">✎</button>
-              </div>
 
-              <div class="ashdom-secondary-row ashdom-secondary-tracker-row">
-                <span>SUCCESSES</span>
-                <div class="ashdom-secondary-checks">
-                  <label class="ashdom-tag-checkbox" title="Success 1"><input type="checkbox" name="system.health.success1" {{checked system.health.success1}} aria-label="Success 1"><span aria-hidden="true">✓</span></label>
-                  <label class="ashdom-tag-checkbox" title="Success 2"><input type="checkbox" name="system.health.success2" {{checked system.health.success2}} aria-label="Success 2"><span aria-hidden="true">✓</span></label>
-                  <label class="ashdom-tag-checkbox" title="Success 3"><input type="checkbox" name="system.health.success3" {{checked system.health.success3}} aria-label="Success 3"><span aria-hidden="true">✓</span></label>
-                </div>
-              </div>
-
-              <div class="ashdom-secondary-row ashdom-secondary-tracker-row">
-                <span>FAILURES</span>
-                <div class="ashdom-secondary-checks">
-                  <label class="ashdom-tag-checkbox" title="Failure 1"><input type="checkbox" name="system.health.failure1" {{checked system.health.failure1}} aria-label="Failure 1"><span aria-hidden="true">✓</span></label>
-                  <label class="ashdom-tag-checkbox" title="Failure 2"><input type="checkbox" name="system.health.failure2" {{checked system.health.failure2}} aria-label="Failure 2"><span aria-hidden="true">✓</span></label>
-                  <label class="ashdom-tag-checkbox" title="Failure 3"><input type="checkbox" name="system.health.failure3" {{checked system.health.failure3}} aria-label="Failure 3"><span aria-hidden="true">✓</span></label>
-                </div>
-              </div>
             </div>
           </div>
-        </div>
+        </details>
 
         <!-- =================================
              ARMOR
@@ -694,7 +713,7 @@
                     data-action="openNote"
                     data-note-path="system.armors.{{index}}.note"
                     data-note-label="{{#if name}}{{name}}{{else}}Armor Set{{/if}}"
-                    title="Edit armor notes"
+                    title="{{#if name}}{{name}}{{else}}Armor Set{{/if}} Notes"
                     aria-label="Edit armor notes"
                   >✎</button>
 
@@ -783,7 +802,7 @@
                       {{#each mods}}
                         <div class="ashdom-equipment-mod-row">
                           <span>{{name}}</span>
-                          <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="{{notePath}}" data-note-label="{{name}}" title="Edit {{name}} notes" aria-label="Edit {{name}} notes">✎</button>
+                          <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="{{notePath}}" data-note-label="{{name}}" title="{{name}} Notes" aria-label="Edit {{name}} notes">✎</button>
                           <button type="button" class="ashdom-delete-button" data-action="removeEquipmentMod" data-collection="{{collection}}" data-equipment-index="{{equipmentIndex}}" data-mod-index="{{modIndex}}" title="Remove {{name}}" aria-label="Remove {{name}}">×</button>
                         </div>
                       {{/each}}
@@ -883,7 +902,7 @@
                                 >
                                   <input
                                     type="checkbox"
-                                    name="system.skills.{{key}}.tagged"
+                                    name="{{path}}.tagged"
                                     {{checked tagged}}
                                     aria-label="Tag {{label}}"
                                   >
@@ -892,14 +911,14 @@
 
                                 <input
                                   type="number"
-                                  name="system.skills.{{key}}.modifier"
+                                  name="{{path}}.modifier"
                                   value="{{modifier}}"
                                   aria-label="{{label}} modifier"
                                 >
 
                                 <input
                                   type="number"
-                                  name="system.skills.{{key}}.temp"
+                                  name="{{path}}.temp"
                                   value="{{temp}}"
                                   aria-label="{{label}} temporary modifier"
                                 >
@@ -908,9 +927,9 @@
                                   type="button"
                                   class="ashdom-note-button{{#if hasNote}} has-note{{/if}}"
                                   data-action="openNote"
-                                  data-note-path="system.skills.{{key}}.note"
+                                  data-note-path="{{path}}.note"
                                   data-note-label="{{label}}"
-                                  title="Edit {{label}} notes"
+                                  title="{{label}} Notes"
                                   aria-label="Edit {{label}} notes"
                                 >
                                   ✎
@@ -945,7 +964,7 @@
                     <span class="ashdom-armor-equip-label">EQUIP</span>
                     <label class="ashdom-tag-checkbox" title="Equip {{name}}"><input type="checkbox" name="system.weapons.{{index}}.equipped" {{checked equipped}} aria-label="Weapon equipped"><span aria-hidden="true">✓</span></label>
                   </div>
-                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.weapons.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Weapon{{/if}}" title="Edit weapon notes" aria-label="Edit weapon notes">✎</button>
+                  
                   <button type="button" class="ashdom-weapon-a-button" data-action="displayWeapon" data-index="{{index}}" title="Display {{#if name}}{{name}}{{else}}weapon{{/if}} in chat" aria-label="Display {{#if name}}{{name}}{{else}}weapon{{/if}} in chat">A</button>
                   <input type="text" name="system.weapons.{{index}}.name" value="{{name}}" placeholder="Weapon Name" aria-label="Weapon name">
                   <button type="button" class="ashdom-delete-button" data-action="deleteDataEntry" data-collection="weapons" data-index="{{index}}" title="Delete weapon" aria-label="Delete weapon">×</button>
@@ -964,18 +983,19 @@
                   <div class="ashdom-weapon-details">
 
                     <div class="ashdom-weapon-row-one">
-                      <label><span>SKILL</span><select name="system.weapons.{{index}}.skill" aria-label="Weapon skill">{{selectOptions ../weaponSkillChoices selected=skill}}</select></label>
+                      <div class="ashdom-weapon-skill-notes"><button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.weapons.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Weapon{{/if}}" title="{{#if name}}{{name}}{{else}}Weapon{{/if}} Notes" aria-label="Edit weapon notes">✎</button><label><span>SKILL</span><select name="system.weapons.{{index}}.skill" aria-label="Weapon skill">{{selectOptions ../weaponSkillChoices selected=skill}}</select></label></div>
                       <label><span>DAMAGE TYPE</span><select name="system.weapons.{{index}}.damageType" aria-label="Weapon damage type">{{selectOptions ../weaponDamageTypeChoices selected=damageType}}</select></label>
                       <label><span>DICE DAMAGE</span><input type="text" name="system.weapons.{{index}}.diceDamage" value="{{diceDamage}}" aria-label="Weapon dice damage"></label>
                       <label><span>FLAT DAMAGE</span><input type="number" name="system.weapons.{{index}}.flatDamage" value="{{flatDamage}}" aria-label="Weapon flat damage"></label>
                     </div>
 
                     <div class="ashdom-weapon-row-two">
+                      <button type="button" class="ashdom-weapon-attack-button ashdom-reload-button" data-action="reloadWeapon" data-index="{{index}}" title="Reload: load matching ammunition from inventory" aria-label="Reload weapon">R</button>
                       <label class="ashdom-weapon-capacity"><span>CAPACITY</span><span><input type="number" min="0" name="system.weapons.{{index}}.capacityCurrent" value="{{capacityCurrent}}" aria-label="Current weapon capacity"><b>/</b><input type="number" min="0" name="system.weapons.{{index}}.capacityMax" value="{{capacityMax}}" aria-label="Maximum weapon capacity"></span></label>
+                      <label><span>RELOAD AP</span><input type="number" min="0" name="system.weapons.{{index}}.reloadAP" value="{{reloadAP}}" aria-label="Weapon reload AP"></label>
                       <label><span>ITEM TYPE</span><input type="text" name="system.weapons.{{index}}.itemType" value="{{itemType}}" aria-label="Weapon item type"></label>
                       <label><span>CC (S)</span><input type="number" name="system.weapons.{{index}}.ccSuccessModifier" value="{{ccSuccessModifier}}" aria-label="Weapon critical success modifier"></label>
                       <label><span>CC (F)</span><input type="number" name="system.weapons.{{index}}.ccFailureModifier" value="{{ccFailureModifier}}" aria-label="Weapon critical failure modifier"></label>
-                      <label><span>RELOAD AP</span><input type="number" min="0" name="system.weapons.{{index}}.reloadAP" value="{{reloadAP}}" aria-label="Weapon reload AP"></label>
                     </div>
 
                     <div class="ashdom-weapon-row-three">
@@ -983,14 +1003,14 @@
                       <label><span>BURST LIMIT</span><input type="text" name="system.weapons.{{index}}.burstLimit" value="{{burstLimit}}" aria-label="Weapon burst limit"></label>
                       <label><span>IGNORE TARGET HIT CHANCE</span><input type="number" min="0" name="system.weapons.{{index}}.ignoreTargetHitChance" value="{{ignoreTargetHitChance}}" aria-label="Ignore Target Hit Chance"></label>
                       <label><span>SET-UP AP</span><input type="number" min="0" name="system.weapons.{{index}}.setupAP" value="{{setupAP}}" aria-label="Weapon set-up AP"></label>
-                      <button type="button" class="ashdom-note-button{{#if hasConcealedNote}} has-note{{/if}} ashdom-weapon-concealed-note" data-action="openNote" data-note-path="system.weapons.{{index}}.concealedNote" data-note-label="Concealed Notes" title="Edit concealed notes" aria-label="Edit concealed notes"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
+                      <button type="button" class="ashdom-note-button{{#if hasConcealedNote}} has-note{{/if}} ashdom-weapon-concealed-note" data-action="openNote" data-note-path="system.weapons.{{index}}.concealedNote" data-note-label="Concealed Notes" title="Concealed Notes Notes" aria-label="Edit concealed notes"><i class="fa-solid fa-eye" aria-hidden="true"></i></button>
                     </div>
                     <div class="ashdom-equipment-mods" data-equipment-mod-drop data-collection="weapons" data-equipment-index="{{index}}">
                       <b>MODS</b>
                       {{#each mods}}
                         <div class="ashdom-equipment-mod-row">
                           <span>{{name}}</span>
-                          <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="{{notePath}}" data-note-label="{{name}}" title="Edit {{name}} notes" aria-label="Edit {{name}} notes">✎</button>
+                          <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="{{notePath}}" data-note-label="{{name}}" title="{{name}} Notes" aria-label="Edit {{name}} notes">✎</button>
                           <button type="button" class="ashdom-delete-button" data-action="removeEquipmentMod" data-collection="{{collection}}" data-equipment-index="{{equipmentIndex}}" data-mod-index="{{modIndex}}" title="Remove {{name}}" aria-label="Remove {{name}}">×</button>
                         </div>
                       {{/each}}
@@ -1034,7 +1054,7 @@
           <div class="ashdom-perk-list">
             {{#each perks}}
               <div class="ashdom-perk-row" data-reorder-entry data-collection="perks" data-index="{{index}}">
-                <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag {{name}} to reorder">⠿</button>
+                <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag {{name}} to reorder">⠿</button><button type="button" class="ashdom-weapon-toggle" data-perk-radius-toggle aria-expanded="false" title="Expand perk details" aria-label="Expand {{name}} details">▼</button>
 
                 <button
                   type="button"
@@ -1051,7 +1071,7 @@
                   data-action="openNote"
                   data-note-path="system.perks.{{index}}.note"
                   data-note-label="{{#if name}}{{name}}{{else}}Perk / Trait{{/if}}"
-                  title="Edit description"
+                  title="{{#if name}}{{name}}{{else}}Perk / Trait{{/if}} Notes"
                   aria-label="Edit perk or trait description"
                 >✎</button>
 
@@ -1063,12 +1083,7 @@
                   aria-label="Perk or trait name"
                 >
 
-                <select
-                  name="system.perks.{{index}}.type"
-                  aria-label="Perk type"
-                >
-                  {{selectOptions ../perkTypeChoices selected=type}}
-                </select>
+                
 
                 <button
                   type="button"
@@ -1081,6 +1096,17 @@
                 >
                   ×
                 </button>
+              <div class="ashdom-perk-radius-details" hidden>
+                <div class="ashdom-perk-radius">
+                  <label class="ashdom-perk-radius-value"><span>RADIUS (FT)</span>{{#if radiusUsePL}}<input type="number" value="{{effectiveRadius}}" readonly aria-label="{{name}} radius from PL">{{else}}<input type="number" min="0" step="any" name="system.perks.{{index}}.radius" value="{{radius}}" title="0 disables the private range ring" aria-label="{{name}} radius in feet">{{/if}}</label>
+                  <label class="ashdom-perk-radius-pl"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.perks.{{index}}.radiusUsePL" {{checked radiusUsePL}} aria-label="Use PL for {{name}} radius"><span aria-hidden="true">✓</span></span> Use PL</label>
+                  <label class="ashdom-perk-type-field"><span>TYPE</span><select
+                  name="system.perks.{{index}}.type"
+                  aria-label="Perk type"
+                >
+                  {{selectOptions ../perkTypeChoices selected=type}}
+                </select></label>
+                </div></div>
               </div>
             {{else}}
               <p class="ashdom-empty-message">No perks or traits added.</p>
@@ -1114,7 +1140,7 @@
 
           {{#each chargeTrackers}}
             <div class="ashdom-tracker-row ashdom-charge-grid" data-reorder-entry data-collection="chargeTrackers" data-index="{{index}}">
-              <button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag charge tracker to reorder">⠿</button>
+              <span class="ashdom-charge-controls"><button type="button" class="ashdom-drag-handle" draggable="true" title="Drag to reorder" aria-label="Drag charge tracker to reorder">⠿</button><button type="button" class="ashdom-collapse-button" data-charge-formula-toggle aria-label="Toggle charge formula" aria-expanded="false">▸</button></span>
 
               <input
                 type="text"
@@ -1133,6 +1159,7 @@
                 min="0"
                 name="system.chargeTrackers.{{index}}.max"
                 value="{{max}}"
+                {{#if formula}}readonly{{/if}}
                 aria-label="Maximum charges"
               >
               <button
@@ -1143,6 +1170,15 @@
                 data-index="{{index}}"
                 aria-label="Delete charge tracker"
               >×</button>
+              <div class="ashdom-charge-formula-details" hidden>
+              <div class="ashdom-charge-reset-options"><span>RESET AFTER</span>
+                <label><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.chargeTrackers.{{index}}.resetRest" {{checked resetRest}}><span aria-hidden="true">✓</span></span> R&amp;R</label>
+                <label><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.chargeTrackers.{{index}}.resetBreak" {{checked resetBreak}}><span aria-hidden="true">✓</span></span> Break</label>
+              </div>
+              <label class="ashdom-charge-formula">Formula <input type="text" name="system.chargeTrackers.{{index}}.formula" value="{{formula}}" placeholder="e.g. ceil(FRT / 2)"></label>
+              {{#if review}}<small class="ashdom-charge-help">Review this description and enter its charge formula.</small>{{/if}}
+              {{#if formulaError}}<small class="ashdom-charge-help">{{formulaError}}</small>{{/if}}
+              </div>
             </div>
           {{/each}}
 
@@ -1176,18 +1212,25 @@
                 <span aria-hidden="true">✓</span>
               </label>
 
+              <div class="ashdom-effect-name"><button type="button" class="ashdom-collapse-button" data-effect-timer-toggle aria-label="Toggle effect timer" aria-expanded="false">▸</button>
               <input
                 type="text"
                 name="system.effects.{{index}}.name"
                 value="{{name}}"
                 placeholder="Effect Name"
               >
+              </div>
               <input
                 type="text"
                 name="system.effects.{{index}}.source"
                 value="{{source}}"
                 placeholder="Effect Source"
               >
+              <div class="ashdom-effect-timer" hidden>
+                <label><span>REMAINING</span> <input type="number" min="0" step="any" name="system.effects.{{index}}.remaining" value="{{remaining}}" aria-label="Effect time remaining"></label>
+                <select name="system.effects.{{index}}.unit" aria-label="Effect duration unit">{{selectOptions timerUnits selected=unit}}</select>
+                {{#if expired}}<strong role="status">Expired - review effect</strong>{{/if}}
+              </div>
               <button
                 type="button"
                 class="ashdom-delete-button"
@@ -1315,7 +1358,7 @@
                   data-action="openNote"
                   data-note-path="system.augmentations.{{index}}.note"
                   data-note-label="{{#if name}}{{name}}{{else}}Part{{/if}}"
-                  title="Edit description"
+                  title="{{#if name}}{{name}}{{else}}Part{{/if}} Notes"
                   aria-label="Edit part description"
                 >✎</button>
 
@@ -1378,12 +1421,12 @@
             <input type="number" name="system.carryWeight.modifier" value="{{system.carryWeight.modifier}}" aria-label="Carry Weight modifier">
             <input type="number" value="{{system.carryWeight.max}}" readonly aria-label="Maximum Carry Weight">
             <input type="number" value="{{system.carryWeight.current}}" readonly aria-label="Current Carry Weight">
-            <button type="button" class="ashdom-note-button{{#if system.carryWeight.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.carryWeight.note" data-note-label="Carry Weight" title="Edit Carry Weight notes" aria-label="Edit Carry Weight notes">✎</button>
+            <button type="button" class="ashdom-note-button{{#if system.carryWeight.note}} has-note{{/if}}" data-action="openNote" data-note-path="system.carryWeight.note" data-note-label="Carry Weight" title="Carry Weight Notes" aria-label="Edit Carry Weight notes">✎</button>
           </div>
         </section>
 
         <section class="ashdom-panel ashdom-items-panel" data-inventory-drop-zone>
-          <h2>ITEMS</h2>
+          <h2>INVENTORY</h2>
 
           <div class="ashdom-item-summary-grid ashdom-item-header">
             <span></span><span></span><span>ITEM</span><span>QTY</span><span>WEIGHT</span><span>TOTAL</span><span></span><span></span>
@@ -1399,12 +1442,14 @@
                   <input type="number" min="0" name="system.inventoryItems.{{index}}.quantity" value="{{quantity}}" aria-label="Item quantity">
                   <input type="number" min="0" name="system.inventoryItems.{{index}}.weight" value="{{weight}}" aria-label="Item weight">
                   <input type="number" value="{{totalWeight}}" readonly aria-label="Total item weight">
-                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.inventoryItems.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Item{{/if}}" title="Edit item notes" aria-label="Edit item notes">✎</button>
+                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="openNote" data-note-path="system.inventoryItems.{{index}}.note" data-note-label="{{#if name}}{{name}}{{else}}Item{{/if}}" title="{{#if name}}{{name}}{{else}}Item{{/if}} Notes" aria-label="Edit item notes">✎</button>
+                  
                   <button type="button" class="ashdom-delete-button" data-action="deleteDataEntry" data-collection="inventoryItems" data-index="{{index}}" title="Delete item" aria-label="Delete item">×</button>
                 </div>
 
                 {{#if open}}
                   <div class="ashdom-item-details">
+                    {{#if canUse}}<button type="button" class="ashdom-display-button" data-action="useConsumable" data-index="{{index}}" title="Use one serving and display its effects; cooked food consumes 1 lb">{{useLabel}}</button>{{/if}}
                     <label><span>CATEGORY</span><input type="text" name="system.inventoryItems.{{index}}.category" value="{{category}}" placeholder="Category" aria-label="Item category" readonly></label>
                     <label><span>SUBCATEGORY</span><input type="text" name="system.inventoryItems.{{index}}.subcategory" value="{{subcategory}}" placeholder="Subcategory" aria-label="Item subcategory" readonly></label>
                     <label><span>SPECIALIZATION</span><input type="text" name="system.inventoryItems.{{index}}.specialization" value="{{specialization}}" placeholder="Specialization" aria-label="Item specialization" readonly></label>
@@ -1437,6 +1482,13 @@
     <div class="ashdom-settings-layout">
       <div class="ashdom-settings-left">
       <section class="ashdom-panel ashdom-settings-panel">
+        <h2>AUTOMATIC AP</h2>
+        <label class="ashdom-pins-setting"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.settings.deferredDamage" {{checked system.settings.deferredDamage}}><span aria-hidden="true">✓</span></span><span>Roll attack before damage</span></label>
+        <p class="ashdom-settings-help">Show the attack first, then choose Roll Damage in chat after confirming a hit.</p>
+        <label class="ashdom-pins-setting"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.settings.autoSpendAP" {{checked system.settings.autoSpendAP}}><span aria-hidden="true">✓</span></span><span>Spend AP on attacks and reloads</span></label>
+        <p class="ashdom-settings-help">Uses the weapon's S, T, B, and Reload AP costs. Actions require enough AP. Cancelled prompts spend nothing. Turn off to track AP manually.</p>
+      </section>
+      <section class="ashdom-panel ashdom-settings-panel">
         <h2>CRITICAL CHANCE</h2>
         <label class="ashdom-settings-number-row">
           <span>SUCCESS CAP</span>
@@ -1448,7 +1500,7 @@
           >
         </label>
         <p class="ashdom-settings-help">
-          Adds to the normal Success Cap of 5.
+          Changes the d20 critical-success limit: 0 = cap 5, +2 = cap 7, −2 = cap 3. Raising the cap does not directly add Critical Chance. The d100 cap stays at 25.
         </p>
 
         <label class="ashdom-settings-number-row">
@@ -1461,10 +1513,41 @@
           >
         </label>
         <p class="ashdom-settings-help">
-          Negative values lower the beginning of the Failure Range.
+          Shifts the start of the critical-failure range. From 19: −1 means 18–20 (more failures), +1 means 20 only (fewer). The threshold stays within the die’s range; this also applies in d100.
         </p>
       </section>
 
+      <section class="ashdom-panel ashdom-settings-panel">
+        <h2>RADIATION</h2>
+        <label class="ashdom-rads-immunity"><span class="ashdom-tag-checkbox"><input type="checkbox" name="system.health.immuneToRads" {{checked system.health.immuneToRads}}><span aria-hidden="true">✓</span></span> Immune to Rads</label>
+        <p class="ashdom-settings-help">Immune to Rads hides the RADS tracker and locks RR (B) and total RR at 999, ignoring additional RR. Uncheck to restore normal radiation tracking.</p>
+      </section>
+      <section class="ashdom-panel ashdom-settings-panel ashdom-hp-progression">
+        <h2>HP PROGRESSION</h2>
+        <p class="ashdom-settings-help">Level 1: 15 + Base MGT + (Base FRT × 2). HP gained on later levels is not calculated automatically: enter it in each Level Up HP box. Total adds previous HP, Level Up HP, Mod, and any checked perk bonus.</p>
+        {{#each hpProgression.rows}}
+        <div class="ashdom-hp-level">
+          <strong>LEVEL {{level}}</strong>
+          <div class="ashdom-hp-level-values{{#unless @first}} ashdom-hp-with-gain{{/unless}}">
+            <label>{{#if @first}}BASE HP{{else}}PREVIOUS HP{{/if}}<input type="number" readonly value="{{base}}"></label>
+            {{#unless @first}}<label>LEVEL UP HP<input type="number" name="system.hpProgression.levels.{{key}}.levelUpHP" value="{{gain}}" aria-label="Level {{level}} HP gain"></label>{{/unless}}
+            <label>MOD<input type="number" name="system.hpProgression.levels.{{key}}.modifier" value="{{modifier}}"></label>
+            <label>TOTAL<input type="number" readonly value="{{total}}"></label>
+          </div>
+          <div class="ashdom-hp-perk">
+            <label class="ashdom-tag-checkbox" title="Apply this level's perk bonus"><input type="checkbox" name="system.hpProgression.levels.{{key}}.applies" {{checked applies}} aria-label="Apply level {{level}} perk bonus"><span aria-hidden="true">✓</span></label>
+            <input type="text" name="system.hpProgression.levels.{{key}}.perkName" value="{{perkName}}" placeholder="Perk Name" aria-label="Level {{level}} perk name">
+            <input type="number" name="system.hpProgression.levels.{{key}}.bonus" value="{{bonus}}" aria-label="Level {{level}} perk HP bonus" title="Perk HP Bonus">
+          </div>
+        </div>
+        {{/each}}
+      </section>
+      <section class="ashdom-panel ashdom-settings-panel ashdom-hope-settings">
+        <h2>HOPE POINTS</h2>
+        <p class="ashdom-settings-help">Maximum starts at 3 and increases by 1 at levels 5, 10, 15, and so on. Adjust the maximum below for perks or other effects. Current Hope Points are not changed automatically.</p>
+        <label class="ashdom-settings-number-row"><span>MAX ADJUSTMENT</span><input type="number" step="1" name="system.settings.hopePoints.maxModifier" value="{{hopePoints.modifier}}" aria-label="Hope Points maximum adjustment"></label>
+        <label class="ashdom-settings-number-row"><span>MAXIMUM</span><input type="number" readonly value="{{hopePoints.max}}" aria-label="Calculated Hope Points maximum"></label>
+      </section>
       <section class="ashdom-panel ashdom-settings-panel">
         <h2>SUPPLEMENTS</h2>
         <label class="ashdom-variant-rule-row">
@@ -1475,6 +1558,17 @@
           </span>
         </label>
         <p class="ashdom-settings-help">Adds Chill, Drunk, and Immobilized status trackers and enables Cryo Weapons under Heavy Guns for actor-owned items.</p>
+      </section>
+      <section class="ashdom-panel ashdom-settings-panel">
+        <h2>PINNED ACTIONS</h2>
+        <label class="ashdom-pins-setting">
+          <span class="ashdom-tag-checkbox">
+            <input type="checkbox" data-pinned-actions-enabled aria-label="Enable pinned actions">
+            <span aria-hidden="true">✓</span>
+          </span>
+          <span>Enable Pinned Actions</span>
+        </label>
+        <p class="ashdom-settings-help">Pin skills, weapons, and perks for quick access at the top of your sheet. Turning this off hides the pin buttons and shortcuts without deleting your saved pins. This preference is saved for you in this browser.</p>
       </section>
       </div>
       <section class="ashdom-panel ashdom-settings-panel">

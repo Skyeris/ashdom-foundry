@@ -12,7 +12,7 @@
             <div class="ashdom-vehicle-type-seating">
             <label class="ashdom-fleet-field"><span class="ashdom-vehicle-type-control"><img src="{{typeIcon}}" alt="{{type}} icon"><select name="system.vehicles.{{index}}.type" aria-label="Vehicle type">{{selectOptions ../vehicleTypeChoices selected=type blank=""}}</select></span></label>
               <label class="ashdom-vehicle-seating">SEATING<input type="number" min="0" step="1" name="system.vehicles.{{index}}.seating" value="{{seating}}" aria-label="Vehicle seating"></label>
-            <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="{{index}}" title="Vehicle notes" aria-label="Vehicle notes">✎</button>
+            <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="{{index}}" title="{{#if name}}{{name}}{{else}}Vehicle{{/if}} Notes" aria-label="Vehicle notes">✎</button>
             </div>
             <div class="ashdom-fleet-vitals">
               <b>HP</b><input type="number" min="0" name="system.vehicles.{{index}}.hpCurrent" value="{{hpCurrent}}" aria-label="Current vehicle HP"><span>/</span><input type="number" min="0" name="system.vehicles.{{index}}.hpMax" value="{{hpMax}}" aria-label="Maximum vehicle HP">
@@ -48,7 +48,7 @@
               {{#each mods}}
                 <div class="ashdom-equipment-mod-row">
                   <span>{{name}}</span>
-                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="0" data-mod-index="{{modIndex}}" title="Edit {{name}} notes" aria-label="Edit {{name}} notes">✎</button>
+                  <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="0" data-mod-index="{{modIndex}}" title="{{name}} Notes" aria-label="Edit {{name}} notes">✎</button>
                   <button type="button" class="ashdom-delete-button" data-action="removeVehicleMod" data-mod-index="{{modIndex}}" title="Remove {{name}}" aria-label="Remove {{name}}">×</button>
                 </div>
               {{/each}}
@@ -79,7 +79,7 @@
               <input type="number" min="0" step="any" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.quantity" value="{{quantity}}" aria-label="Cargo quantity">
               <input type="number" min="0" step="any" name="system.vehicles.{{vehicleIndex}}.cargo.{{index}}.weight" value="{{weight}}" aria-label="Cargo unit weight">
               <input type="number" value="{{totalWeight}}" readonly aria-label="Cargo total weight">
-              <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="{{vehicleIndex}}" data-cargo-index="{{index}}" title="Item notes" aria-label="Item notes">✎</button>
+              <button type="button" class="ashdom-note-button{{#if hasNote}} has-note{{/if}}" data-action="editVehicleNote" data-vehicle-index="{{vehicleIndex}}" data-cargo-index="{{index}}" title="{{#if name}}{{name}}{{else}}Item{{/if}} Notes" aria-label="Item notes">✎</button>
               <button type="button" class="ashdom-delete-button" data-action="deleteCargo" data-vehicle-index="{{vehicleIndex}}" data-cargo-index="{{index}}" title="Remove cargo item" aria-label="Remove cargo item">×</button>
             </div>
             {{#if open}}
