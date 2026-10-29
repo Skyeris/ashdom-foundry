@@ -1,6 +1,17 @@
-2026/10/10-11:45:22.871 18f8 Recovering log #151
-2026/10/10-11:45:22.879 18f8 Delete type=0 #151
-2026/10/10-11:45:22.879 18f8 Delete type=2 #152
-2026/10/10-11:45:22.880 18f8 Delete type=3 #150
-2026/10/10-11:45:22.880 2ddc Compacting 5@0 + 1@1 files
-2026/10/10-11:45:22.883 2ddc compacted to: files[ 5 1 0 0 0 0 0 ]
+2026/10/10-11:45:22.897 cdc Recovering log #153
+2026/10/10-11:45:22.898 cdc Level-0 table #155: started
+2026/10/10-11:45:22.903 cdc Level-0 table #155: 40836 bytes OK
+2026/10/10-11:45:22.911 cdc Delete type=0 #153
+2026/10/10-11:45:22.912 cdc Delete type=2 #154
+2026/10/10-11:45:22.913 cdc Delete type=3 #152
+2026/10/10-11:45:22.913 2ddc Compacting 6@0 + 1@1 files
+2026/10/10-11:45:22.920 2ddc Generated table #157@0: 46 keys, 40836 bytes
+2026/10/10-11:45:22.920 2ddc Compacted 6@0 + 1@1 files => 40836 bytes
+2026/10/10-11:45:22.923 2ddc compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/10/10-11:45:22.923 2ddc Delete type=2 #100
+2026/10/10-11:45:22.924 2ddc Delete type=2 #110
+2026/10/10-11:45:22.924 2ddc Delete type=2 #121
+2026/10/10-11:45:22.924 2ddc Delete type=2 #130
+2026/10/10-11:45:22.925 2ddc Delete type=2 #141
+2026/10/10-11:45:22.925 2ddc Delete type=2 #146
+2026/10/10-11:45:22.926 2ddc Delete type=2 #155
